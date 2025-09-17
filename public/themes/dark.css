@@ -1,0 +1,85 @@
+:root {
+  /* Text Colors */
+  --color-text1: #fdf6e3;             /* main text - light ivory */
+  --color-text1-faded: #e0d7c2;
+  --color-text2: #fdf6e3;
+  --color-text2-faded: #c8c2ad;
+  --color-text3: #fdf6e3;
+  --color-text3-faded: #b5ae97;
+  --color-text4: #0d0d0d;             /* dark text on light surfaces */
+  --color-text4-faded: #44403c;
+
+  /* Backgrounds */
+  --color-bg1: #3b1c0f;               /* deep brown - pub wood */
+  --color-bg2: #5c2b18;               /* secondary background */
+  --color-bg3: #facc15;               /* golden accent */
+  --color-bg4: #fef3c7;               /* light amber */
+
+  --color-bg1-gradient1: #3b1c0f;
+  --color-bg1-gradient2: #5c2b18;
+
+  /* Borders */
+  --color-border1: #fef3c7;
+  --color-border2: #facc15;
+  --color-border3: #92400e;
+  --color-border4: #78350f;
+
+  /* Buttons */
+  --color-button1: #65a30d;            /* vibrant green */
+  --color-button1-meta: #fdf6e3;
+  --color-button1-meta-hover: #ffffff;
+  --color-button1-hover: #4d7c0f;
+  --color-button1-border: #365314;
+
+  --color-button1-gradient1: #84cc16;
+  --color-button1-gradient2: #65a30d;
+
+  --color-button2: #d97706;            /* amber/orange */
+  --color-button2-meta: #fdf6e3;
+  --color-button2-hover: #b45309;
+  --color-button2-border: #92400e;
+
+  /* Secondary Button */
+  --color-button3: #e7e5e4;
+  --color-button3-meta: #0d0d0d;
+  --color-button3-hover: #d6d3d1;
+  --color-button3-border: #a8a29e;
+
+  /* Tertiary Button */
+  --color-button4: #f5f5f4;
+  --color-button4-meta: #0d0d0d;
+  --color-button4-hover: #e7e5e4;
+  --color-button4-border: #a8a29e;
+
+  --color-button-transparent: transparent;
+  --color-button-transparent-meta: #fdf6e3;
+  --color-button-transparent-hover: rgba(255, 255, 255, 0.1);
+  --color-button-transparent-border: transparent;
+  --color-button-transparent-hover-border: #a8a29e;
+
+  /* Utility */
+  --color-overlay: rgba(0, 0, 0, 0.7);
+  --color-danger: #dc2626;
+  --color-danger-hover: #b91c1c;
+  --color-danger-border: #7f1d1d;
+  --color-success: #16a34a;
+  --color-success-hover: #15803d;
+  --color-success-border: #166534;
+
+  /* Status */
+  --color-status-pending: #fef3c7;         /* light amber */
+  --color-status-pending-text: #92400e;
+  --color-status-pending-border: #facc15;
+  --color-status-completed: #bbf7d0;       /* soft green */
+  --color-status-completed-text: #166534;
+  --color-status-completed-border: #4ade80;
+  --color-status-rejected: #fecaca;
+  --color-status-rejected-text: #7f1d1d;
+  --color-status-rejected-border: #f87171;
+  --color-status-new: #ede9fe;
+  --color-status-new-text: #5b21b6;
+  --color-status-new-border: #c4b5fd;
+  --color-status-in-review: #fed7aa;
+  --color-status-in-review-text: #9a3412;
+  --color-status-in-review-border: #fb923c;
+}

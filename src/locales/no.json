@@ -1,0 +1,38 @@
+{
+  "navbar": {
+    "home": "Hjem",
+    "games": "Spill",
+    "events": "Arrangementer",
+    "about": "Om oss",
+    "contact": "Kontakt",
+    "membership": "Bli medlem",
+    "support": "Hjelp",
+    "login": "Se Svar"
+  },
+  "footer": {
+    "privacy": "Personvern",
+    "terms": "Vilkår",
+    "about": "Om oss",
+    "contact": "Kontakt"
+  },
+  "home": {
+    "welcome": "Velkommen til vår nettside!",
+    "description": "Dette er en eksempeltekst for hjemmesiden."
+  },
+  "settings": {
+    "language": "Språk",
+    "theme": "Tema",
+    "languages": {
+      "en": "Engelsk",
+      "no": "Norsk"
+    },
+    "themes": {
+      "light": "Lyst",
+      "dark": "Mørkt"
+    }
+
+  }
+}
+
+
+

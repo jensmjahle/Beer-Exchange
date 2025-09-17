@@ -1,0 +1,85 @@
+:root {
+  /* Text Colors */
+  --color-text1: #1a1a1a;             /* main text - strong */
+  --color-text1-faded: #4a4a4a;
+  --color-text2: #1a1a1a;
+  --color-text2-faded: #6b6b6b;
+  --color-text3: #1a1a1a;
+  --color-text3-faded: #8c8c8c;
+  --color-text4: #ffffff;             /* for dark buttons */
+  --color-text4-faded: #e5e5e5;
+
+  /* Backgrounds */
+  --color-bg1: #fffdf7;               /* off-white, wheat */
+  --color-bg2: #fef3c7;               /* pale amber */
+  --color-bg3: #fde68a;               /* golden highlight */
+  --color-bg4: #f9fafb;               /* light gray for cards */
+
+  --color-bg1-gradient1: #fffdf7;
+  --color-bg1-gradient2: #fde68a;
+
+  /* Borders */
+  --color-border1: #d4d4d4;
+  --color-border2: #f59e0b;           /* amber/orange border */
+  --color-border3: #e5e7eb;
+  --color-border4: #d1d5db;
+
+  /* Buttons */
+  --color-button1: #84cc16;            /* vibrant green */
+  --color-button1-meta: #ffffff;
+  --color-button1-meta-hover: #fdf6e3;
+  --color-button1-hover: #65a30d;
+  --color-button1-border: #4d7c0f;
+
+  --color-button1-gradient1: #a3e635;
+  --color-button1-gradient2: #84cc16;
+
+  --color-button2: #f59e0b;            /* amber/orange */
+  --color-button2-meta: #ffffff;
+  --color-button2-hover: #d97706;
+  --color-button2-border: #b45309;
+
+  /* Secondary Button */
+  --color-button3: #f3f4f6;
+  --color-button3-meta: #1a1a1a;
+  --color-button3-hover: #e5e7eb;
+  --color-button3-border: #d1d5db;
+
+  /* Tertiary Button */
+  --color-button4: #ffffff;
+  --color-button4-meta: #1a1a1a;
+  --color-button4-hover: #f9fafb;
+  --color-button4-border: #e5e7eb;
+
+  --color-button-transparent: transparent;
+  --color-button-transparent-meta: #1a1a1a;
+  --color-button-transparent-hover: rgba(0, 0, 0, 0.05);
+  --color-button-transparent-border: transparent;
+  --color-button-transparent-hover-border: #d1d5db;
+
+  /* Utility */
+  --color-overlay: rgba(0, 0, 0, 0.5);
+  --color-danger: #ef4444;
+  --color-danger-hover: #dc2626;
+  --color-danger-border: #b91c1c;
+  --color-success: #22c55e;
+  --color-success-hover: #16a34a;
+  --color-success-border: #15803d;
+
+  /* Status */
+  --color-status-pending: #fef9c3;
+  --color-status-pending-text: #854d0e;
+  --color-status-pending-border: #fde047;
+  --color-status-completed: #bbf7d0;
+  --color-status-completed-text: #166534;
+  --color-status-completed-border: #4ade80;
+  --color-status-rejected: #fecaca;
+  --color-status-rejected-text: #991b1b;
+  --color-status-rejected-border: #f87171;
+  --color-status-new: #e9d5ff;
+  --color-status-new-text: #7e22ce;
+  --color-status-new-border: #c084fc;
+  --color-status-in-review: #fed7aa;
+  --color-status-in-review-text: #9a3412;
+  --color-status-in-review-border: #fb923c;
+}
