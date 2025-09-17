@@ -13,7 +13,7 @@ export default defineConfig({
   },
   // Only define global if you truly need it; otherwise remove.
   define: {
-    // global: 'globalThis',
+     global: 'globalThis',
   },
   server: {
     host: true,

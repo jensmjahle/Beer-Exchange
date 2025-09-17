@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { createEventMultipart } from '@/services/events.service'
+import { createEventMultipart } from '@/services/events.service.js'
 
 const router = useRouter()
 
@@ -124,11 +124,12 @@ onMounted(loadCurrencies)
 
       <div class="flex items-center justify-end gap-3">
         <router-link
-          :to="{ name: 'events' }"
-          class="rounded-lg border px-3 py-2 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
-        >
-          Cancel
-        </router-link>
+        :to="{ name: 'admin-events' }"
+        class="rounded-lg border px-3 py-2 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
+  >
+  Cancel
+</router-link>
+
         <button
           type="submit"
           :disabled="creating"

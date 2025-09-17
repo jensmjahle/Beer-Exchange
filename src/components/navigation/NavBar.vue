@@ -5,9 +5,9 @@
     </div>
 
     <div class="flex gap-6">
-      <NavButton to="/" labelKey="navbar.home" />
+      <NavButton to="/admin" labelKey="navbar.home" />
       <NavButton to="/games" labelKey="navbar.games" />
-      <NavButton to="/events" labelKey="navbar.events" />
+      <NavButton to="/admin/events" labelKey="navbar.events" />
     </div>
 
     <div class="flex-1 flex items-center justify-end gap-4">

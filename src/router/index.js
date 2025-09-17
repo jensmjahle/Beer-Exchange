@@ -8,7 +8,11 @@ import AboutView from "../views/AboutView.vue";
 import GamesView from "@/views/GamesView.vue";
 import KioskView from "@/views/KioskView.vue";
 import EventView from "@/views/EventView.vue";
-import AllEventsView from "@/views/AllEventsView.vue";
+import AllEventsView from "@/views/Admin/AllEventsView.vue";
+import AppAdminLayout from "@/layouts/AppAdminLayout.vue";
+import AdminLoginView from "@/views/Admin/AdminLoginView.vue";
+import AdminHomeView from "@/views/Admin/AdminHomeView.vue";
+import NewEventView from "@/views/Admin/NewEventView.vue";
 
 const routes = [
   {
@@ -32,21 +36,38 @@ const routes = [
         props: true,
       },
       {
-        path: 'events',
-        name: 'events',
-        component: AllEventsView,
-      },
-      {
-         path: 'events/new',
-          name: 'event-new',
-           component: () => import('@/views/NewEventView.vue'),
-      },
-      {
         path: 'about',
         name: 'about',
         component: AboutView,
       },
     ],
+  },
+  {
+    path: '/admin',
+    component: AppAdminLayout,
+    meta: { requiresAdmin: true },
+    children: [
+      {
+        path: '',
+        name: 'admin-home',
+        component: AdminHomeView,
+      },
+      {
+         path: 'events/new',
+          name: 'event-new',
+           component: NewEventView,
+      },
+           {
+        path: 'events',
+        name: 'admin-events',
+        component: AllEventsView,
+      },
+    ],
+  },
+  {
+    path: '/admin/login',
+    name: 'admin-login',
+    component: AdminLoginView,
   },
   {
     path: '/kiosk',

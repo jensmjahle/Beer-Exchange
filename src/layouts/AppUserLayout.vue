@@ -1,6 +1,6 @@
 <template>
   <div class="flex min-h-screen flex-col gap-4">
-    <NavBar />
+    <SettingsWidget class="fixed top-0 right-0 z-50 p-6 sm:block"></SettingsWidget>
     <div class="flex flex-grow align-middle justify-center flex-1">
       <router-view />
     </div>
@@ -8,8 +8,10 @@
   </div>
 </template>
 
+
 <script setup>
-import NavBar from '@/components/navigation/NavBar.vue'
+
 import Footer from "@/components/Footer.vue";
+import SettingsWidget from "@/components/settings/SettingsWidget.vue";
 </script>
 
