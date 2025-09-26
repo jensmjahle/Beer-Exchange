@@ -24,7 +24,8 @@ const data = useEventData(eventId)
       Error: {{ data.error }}
     </div>
     <div v-else class="space-y-6">
-      <div class="grid md:grid-cols-2 gap-4">
+      <div class=
+               "grid md:grid-cols-2 gap-4">
         <BiggestMovers title="Biggest Winners" :items="data.topWinners" side="left" />
         <BiggestMovers title="Biggest Losers" :items="data.topLosers" side="right" />
       </div>

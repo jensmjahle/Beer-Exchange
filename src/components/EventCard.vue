@@ -33,7 +33,7 @@ function fmt(d) {
     </div>
 
     <router-link
-      :to="{ name: 'event', params: { eventId: item.id } }"
+      :to="{ name: 'admin-event', params: { eventId: item.id } }"
       class="mt-2 inline-flex items-center justify-center rounded-lg border border-[var(--color-border3)] px-3 py-1.5 text-sm
              hover:bg-[var(--color-bg4)]"
     >

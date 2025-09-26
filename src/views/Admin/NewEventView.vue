@@ -57,7 +57,8 @@ async function submit() {
     if (imageFile.value) formData.append('image', imageFile.value)
 
     const ev = await createEventMultipart(formData)
-    router.push({ name: 'event', params: { eventId: ev.id } })
+    router.push({ name: 'admin-event', params: { eventId: ev.id } })
+
   } catch (e) {
     alert(e?.message || 'Failed to create event')
   } finally {

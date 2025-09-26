@@ -1,28 +1,43 @@
 <script setup>
 defineProps({
-  transactions: { type: Array, required: true }
+  transactions: { type: Array, default: () => [] }
+  // expected shape: [{ id, ts, beer_name, qty, unit_price, customer_name }]
 })
-
-function fmtTime(iso) {
-  const d = new Date(iso)
-  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
+function fmtTs(ts) {
+  if (!ts) return ''
+  try { return new Date(ts).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' }) }
+  catch { return '' }
+}
+function money(n) {
+  if (n == null || Number.isNaN(n)) return ''
+  return Number(n).toFixed(1)
 }
 </script>
 
 <template>
-  <div class="rounded-2xl border border-[var(--color-border3)] bg-[var(--color-button4)] p-4">
-    <h2 class="font-bold mb-3">Transaction History</h2>
-    <ul class="space-y-2">
-      <li v-for="t in transactions" :key="t.id"
-          class="grid grid-cols-[72px_110px_1fr_50px_110px_1fr] items-center gap-3 rounded-xl border border-[var(--color-border4)] bg-[var(--color-bg4)] px-3 py-2">
-        <span class="opacity-80">{{ fmtTime(t.created_at) }}</span>
-        <span class="font-semibold">{{ t.type }}</span>
-        <span class="truncate">{{ t.event_beer_id ?? '-' }}</span>
-        <span class="text-sm">x{{ t.qty }}</span>
-        <span class="font-extrabold tabular-nums">{{ t.total_amount.toFixed(1) }} kr</span>
-        <span class="text-xs opacity-70">{{ t.source ?? '' }}</span>
+  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-bold text-lg">Recent Trades</h2>
+      <span class="text-xs opacity-70">{{ transactions.length }}</span>
+    </div>
+
+    <ul class="divide-y">
+      <li v-for="t in transactions" :key="t.id" class="py-2 flex items-center justify-between gap-3">
+        <div class="min-w-0">
+          <div class="font-medium truncate">
+            {{ t.customer_name ?? 'Anonymous' }} bought {{ t.qty }} × {{ t.beer_name ?? t.beer_id }}
+          </div>
+          <div class="text-xs opacity-70">{{ fmtTs(t.ts) }}</div>
+        </div>
+        <div class="text-right">
+          <div class="font-bold tabular-nums">{{ money(t.unit_price) }}</div>
+          <div class="text-xs opacity-70">total {{ money((t.unit_price || 0) * (t.qty || 0)) }}</div>
+        </div>
       </li>
-      <li v-if="!transactions.length" class="text-sm italic opacity-60">No transactions yet</li>
+
+      <li v-if="!transactions.length" class="py-3 text-sm opacity-60 italic">
+        No trades yet
+      </li>
     </ul>
   </div>
 </template>

@@ -6,6 +6,10 @@ import path from 'node:path'
 import { fileURLToPath } from 'node:url'
 import { events } from './api/events'
 import { admin } from './api/admin'
+import { beers } from './api/beers'
+import { customers } from './api/customers'
+import { transactions } from './api/transactions'
+
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
 const app = express()
@@ -20,6 +24,9 @@ app.use('/uploads', express.static(uploadsDir))
 // routes
 app.use('/api/events', events)
 app.use('/api/admin', admin)
+app.use('/api/beers', beers)
+app.use('/api/customers', customers)
+app.use('/api/transactions', transactions)
 
 app.get('/api/health', (_req, res) => res.json({ ok: true }))
 

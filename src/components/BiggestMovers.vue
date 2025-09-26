@@ -1,27 +1,45 @@
 <script setup>
 defineProps({
   title: { type: String, required: true },
-  items: { type: Array, required: true },
-  side: { type: String, default: 'left' }
+  items: { type: Array, default: () => [] }, // [{ id, name, current_price, delta }]
+  side: { type: String, default: 'left' }    // just for potential styling
 })
+function fmt(n) {
+  if (n == null || Number.isNaN(n)) return ''
+  return Number(n).toFixed(1)
+}
 </script>
 
 <template>
-  <div class="rounded-2xl border border-[var(--color-border3)] bg-[var(--color-button4)] p-4">
-    <h2 class="font-bold mb-3">{{ title }}</h2>
+  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+    <div class="flex items-center justify-between mb-3">
+      <h2 class="font-bold text-lg">{{ title }}</h2>
+      <span class="text-xs opacity-70">{{ items.length }} items</span>
+    </div>
+
     <ul class="space-y-2">
-      <li v-for="it in items" :key="it.id"
-          class="grid grid-cols-[1fr_auto_auto] items-center gap-3 rounded-xl border border-[var(--color-border4)] bg-[var(--color-bg4)] px-3 py-2">
-        <span class="font-semibold truncate">{{ it.name ?? it.id }}</span>
-        <span class="opacity-80 tabular-nums">{{ it.current_price.toFixed(1) }} kr</span>
-        <span class="tabular-nums font-semibold"
-              :class="it.delta > 0 ? 'text-[var(--color-success)]' : 'text-[var(--color-danger)]'">
-          <template v-if="it.delta > 0">▲</template>
-          <template v-else>▼</template>
-          {{ Math.abs(it.delta).toFixed(1) }}
-        </span>
+      <li v-for="b in items" :key="b.id"
+          class="rounded-xl border bg-[var(--color-bg4)] px-3 py-2 flex items-center gap-3">
+        <div class="w-2 h-2 rounded-full"
+             :class="b.delta > 0 ? 'bg-green-500' : 'bg-red-500'"></div>
+
+        <div class="flex-1 min-w-0">
+          <div class="font-semibold truncate">{{ b.name ?? b.beer_id }}</div>
+          <div class="text-xs opacity-70">
+            Now {{ fmt(b.current_price) }}
+          </div>
+        </div>
+
+        <div class="text-right">
+          <div
+            class="text-sm font-bold tabular-nums"
+            :class="b.delta > 0 ? 'text-green-600' : 'text-red-600'">
+            {{ b.delta > 0 ? '▲' : '▼' }} {{ fmt(Math.abs(b.delta)) }}
+          </div>
+        </div>
       </li>
-      <li v-if="!items.length" class="text-sm italic opacity-60">No changes yet</li>
+
+      <li v-if="!items.length" class="text-sm opacity-60 italic px-1">No movement yet</li>
     </ul>
   </div>
 </template>

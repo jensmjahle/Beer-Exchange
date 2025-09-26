@@ -1,3 +1,4 @@
+// server/api/events.ts
 import { Router, Request, Response } from 'express'
 import crypto from 'node:crypto'
 import multer from 'multer'
@@ -19,7 +20,7 @@ const storage = multer.diskStorage({
 })
 const upload = multer({ storage })
 
-type Event = {
+export type Event = {
   id: string
   name: string
   currency: string
@@ -30,9 +31,11 @@ type Event = {
   image_url?: string | null
 }
 
+// In-memory store (replace with DB later)
 const store: Event[] = []
+export function getEventById(id: string) { return store.find(e => e.id === id) }
 
-// GET /api/events
+// ---------- LIST ----------
 events.get('/', (_req: Request, res: Response) => {
   const ordered = [...store].sort((a, b) => {
     const weight = (s: Event['status']) => (s === 'live' ? 0 : s === 'draft' ? 1 : 2)
@@ -42,7 +45,14 @@ events.get('/', (_req: Request, res: Response) => {
   res.json(ordered)
 })
 
-// POST /api/events  (multipart: fields + image)
+// ---------- GET ONE ----------
+events.get('/:id', (req: Request, res: Response) => {
+  const ev = getEventById(req.params.id)
+  if (!ev) return res.status(404).json({ error: 'event not found' })
+  res.json(ev)
+})
+
+// ---------- CREATE (multipart) ----------
 events.post('/', upload.single('image'), (req: Request, res: Response) => {
   const id = crypto.randomUUID()
   const nowIso = new Date().toISOString()
@@ -50,7 +60,6 @@ events.post('/', upload.single('image'), (req: Request, res: Response) => {
   const currency = (req.body?.currency || 'NOK').toString()
   const startLive = String(req.body?.startLive || 'false') === 'true'
 
-  // file path -> public URL under /uploads/...
   const file = (req as any).file as Express.Multer.File | undefined
   const image_url = file ? `/uploads/${path.basename(file.path)}` : null
 
@@ -65,5 +74,42 @@ events.post('/', upload.single('image'), (req: Request, res: Response) => {
     image_url,
   }
   store.unshift(ev)
+  res.json(ev)
+})
+
+// ---------- UPDATE (name/currency/image) ----------
+events.patch('/:id', upload.single('image'), (req: Request, res: Response) => {
+  const ev = getEventById(req.params.id)
+  if (!ev) return res.status(404).json({ error: 'event not found' })
+
+  if (typeof req.body?.name === 'string') ev.name = req.body.name
+  if (typeof req.body?.currency === 'string') ev.currency = req.body.currency
+
+  const file = (req as any).file as Express.Multer.File | undefined
+  if (file) ev.image_url = `/uploads/${path.basename(file.path)}`
+
+  res.json(ev)
+})
+
+// ---------- START ----------
+events.post('/:id/start', (req: Request, res: Response) => {
+  const ev = getEventById(req.params.id)
+  if (!ev) return res.status(404).json({ error: 'event not found' })
+  if (ev.status !== 'live') {
+    ev.status = 'live'
+    ev.starts_at = new Date().toISOString()
+    ev.ends_at = null
+  }
+  res.json(ev)
+})
+
+// ---------- CLOSE ----------
+events.post('/:id/close', (req: Request, res: Response) => {
+  const ev = getEventById(req.params.id)
+  if (!ev) return res.status(404).json({ error: 'event not found' })
+  if (ev.status !== 'closed') {
+    ev.status = 'closed'
+    ev.ends_at = new Date().toISOString()
+  }
   res.json(ev)
 })

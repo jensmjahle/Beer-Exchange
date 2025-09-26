@@ -24,7 +24,7 @@ async function load() {
 async function onCreate() {
   try {
     const ev = await createEvent({ name: 'New Beer Exchange', currency: 'NOK' })
-    router.push({ name: 'event', params: { eventId: ev.id } })
+    router.push({ name: 'admin-event', params: { eventId: ev.id } })
   } catch (e) {
     alert(e?.message || 'Failed to create event')
   }

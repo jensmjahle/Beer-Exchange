@@ -13,6 +13,7 @@ import AppAdminLayout from "@/layouts/AppAdminLayout.vue";
 import AdminLoginView from "@/views/Admin/AdminLoginView.vue";
 import AdminHomeView from "@/views/Admin/AdminHomeView.vue";
 import NewEventView from "@/views/Admin/NewEventView.vue";
+import AdminEventView from "@/views/Admin/AdminEventView.vue";
 
 const routes = [
   {
@@ -62,6 +63,13 @@ const routes = [
         name: 'admin-events',
         component: AllEventsView,
       },
+        {
+       path: 'events/:eventId',
+       name: 'admin-event',
+       component: AdminEventView,
+       props: true,
+}
+
     ],
   },
   {
