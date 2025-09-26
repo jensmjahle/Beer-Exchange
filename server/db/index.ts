@@ -1,11 +1,7 @@
-// server/db.ts
-// One DB module for all backends: memory (default), sqlite, pg
+// server/db/index.ts
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import Database from 'better-sqlite3'
-const sql = new Database(file)
-
 
 export type DBKind = 'memory' | 'sqlite' | 'pg'
 
@@ -19,14 +15,12 @@ export type Event = {
   created_at: string
   image_url?: string | null
 }
-
 export type Customer = {
   id: string
   event_id: string
   name: string
   phone?: string | null
 }
-
 export type EventBeer = {
   id: string
   event_id: string
@@ -39,7 +33,6 @@ export type EventBeer = {
   position: number
   active: 0 | 1
 }
-
 export type Tx = {
   id: string
   event_id: string
@@ -62,7 +55,6 @@ function createMemory() {
   }
 }
 
-// Try SQLite; on any failure fall back to memory
 async function trySqlite(url: string) {
   try {
     const Database = (await import('better-sqlite3')).default
@@ -70,26 +62,24 @@ async function trySqlite(url: string) {
     const file = path.isAbsolute(raw) ? raw : path.resolve(process.cwd(), raw)
     const dir = path.dirname(file)
     if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true })
-
     const sql = new Database(file)
     sql.pragma('journal_mode = WAL')
     sql.pragma('foreign_keys = ON')
     return { kind: 'sqlite' as const, sql }
   } catch (e: any) {
-    console.warn('SQLite init failed, falling back to memory:', e?.message || e)
+    console.warn('[db] SQLite init failed → memory:', e?.message || e)
     return createMemory()
   }
 }
 
-// Try Postgres; on any failure fall back to memory
 async function tryPg(url: string) {
   try {
     const { Pool } = await import('pg')
     const pool = new Pool({ connectionString: url })
-    await pool.query('select 1') // connectivity check
+    await pool.query('select 1')
     return { kind: 'pg' as const, pool }
   } catch (e: any) {
-    console.warn('Postgres init failed, falling back to memory:', e?.message || e)
+    console.warn('[db] Postgres init failed → memory:', e?.message || e)
     return createMemory()
   }
 }
@@ -100,15 +90,9 @@ let db:
   | { kind: 'sqlite'; sql: any }
   | { kind: 'pg'; pool: any }
 
-if (!DATABASE_URL) {
-  db = createMemory()
-} else if (DATABASE_URL.startsWith('sqlite://')) {
-  db = await trySqlite(DATABASE_URL)
-} else if (DATABASE_URL.startsWith('postgres://') || DATABASE_URL.startsWith('postgresql://')) {
-  db = await tryPg(DATABASE_URL)
-} else {
-  console.warn(`Unsupported DATABASE_URL "${DATABASE_URL}", using memory`)
-  db = createMemory()
-}
+if (!DATABASE_URL) db = createMemory()
+else if (DATABASE_URL.startsWith('sqlite://')) db = await trySqlite(DATABASE_URL)
+else if (DATABASE_URL.startsWith('postgres://') || DATABASE_URL.startsWith('postgresql://')) db = await tryPg(DATABASE_URL)
+else { console.warn(`[db] Unsupported DATABASE_URL "${DATABASE_URL}" → memory`); db = createMemory() }
 
 export default db

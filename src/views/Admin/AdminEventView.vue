@@ -62,7 +62,10 @@ async function loadAll() {
 async function addCustomer() {
   if (!custName.value.trim()) return
   try {
-    const created = await createCustomer({ eventId, name: custName.value.trim(), phone: custPhone.value.trim() || null })
+    const created = await createCustomer(eventId, {
+      name: custName.value.trim(),
+      phone: custPhone.value.trim() || null,
+})
     customers.value.unshift(created)
     custName.value = ''
     custPhone.value = ''

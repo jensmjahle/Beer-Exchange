@@ -1,50 +1,39 @@
 // server/server.ts
 import express from 'express'
-import { createServer } from 'http'
-import { Server as SocketServer } from 'socket.io'
+import cors from 'cors'
+import http from 'node:http'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
-import { runMigrations } from './migrate.js'
 import db from './db.js'
 
-// Routers
-import { events } from './api/events.js'
-import { beers } from './api/beers.js'
-import { transactions } from './api/transactions.js'
-import { tabs } from './api/tabs.js'
-import { createOrdersRouter } from './api/orders.js'
-import { pricing } from './api/pricing.js'
-
-
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
-const app = express()
-app.use(express.json())
-const httpServer = createServer(app)
-const io = new SocketServer(httpServer, { cors: { origin: '*' } })
 
-// Mount routes
-app.use('/api/pricing', pricing)
-app.use('/api/events', events)
-app.use('/api/beers', beers)
-app.use('/api/transactions', transactions)
-app.use('/api/tabs', tabs)
-app.use('/api/orders', createOrdersRouter(io))
+export async function createHttpServer() {
+  const app = express()
+  const server = http.createServer(app)
 
-// Health
-app.get('/api/health', (_req, res) => res.json({ ok: true }))
+  app.use(cors())
+  app.use(express.json({ limit: '2mb' }))
 
-// Serve frontend build in production
-const distDir = path.resolve(__dirname, '..', 'dist_frontend')
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(distDir))
-  app.get('*', (_req, res) => res.sendFile(path.join(distDir, 'index.html')))
+  // static uploads
+  const uploadsDir = path.join(process.cwd(), 'uploads')
+  app.use('/uploads', express.static(uploadsDir))
+
+  // health
+  app.get('/api/health', (_req, res) => res.json({ ok: true, db: db.kind }))
+
+  // mount routers (ESM paths end with .js)
+  const { events } = await import('./api/events.js')
+  app.use('/api/events', events)
+
+  const { beers } = await import('./api/beers.js')
+  app.use('/api/beers', beers)
+
+  const { customers } = await import('./api/customers.js')
+  app.use('/api/customers', customers)
+
+  const { transactions } = await import('./api/transactions.js')
+  app.use('/api/transactions', transactions)
+
+  return { app, server }
 }
-
-const PORT = process.env.PORT || 3000
-runMigrations().then(() => {
-  httpServer.listen(PORT, () => {
-    console.log(`Server listening on http://localhost:${PORT}`)
-    if (db.kind === 'sqlite') console.log('DB: SQLite')
-    else console.log('DB: Postgres')
-  })
-})

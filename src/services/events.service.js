@@ -1,32 +1,42 @@
-const BASE = '/api/events'
+import { authedFetch } from './authService'
 
-export async function listEvents() {
-  const res = await fetch(BASE)
-  if (!res.ok) throw new Error('Failed to load events')
-  return res.json()
+const BASE = '/api'
+
+async function parse(res) {
+  if (!res.ok) {
+    let msg = `HTTP ${res.status}`
+    try { const j = await res.json(); if (j?.error) msg = j.error } catch {}
+    throw new Error(msg)
+  }
+  try { return await res.json() } catch { return null }
 }
 
-export async function createEvent(payload = {}) {
-  const res = await fetch(BASE, {
+export async function listEvents() {
+  const res = await fetch(`${BASE}/events`)
+  return parse(res)
+}
+
+export async function getEvent(eventId) {
+  const res = await fetch(`${BASE}/events/${encodeURIComponent(eventId)}`)
+  return parse(res)
+}
+
+// formData: name, currency, startLive, (optional) image (File)
+// NOTE: must be FormData (multipart)
+export async function createEventMultipart(formData) {
+  const res = await authedFetch(`${BASE}/events`, { method: 'POST', body: formData })
+  return parse(res)
+}
+
+export async function createEvent(payload) {
+  const res = await authedFetch(`${BASE}/events`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(payload),
   })
-  if (!res.ok) throw new Error('Failed to create event')
-  return res.json()
+  return parse(res)
 }
 
-export async function getEvent(eventId) {
-  const res = await fetch(`${BASE}/${encodeURIComponent(eventId)}`)
-  if (!res.ok) throw new Error('Event not found')
-  return res.json()
-}
-
-export async function createEventMultipart(formData) {
-  const res = await fetch(BASE, {
-    method: 'POST',
-    body: formData, // browser sets multipart/form-data with boundary
-  })
-  if (!res.ok) throw new Error('Failed to create event')
-  return res.json()
-}
+// (Optional) update helpers if/when you add server routes later:
+// export async function updateEvent(eventId, patch) { ... }
+// export async function uploadEventImage(eventId, file) { ... }

@@ -1,45 +1,57 @@
 // src/services/authService.ts
+// Minimal auth & fetch helpers used across services
 
-export type LoginResponse = { token: string }
+const TOKEN_KEY = 'jwt'
 
-const BASE = '/api'
+export function getToken(): string | null {
+  try { return sessionStorage.getItem(TOKEN_KEY) } catch { return null }
+}
 
-export async function loginAdmin(username: string, password: string): Promise<{ data: LoginResponse }> {
-  const res = await fetch(`${BASE}/admin/login`, {
+export function setToken(token: string | null) {
+  try {
+    if (token) sessionStorage.setItem(TOKEN_KEY, token)
+    else sessionStorage.removeItem(TOKEN_KEY)
+  } catch {}
+}
+
+export function isLoggedIn(): boolean {
+  return !!getToken()
+}
+
+/**
+ * authedFetch(url, init?)
+ * Adds Authorization: Bearer <jwt> if present.
+ * Leaves headers alone if you already passed them; merges otherwise.
+ */
+export async function authedFetch(input: RequestInfo | URL, init: RequestInit = {}): Promise<Response> {
+  const token = getToken()
+  const headers = new Headers(init.headers || {})
+
+  if (token && !headers.has('Authorization')) {
+    headers.set('Authorization', `Bearer ${token}`)
+  }
+
+  // Let callers set Content-Type themselves (JSON or multipart)
+  return fetch(input, { ...init, headers })
+}
+
+/** Example admin login helper (adjust endpoint to your server if different) */
+export async function loginAdmin(username: string, password: string) {
+  const res = await fetch('/api/admin/login', {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ username, password }),
   })
   if (!res.ok) {
-    let msg = `Login failed (${res.status})`
-    try {
-      const j = await res.json()
-      if (j?.error) msg = j.error
-    } catch {}
+    let msg = `HTTP ${res.status}`
+    try { const j = await res.json(); if (j?.error) msg = j.error } catch {}
     throw new Error(msg)
   }
-  const json = (await res.json()) as LoginResponse
-  if (!json?.token) throw new Error('No token in response')
-  return { data: json }
+  const data = await res.json()
+  if (data?.token) setToken(data.token)
+  return data
 }
 
-export function getToken(): string | null {
-  return sessionStorage.getItem('jwt')
-}
-export function setToken(token: string) {
-  sessionStorage.setItem('jwt', token)
-}
-export function clearToken() {
-  sessionStorage.removeItem('jwt')
-}
-export function isAuthenticated(): boolean {
-  return !!getToken()
-}
-
-// Attach JWT automatically for protected requests
-export async function authedFetch(input: RequestInfo | URL, init: RequestInit = {}) {
-  const token = getToken()
-  const headers = new Headers(init.headers || {})
-  if (token) headers.set('Authorization', `Bearer ${token}`)
-  return fetch(input, { ...init, headers })
+export function logout() {
+  setToken(null)
 }

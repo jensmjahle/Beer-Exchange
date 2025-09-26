@@ -18,19 +18,10 @@ export default defineConfig({
   server: {
     host: true,
     port: 5173,
-    proxy: {
-      // REST/JSON API → Node/Express
-      '/api': {
-        target: 'http://localhost:3000',
-        changeOrigin: true,
-      },
-      // Socket.IO (WebSocket) → Node/Express
-      '/socket.io': {
-        target: 'http://localhost:3000',
-        ws: true,
-        changeOrigin: true,
-      },
-    },
+   proxy: {
+    '/api': { target: 'http://127.0.0.1:3000', changeOrigin: true },
+    '/socket.io': { target: 'http://127.0.0.1:3000', ws: true, changeOrigin: true },
+  },
   },
   test: {
     globals: true,

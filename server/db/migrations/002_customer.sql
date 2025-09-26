@@ -1,0 +1,7 @@
+CREATE TABLE IF NOT EXISTS customer (
+  id TEXT PRIMARY KEY,
+  event_id TEXT NOT NULL,
+  name TEXT NOT NULL,
+  phone TEXT,
+  FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE
+);
