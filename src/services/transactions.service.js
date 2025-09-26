@@ -15,20 +15,12 @@ export async function listEventTransactions(eventId, { limit = 200 } = {}) {
   return parse(res)
 }
 
-/**
- * createTransaction({
- *   event_id,
- *   event_beer_id?: string|null,
- *   customer_id?: string|null,
- *   qty: number,
- *   unit_price: number
- * })
- */
-export async function createTransaction(payload) {
+// Server will compute unit_price from current beer price — we do NOT send it.
+export async function createTransaction({ event_id, event_beer_id, customer_id = null, qty = 1 }) {
   const res = await authedFetch(`${BASE}/transactions`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(payload),
+    body: JSON.stringify({ event_id, event_beer_id, customer_id, qty }),
   })
   return parse(res)
 }

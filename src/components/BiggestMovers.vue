@@ -19,7 +19,7 @@ function fmt(n) {
 
     <ul class="space-y-2">
       <li v-for="b in items" :key="b.id"
-          class="rounded-xl border bg-[var(--color-bg4)] px-3 py-2 flex items-center gap-3">
+          class="rounded-xl border bg-bg4 px-3 py-2 flex items-center gap-3">
         <div class="w-2 h-2 rounded-full"
              :class="b.delta > 0 ? 'bg-green-500' : 'bg-red-500'"></div>
 
