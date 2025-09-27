@@ -67,8 +67,8 @@ onMounted(loadAll)
 
     <div v-if="loading" class="p-4 rounded-xl border border-dashed">Loading…</div>
 
-    <div v-else class="gap-4">
-      <div v-if="error" class="mb-4 p-4 rounded-xl border border-red-300 text-red-700 bg-red-50">
+    <div v-else class="space-y-4">
+      <div v-if="error" class="p-4 rounded-xl border border-red-300 text-red-700 bg-red-50">
         {{ error }}
       </div>
 
@@ -77,9 +77,23 @@ onMounted(loadAll)
         <BiggestMovers title="Biggest Losers" :items="topLosers" side="right" />
       </div>
 
-      <PriceGrid :event-id="eventId" :beers="beers" :currency="ev?.currency ?? 'NOK'" @updated="onUpdated" />
-      <CustomersPanel :event-id="eventId" :currency="ev?.currency ?? 'NOK'" />
-      <TransactionHistory :transactions="transactions" :currency="ev?.currency ?? 'NOK'" />
+      <PriceGrid
+        :event-id="eventId"
+        :beers="beers"
+        :currency="ev?.currency ?? 'NOK'"
+        @updated="onUpdated"
+      />
+
+      <CustomersPanel
+        :event-id="eventId"
+        :currency="ev?.currency ?? 'NOK'"
+      />
+
+      <TransactionHistory
+        :transactions="transactions"
+        :currency="ev?.currency ?? 'NOK'"
+      />
     </div>
   </section>
 </template>
+
