@@ -3,7 +3,7 @@ const props = defineProps({
   beer: { type: Object, required: true },
   currency: { type: String, default: 'NOK' }
 })
-const emit = defineEmits(['buy'])
+const emit = defineEmits(['buy','open'])
 
 function fmt(n) {
   if (n == null || Number.isNaN(n)) return ''
@@ -19,7 +19,10 @@ function pctOfRange(b) {
 </script>
 
 <template>
-  <article class="rounded-xl border bg-[var(--color-bg4)] p-3 flex flex-col gap-2">
+  <article
+    class="rounded-xl border bg-[var(--color-bg4)] p-3 flex flex-col gap-2 cursor-pointer hover:shadow-sm transition"
+    @click="$emit('open', beer)"
+  >
     <div class="flex items-start justify-between gap-3">
       <div class="min-w-0">
         <h3 class="font-semibold truncate">{{ beer.name ?? beer.beer_id }}</h3>
@@ -34,7 +37,6 @@ function pctOfRange(b) {
       </div>
     </div>
 
-    <!-- range bar -->
     <div class="mt-1">
       <div class="h-2 rounded bg-gray-200 overflow-hidden">
         <div class="h-full"
@@ -57,7 +59,8 @@ function pctOfRange(b) {
                bg-[var(--color-button1)]
                text-[var(--color-button1-meta)]
                hover:bg-[var(--color-button1-hover)]"
-        @click="$emit('buy', beer)">
+        @click.stop="$emit('buy', beer)"
+      >
         Buy
       </button>
     </div>

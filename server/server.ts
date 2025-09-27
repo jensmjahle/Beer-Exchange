@@ -3,37 +3,56 @@ import express from 'express'
 import cors from 'cors'
 import http from 'node:http'
 import path from 'node:path'
+import fs from 'node:fs'
 import { fileURLToPath } from 'node:url'
-import db from './db.js'
+
+import db from './db/index.js'
+import { runMigrations } from './db/migrate.js'
+
+process.on('unhandledRejection', (e) => console.error('[server] UnhandledRejection:', e))
+process.on('uncaughtException', (e) => console.error('[server] UncaughtException:', e))
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url))
+const app = express()
+const server = http.createServer(app)
 
-export async function createHttpServer() {
-  const app = express()
-  const server = http.createServer(app)
+/** CORS for Vite dev and same-origin in prod */
+app.use(cors({
+  origin: (origin, cb) => cb(null, true),
+  credentials: true,
+}))
+app.use(express.json({ limit: '5mb' }))
 
-  app.use(cors())
-  app.use(express.json({ limit: '2mb' }))
+/** Static uploads */
+const uploadsDir = path.join(process.cwd(), 'uploads')
+if (!fs.existsSync(uploadsDir)) fs.mkdirSync(uploadsDir, { recursive: true })
+app.use('/uploads', express.static(uploadsDir))
 
-  // static uploads
-  const uploadsDir = path.join(process.cwd(), 'uploads')
-  app.use('/uploads', express.static(uploadsDir))
+/** Health */
+app.get('/api/health', (_req, res) => res.json({ ok: true, db: db.kind }))
 
-  // health
-  app.get('/api/health', (_req, res) => res.json({ ok: true, db: db.kind }))
-
-  // mount routers (ESM paths end with .js)
-  const { events } = await import('./api/events.js')
-  app.use('/api/events', events)
-
-  const { beers } = await import('./api/beers.js')
-  app.use('/api/beers', beers)
-
-  const { customers } = await import('./api/customers.js')
-  app.use('/api/customers', customers)
-
-  const { transactions } = await import('./api/transactions.js')
-  app.use('/api/transactions', transactions)
-
-  return { app, server }
+/** Run migrations unless in-memory */
+if (db.kind !== 'memory' && process.env.SKIP_MIGRATIONS !== '1') {
+  await runMigrations()
 }
+
+/** Routers */
+const { events }        = await import('./api/events.js')
+const { beers }         = await import('./api/beers.js')
+const { customers }     = await import('./api/customers.js')
+const { transactions }  = await import('./api/transactions.js')
+const { analytics }     = await import('./api/analytics.js') // <— NEW
+
+app.use('/api/events', events)
+app.use('/api/beers', beers)
+app.use('/api/customers', customers)
+app.use('/api/transactions', transactions)
+app.use('/api/analytics', analytics) // <— NEW
+
+/** Start */
+const PORT = Number(process.env.PORT || 3000)
+server.listen(PORT, '127.0.0.1', () => {
+  console.log(`API listening on http://127.0.0.1:${PORT} (db=${db.kind})`)
+})
+
+export { app, server }

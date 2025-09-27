@@ -8,6 +8,7 @@ import { listEventTransactions } from '@/services/transactions.service.js'
 import BiggestMovers from '@/components/BiggestMovers.vue'
 import PriceGrid from '@/components/PriceGrid.vue'
 import TransactionHistory from '@/components/TransactionHistory.vue'
+import CustomersPanel from "@/components/CustomersPanel.vue";
 
 const route = useRoute()
 const eventId = String(route.params.eventId || '')
@@ -66,7 +67,7 @@ onMounted(loadAll)
 
     <div v-if="loading" class="p-4 rounded-xl border border-dashed">Loading…</div>
 
-    <div v-else>
+    <div v-else class="gap-4">
       <div v-if="error" class="mb-4 p-4 rounded-xl border border-red-300 text-red-700 bg-red-50">
         {{ error }}
       </div>
@@ -77,7 +78,7 @@ onMounted(loadAll)
       </div>
 
       <PriceGrid :event-id="eventId" :beers="beers" :currency="ev?.currency ?? 'NOK'" @updated="onUpdated" />
-
+      <CustomersPanel :event-id="eventId" :currency="ev?.currency ?? 'NOK'" />
       <TransactionHistory :transactions="transactions" :currency="ev?.currency ?? 'NOK'" />
     </div>
   </section>

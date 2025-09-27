@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import BeerCard from './BeerCard.vue'
 import BuyBeerModal from './BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
@@ -10,6 +11,7 @@ const props = defineProps({
   currency:{ type: String, default: 'NOK' },
 })
 const emit = defineEmits(['updated'])
+const router = useRouter()
 
 const buying = ref(false)
 const selectedBeer = ref(null)
@@ -22,19 +24,20 @@ function closeBuy() {
   buying.value = false
   selectedBeer.value = null
 }
+function openStock(beer) {
+  router.push({ name: 'beer-stock', params: { eventId: props.eventId, eventBeerId: beer.id } })
+}
 
 async function confirmBuy(payload) {
-  // payload: { event_beer_id, customer_id, qty }
   try {
     await createTransaction({
       event_id: props.eventId,
       event_beer_id: payload.event_beer_id,
       customer_id: payload.customer_id,
       qty: payload.qty,
-      // NOTE: no unit_price here
     })
     closeBuy()
-    emit('updated') // parent refresh
+    emit('updated')
   } catch (e) {
     alert(e?.message || 'Purchase failed')
   }
@@ -46,8 +49,15 @@ async function confirmBuy(payload) {
     <h2 class="font-bold text-lg mb-3">Live Prices</h2>
 
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-      <BeerCard v-for="b in beers" :key="b.id" :beer="b" :currency="currency" @buy="openBuy" />
-      <div v-if="!beers.length" class="col-span-full text-sm opacity-60 italic">No beers loaded for this event.</div>
+      <BeerCard
+        v-for="b in beers" :key="b.id"
+        :beer="b" :currency="currency"
+        @buy="openBuy"
+        @open="openStock"
+      />
+      <div v-if="!beers.length" class="col-span-full text-sm opacity-60 italic">
+        No beers loaded for this event.
+      </div>
     </div>
 
     <BuyBeerModal

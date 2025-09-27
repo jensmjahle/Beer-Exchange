@@ -1,4 +1,4 @@
-<!-- src/views/HomeView.vue -->
+
 <template>
   <section class="mx-auto max-w-6xl px-4 py-8 space-y-6">
     <header class="text-center space-y-2">

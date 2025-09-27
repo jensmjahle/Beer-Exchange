@@ -3,17 +3,19 @@ import { parseJwt } from '../utils/jwt';
 
 import AppUserLayout from '../layouts/AppUserLayout.vue';
 
-import HomeView from '../views/HomeView.vue';
+import HomeView from '../views/User/HomeView.vue';
 import AboutView from "../views/AboutView.vue";
 import GamesView from "@/views/GamesView.vue";
-import KioskView from "@/views/KioskView.vue";
-import EventView from "@/views/EventView.vue";
+import KioskView from "@/views/User/KioskView.vue";
+import EventView from "@/views/User/EventView.vue";
 import AllEventsView from "@/views/Admin/AllEventsView.vue";
 import AppAdminLayout from "@/layouts/AppAdminLayout.vue";
 import AdminLoginView from "@/views/Admin/AdminLoginView.vue";
 import AdminHomeView from "@/views/Admin/AdminHomeView.vue";
 import NewEventView from "@/views/Admin/NewEventView.vue";
 import AdminEventView from "@/views/Admin/AdminEventView.vue";
+import BeerStockView from "@/views/User/BeerStockView.vue";
+import CustomersDetailView from "@/views/User/CustomersDetailView.vue";
 
 const routes = [
   {
@@ -41,6 +43,19 @@ const routes = [
         name: 'about',
         component: AboutView,
       },
+         {
+      path: 'event/:eventId/beer/:eventBeerId',
+      name: 'beer-stock',
+      component: BeerStockView,
+      props: true,
+    },
+        {
+  path: 'event/:eventId/customer/:customerId',
+  name: 'customer-detail',
+  component: CustomersDetailView,
+  props: true,
+},
+
     ],
   },
   {
@@ -68,7 +83,9 @@ const routes = [
        name: 'admin-event',
        component: AdminEventView,
        props: true,
-}
+},
+
+
 
     ],
   },
