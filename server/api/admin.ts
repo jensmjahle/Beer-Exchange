@@ -51,6 +51,7 @@ admin.post('/login', async (req, res) => {
   }
 
   const token = signJwt({ sub: user.username, role: user.role })
+  console.log("token", token)
   return res.json({ token })
 })
 

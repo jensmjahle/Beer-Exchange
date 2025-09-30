@@ -15,7 +15,7 @@ const router = useRouter()
 const loginUser = async (username: string, password: string) => {
   try {
     const response = await loginAdmin(username, password)
-    const token = response.data.token
+    const token = response.token
     if (token) {
       sessionStorage.setItem('jwt', token)
       await router.push({ name: 'admin-home' })
