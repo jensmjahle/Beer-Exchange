@@ -156,7 +156,7 @@ function reset() {
             min="0"
             max="100"
             step="1"
-            class="w-full h-2 rounded-lg appearance-none cursor-pointer"
+            class="w-full h-10 rounded-lg appearance-none cursor-pointer"
             :style="{
               background: 'linear-gradient(to right, #4b2e2b 0%, #ffffff 50%, #f5e642 100%)',
             }"

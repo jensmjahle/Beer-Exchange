@@ -1,7 +1,8 @@
 <script setup>
 import { ref, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import {useRoute, useRouter} from 'vue-router'
 import { getCustomerDetails } from '@/services/customers.service.js'
+import BaseButton from "@/components/base/BaseButton.vue";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -10,7 +11,8 @@ const props = defineProps({
 })
 
 const route = useRoute()
-
+const router = useRouter()
+const eventId = String(route.params.eventId || '')
 const loading = ref(true)
 const error = ref(null)
 const customer = ref(null)
@@ -31,11 +33,15 @@ async function load() {
     loading.value = false
   }
 }
-
+function backToEvent() {
+  router.push({ name: 'event', params: { eventId } })
+}
 onMounted(load)
 </script>
 
 <template>
+  <div>
+  <BaseButton @click="backToEvent" class="mb-4" variant="button2">← Back to event</BaseButton>
   <div class="rounded-2xl border p-4 bg-bg2">
     <div v-if="loading" class="p-4 text-sm">Loading…</div>
     <div v-else-if="error" class="p-4 text-danger">{{ error }}</div>
@@ -86,4 +92,5 @@ onMounted(load)
       </div>
     </div>
   </div>
+      </div>
 </template>

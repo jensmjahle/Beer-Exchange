@@ -52,9 +52,9 @@ onMounted(load)
           <img v-if="c.profile_image_url"
                :src="c.profile_image_url"
                alt="Profile"
-               class="w-8 h-8 rounded-full object-cover border shrink-0" />
+               class="w-12 h-12 rounded-full object-cover border shrink-0" />
           <div v-else
-               class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white shrink-0">
+               class="w-12 h-12 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white shrink-0">
             {{ c.name.charAt(0).toUpperCase() }}
           </div>
 
