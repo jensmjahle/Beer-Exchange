@@ -9,6 +9,7 @@ import BiggestMovers from '@/components/BiggestMovers.vue'
 import PriceGrid from '@/components/PriceGrid.vue'
 import TransactionHistory from '@/components/TransactionHistory.vue'
 import CustomersPanel from "@/components/CustomersPanel.vue";
+import LiveIndicator from "@/components/LiveIndicator.vue";
 
 const route = useRoute()
 const eventId = String(route.params.eventId || '')
@@ -60,9 +61,9 @@ onMounted(loadAll)
 
 <template>
   <section class="space-y-6">
-    <header class="flex items-baseline gap-3">
+    <header class="flex items-baseline gap-4">
       <h1 class="text-3xl font-extrabold">{{ ev?.name ?? 'Beer Exchange' }}</h1>
-      <p class="text-sm opacity-70">Event: {{ eventId }}</p>
+      <LiveIndicator/>
     </header>
 
     <div v-if="loading" class="p-4 rounded-xl border border-dashed">Loading…</div>

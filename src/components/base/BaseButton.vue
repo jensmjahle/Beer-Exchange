@@ -1,46 +1,31 @@
 <template>
   <button
-      :type="type"
-      :disabled="disabled || loading"
-      :class="[
-      baseClass,
-      block ? 'w-full' : '',
+    v-bind="$attrs"
+    @click="$emit('click', $event)"
+    :class="[
+      'rounded-lg px-3 py-1.5 border ont-medium transition-colors',
+      'focus:outline-none focus:ring-2 focus:ring-offset-1',
+      variant === 'button1'
+        ? 'bg-[var(--color-button1)] hover:bg-[var(--color-button1-hover)] text-button1-meta border-button1-border focus:ring-[var(--color-button1)]'
+        : variant === 'button2'
+        ? 'bg-[var(--color-button2)] hover:bg-[var(--color-button2-hover)] text-button2-meta border-button2-border focus:ring-[var(--color-button2)]'
+        : variant === 'button3'
+        ? 'bg-[var(--color-button3)] hover:bg-[var(--color-button3-hover)] text-button3-meta border-button3-border focus:ring-[var(--color-button3)]'
+        : variant === 'button4'
+        ? 'bg-[var(--color-button4)] hover:bg-[var(--color-button4-hover)] text-button4-meta border-button4-border focus:ring-[var(--color-button4)]'
+        : ''
     ]"
   >
-    <span v-if="loading" class="animate-spin mr-2">
-      <Loader class="w-4 h-4" />
-    </span>
     <slot />
   </button>
 </template>
 
 <script setup>
-import { Loader } from 'lucide-vue-next'
-import {computed} from "vue";
-
-const props = defineProps({
-  type: { type: String, Number, default: 'button' },
+defineProps({
   variant: {
-    type: String, Number,
-    default: '1', // Default variant
+    type: String,
+    default: 'button1', // "button1" | "button2" | "button3" | "button4"
   },
-  loading: Boolean,
-  disabled: Boolean,
-  block: Boolean,
 })
-
-const baseClass = computed(() => {
-  const variants = {
-    '1': 'btn-1',
-    '2': 'btn-2',
-    '3': 'btn-3',
-    '4': 'btn-4',
-    'icon-1': 'btn-icon-1',
-    'icon-2': 'btn-icon-2',
-    'icon-3': 'btn-icon-3',
-    'icon-4': 'btn-icon-4',
-    'icon-transparent-1': 'btn-icon-transparent-1',
-  }
-  return variants[props.variant] ?? 'btn-1'
-})
+defineEmits(['click'])
 </script>
