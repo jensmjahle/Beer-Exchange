@@ -11,7 +11,7 @@ function fmt(n) {
 </script>
 
 <template>
-  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+  <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
       <h2 class="font-bold text-lg">{{ title }}</h2>
       <span class="text-xs opacity-70">{{ items.length }} items</span>
@@ -19,7 +19,7 @@ function fmt(n) {
 
     <ul class="space-y-2">
       <li v-for="b in items" :key="b.id"
-          class="rounded-xl border bg-bg4 px-3 py-2 flex items-center gap-3">
+          class="rounded-xl border bg-bg3 text-text3 px-3 py-2 flex items-center gap-3">
         <div class="w-2 h-2 rounded-full"
              :class="b.delta > 0 ? 'bg-green-500' : 'bg-red-500'"></div>
 

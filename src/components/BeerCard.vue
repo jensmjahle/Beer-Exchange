@@ -20,7 +20,7 @@ function pctOfRange(b) {
 
 <template>
   <article
-    class="rounded-xl border bg-[var(--color-bg4)] p-3 flex flex-col gap-2 cursor-pointer hover:shadow-sm transition"
+    class="rounded-xl border bg-bg3 p-3 flex flex-col text-tex3 gap-2 cursor-pointer hover:shadow-sm transition"
     @click="$emit('open', beer)"
   >
     <div class="flex items-start justify-between gap-3">
@@ -38,7 +38,7 @@ function pctOfRange(b) {
     </div>
 
     <div class="mt-1">
-      <div class="h-2 rounded bg-gray-200 overflow-hidden">
+      <div class="h-2 rounded bg-bg3 overflow-hidden">
         <div class="h-full"
              :style="{ width: pctOfRange(beer) + '%' }"
              :class="[

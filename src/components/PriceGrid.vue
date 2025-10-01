@@ -46,7 +46,7 @@ async function confirmBuy(payload) {
 </script>
 
 <template>
-  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+  <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex flex-row  mb-3 gap-4">
         <h2 class="font-bold text-lg">Beer Prices</h2>
         <LiveIndicator />

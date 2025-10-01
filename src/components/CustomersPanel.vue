@@ -33,7 +33,7 @@ onMounted(load)
 </script>
 
 <template>
-  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+  <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
       <h2 class="font-bold text-lg">Customers</h2>
       <button class="rounded-lg border px-3 py-1.5 text-sm border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
@@ -47,16 +47,32 @@ onMounted(load)
       <li v-for="c in customers" :key="c.id"
           class="py-2 flex items-center justify-between gap-3 cursor-pointer hover:bg-[var(--color-bg4)] rounded px-2"
           @click="openCustomer(c)">
-        <div class="min-w-0">
-          <div class="font-semibold truncate">{{ c.name }}</div>
-          <div class="text-xs opacity-70" v-if="c.phone">{{ c.phone }}</div>
-          <div class="text-xs opacity-70" >{{c.gender}}</div>
+        <div class="flex items-center gap-3 min-w-0">
+          <!-- profile image -->
+          <img v-if="c.profile_image_url"
+               :src="c.profile_image_url"
+               alt="Profile"
+               class="w-8 h-8 rounded-full object-cover border shrink-0" />
+          <div v-else
+               class="w-8 h-8 rounded-full bg-gray-400 flex items-center justify-center text-xs font-bold text-white shrink-0">
+            {{ c.name.charAt(0).toUpperCase() }}
+          </div>
+
+          <!-- name + orientation -->
+          <div class="min-w-0">
+            <div class="font-semibold truncate">{{ c.name }}</div>
+            <div class="text-xs opacity-70 truncate">{{ c.sexual_orientation || '—' }}</div>
+            <div class="text-xs opacity-70">{{ c.gender }}</div>
+          </div>
         </div>
+
+        <!-- stats (unchanged) -->
         <div class="text-right shrink-0">
           <div class="font-extrabold tabular-nums">{{ money(c.tab) }} {{ currency }}</div>
           <div class="text-xs opacity-70">{{ c.beers }} beers</div>
         </div>
       </li>
+
       <li v-if="!customers.length" class="py-3 text-sm opacity-60 italic">No customers yet</li>
     </ul>
   </div>

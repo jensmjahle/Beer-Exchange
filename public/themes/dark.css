@@ -6,13 +6,13 @@
   --color-text2-faded: #c8c2ad;
   --color-text3: #fdf6e3;
   --color-text3-faded: #b5ae97;
-  --color-text4: #0d0d0d;             /* dark text on light surfaces */
+  --color-text4: #fdf6e3;             /* dark text on light surfaces */
   --color-text4-faded: #44403c;
 
   /* Backgrounds */
   --color-bg1: #3b1c0f;               /* deep brown - pub wood */
   --color-bg2: #5c2b18;               /* secondary background */
-  --color-bg3: #facc15;               /* golden accent */
+  --color-bg3: #5c2b50;
   --color-bg4: #fef3c7;               /* light amber */
 
   --color-bg1-gradient1: #3b1c0f;

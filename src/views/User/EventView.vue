@@ -10,6 +10,7 @@ import PriceGrid from '@/components/PriceGrid.vue'
 import TransactionHistory from '@/components/TransactionHistory.vue'
 import CustomersPanel from "@/components/CustomersPanel.vue";
 import LiveIndicator from "@/components/LiveIndicator.vue";
+import SettingsWidget from "@/components/settings/SettingsWidget.vue";
 
 const route = useRoute()
 const eventId = String(route.params.eventId || '')
@@ -55,16 +56,30 @@ async function onUpdated() {
     console.warn('Refresh after buy failed:', e?.message || e)
   }
 }
-
+const today = new Date()
+const formattedDate = today.toLocaleDateString('en-GB', {
+  day: '2-digit',
+  month: '2-digit',
+  year: 'numeric'
+})
 onMounted(loadAll)
 </script>
 
 <template>
   <section class="space-y-6">
-    <header class="flex items-baseline gap-4">
-      <h1 class="text-3xl font-extrabold">{{ ev?.name ?? 'Beer Exchange' }}</h1>
-      <LiveIndicator/>
-    </header>
+    <header class="flex items-baseline justify-between">
+    <div class="flex flex-col items-center gap-4">
+      <h1 class="text-3xl font-extrabold">
+        {{ ev?.name ?? 'Beer Exchange' }}
+      </h1>
+      <div class="flex flex-row items-center gap-2">
+      <LiveIndicator />
+      <span class="text-sm opacity-70">{{ formattedDate }}</span>
+    </div>
+    </div>
+
+    <SettingsWidget />
+  </header>
 
     <div v-if="loading" class="p-4 rounded-xl border border-dashed">Loading…</div>
 

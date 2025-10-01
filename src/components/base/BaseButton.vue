@@ -3,7 +3,7 @@
     v-bind="$attrs"
     @click="$emit('click', $event)"
     :class="[
-      'rounded-lg px-3 py-1.5 border ont-medium transition-colors',
+      'rounded-lg px-3 py-1.5 border font-medium transition-colors',
       'focus:outline-none focus:ring-2 focus:ring-offset-1',
       variant === 'button1'
         ? 'bg-[var(--color-button1)] hover:bg-[var(--color-button1-hover)] text-button1-meta border-button1-border focus:ring-[var(--color-button1)]'

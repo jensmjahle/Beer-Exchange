@@ -3,6 +3,11 @@ import { ref, watch, onMounted, computed } from 'vue'
 import { listEventCustomers } from '@/services/customers.service.js'
 import NewCustomerModal from '@/components/NewCustomerModal.vue'
 
+// base components
+import BaseInput from '@/components/base/BaseInput.vue'
+import BaseButton from '@/components/base/BaseButton.vue'
+import BaseDropdown from '@/components/base/BaseDropdown.vue'
+
 const props = defineProps({
   open: { type: Boolean, default: false },
   eventId: { type: String, required: true },
@@ -18,7 +23,6 @@ const error = ref(null)
 const selectedCustomerId = ref('')
 const qty = ref(1)
 
-// modal state
 const showAddCustomer = ref(false)
 
 const unitPrice = computed(() => Number(props.beer?.current_price || 0))
@@ -62,7 +66,7 @@ onMounted(() => { if (props.open) loadCustomers() })
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
-    <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-[var(--color-button4)] p-5">
+    <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-bg2 p-5">
       <h3 class="text-lg font-bold mb-1">Buy {{ beer?.name ?? beer?.beer_id }}</h3>
       <p class="text-sm opacity-70 mb-4">
         Unit price: <strong>{{ unitPrice.toFixed(1) }} {{ currency }}</strong>
@@ -75,18 +79,15 @@ onMounted(() => { if (props.open) loadCustomers() })
         <div>
           <label class="block text-sm mb-1">Customer</label>
           <div class="flex gap-2">
-            <select v-model="selectedCustomerId"
-                    class="flex-1 rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]">
+            <BaseDropdown v-model="selectedCustomerId" class="flex-1">
               <option value="">— Select customer —</option>
               <option v-for="c in customers" :key="c.id" :value="c.id">
                 {{ c.name }} <span v-if="c.phone">({{ c.phone }})</span>
               </option>
-            </select>
-            <button type="button"
-                    class="rounded-lg border px-3 py-2 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
-                    @click="showAddCustomer = true">
+            </BaseDropdown>
+            <BaseButton variant="button4" type="button" @click="showAddCustomer = true">
               New
-            </button>
+            </BaseButton>
           </div>
         </div>
 
@@ -94,8 +95,7 @@ onMounted(() => { if (props.open) loadCustomers() })
         <div class="grid grid-cols-[1fr_auto] items-end gap-3">
           <div>
             <label class="block text-sm mb-1">Qty</label>
-            <input v-model.number="qty" type="number" min="1"
-                   class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
+            <BaseInput v-model.number="qty" type="number" min="1" />
           </div>
           <div class="text-right">
             <div class="text-sm opacity-70 mb-1">Total</div>
@@ -107,8 +107,8 @@ onMounted(() => { if (props.open) loadCustomers() })
       </div>
 
       <div class="flex justify-end gap-2 mt-5">
-        <button class="rounded-lg border px-3 py-1.5 border-[var(--color-border3)]" @click="$emit('close')">Cancel</button>
-        <button class="rounded-lg px-3 py-1.5 bg-[var(--color-button1)] hover:bg-[var(--color-button1-hover)]" @click="onConfirm">Buy</button>
+        <BaseButton variant="button4" @click="$emit('close')">Cancel</BaseButton>
+        <BaseButton variant="button1" @click="onConfirm">Buy</BaseButton>
       </div>
     </div>
 

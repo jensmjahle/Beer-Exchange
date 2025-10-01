@@ -15,7 +15,7 @@ function money(n) {
 </script>
 
 <template>
-  <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
+  <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
       <h2 class="font-bold text-lg">Recent Trades</h2>
       <span class="text-xs opacity-70">{{ transactions.length }}</span>

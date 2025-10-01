@@ -1,6 +1,7 @@
 
 <template>
   <section class="mx-auto max-w-6xl px-4 py-8 space-y-6">
+      <SettingsWidget class="fixed top-0 right-0 z-50 p-6 sm:block"></SettingsWidget>
     <header class="text-center space-y-2">
       <h1 class="text-3xl font-extrabold">Live Beer Exchanges</h1>
       <p class="opacity-70">Jump into any live event below.</p>
@@ -54,6 +55,7 @@
 <script setup>
 import { ref, computed, onMounted } from 'vue'
 import { listEvents } from '@/services/events.service.js'
+import SettingsWidget from "@/components/settings/SettingsWidget.vue";
 
 const loading = ref(true)
 const error = ref(null)

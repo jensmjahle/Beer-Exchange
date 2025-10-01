@@ -103,7 +103,7 @@ function reset() {
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
     <div
-      class="relative z-10 w-[min(460px,92vw)] rounded-2xl border bg-[var(--color-button4)] p-5 max-h-[90vh] overflow-y-auto"
+      class="relative z-10 w-[min(460px,92vw)] rounded-2xl border bg-bg2 p-5 max-h-[90vh] overflow-y-auto"
     >
       <h3 class="text-lg font-bold mb-4">New Customer</h3>
 
