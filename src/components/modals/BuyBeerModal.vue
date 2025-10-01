@@ -66,18 +66,28 @@ onMounted(() => { if (props.open) loadCustomers() })
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
-    <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-bg2 p-5">
-      <h3 class="text-lg font-bold mb-1">Buy {{ beer?.name ?? beer?.beer_id }}</h3>
-      <p class="text-sm opacity-70 mb-4">
-        Unit price: <strong>{{ unitPrice.toFixed(1) }} {{ currency }}</strong>
-      </p>
+    <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-[var(--color-button4)] p-5">
+      <!-- Header -->
+      <header class="mb-4">
+        <h3 class="text-xl font-extrabold">Buy {{ beer?.name ?? beer?.beer_id }}</h3>
+        <p class="text-sm opacity-70">
+          Unit price:
+          <strong>{{ unitPrice.toFixed(1) }} {{ currency }}</strong>
+        </p>
+      </header>
 
-      <div v-if="error" class="mb-3 text-sm text-red-600">Customers: {{ error }}</div>
+      <!-- Error -->
+      <div v-if="error" class="mb-3 rounded-lg border border-[var(--color-danger-border)] bg-red-50 px-3 py-2 text-sm text-[var(--color-danger)]">
+        {{ error }}
+      </div>
 
       <div class="space-y-4">
-        <!-- customer -->
+        <!-- Customer -->
         <div>
-          <label class="block text-sm mb-1">Customer</label>
+          <label class="mb-1 block text-sm font-medium">Customer</label>
+          <p class="mb-2 text-xs text-[var(--color-text2-faded)]">
+            Choose who is buying. Not on the list? Create a new customer.
+          </p>
           <div class="flex gap-2">
             <BaseDropdown v-model="selectedCustomerId" class="flex-1">
               <option value="">— Select customer —</option>
@@ -91,22 +101,32 @@ onMounted(() => { if (props.open) loadCustomers() })
           </div>
         </div>
 
-        <!-- qty and total -->
-        <div class="grid grid-cols-[1fr_auto] items-end gap-3">
-          <div>
-            <label class="block text-sm mb-1">Qty</label>
-            <BaseInput v-model.number="qty" type="number" min="1" />
-          </div>
-          <div class="text-right">
-            <div class="text-sm opacity-70 mb-1">Total</div>
-            <div class="text-xl font-extrabold tabular-nums">
-              {{ total.toFixed(1) }} {{ currency }}
+        <!-- Quantity -->
+        <div>
+          <label class="mb-1 block text-sm font-medium">Quantity</label>
+          <p class="mb-2 text-xs text-[var(--color-text2-faded)]">
+            Number of units to purchase.
+          </p>
+          <div class="grid grid-cols-[1fr_auto] items-end gap-3">
+            <BaseInput
+              v-model.number="qty"
+              type="number"
+              min="1"
+              :label="null"
+              :help="null"
+            />
+            <div class="text-right">
+              <div class="mb-1 text-sm opacity-70">Total</div>
+              <div class="text-xl font-extrabold tabular-nums">
+                {{ total.toFixed(1) }} {{ currency }}
+              </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="flex justify-end gap-2 mt-5">
+      <!-- Actions -->
+      <div class="mt-5 flex justify-end gap-2">
         <BaseButton variant="button4" @click="$emit('close')">Cancel</BaseButton>
         <BaseButton variant="button1" @click="onConfirm">Buy</BaseButton>
       </div>
@@ -121,3 +141,4 @@ onMounted(() => { if (props.open) loadCustomers() })
     />
   </div>
 </template>
+
