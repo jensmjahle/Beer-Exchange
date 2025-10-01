@@ -27,7 +27,7 @@ function pctOfRange(b) {
       <div class="min-w-0">
         <h3 class="font-semibold truncate">{{ beer.name ?? beer.beer_id }}</h3>
         <div class="text-xs opacity-70">
-          base {{ fmt(beer.abv) }} · min {{ fmt(beer.min_price) }} · max {{ fmt(beer.max_price) }}
+          {{ fmt(beer.abv) }}% · {{ Math.round(beer.volume_ml) }}ml · {{ beer.style }}
         </div>
       </div>
       <div class="text-right">

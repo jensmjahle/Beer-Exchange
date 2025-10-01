@@ -88,6 +88,13 @@ analytics.get('/event/:eventId/beer/:eventBeerId/stats', async (req, res) => {
       return res.json({
         name: eb.name ?? null,
         beer_id: eb.beer_id ?? null,
+        description: eb.description ?? null,
+        brewery: eb.brewery ?? null,
+        style: eb.style ?? null,
+        volume_ml: eb.volume_ml ?? null,
+        abv: eb.abv ?? null,
+        ibu: eb.ibu ?? null,
+        image_url: eb.image_url ?? null,
         last_price: Number(eb.current_price ?? eb.base_price ?? 0),
         ath, atl,
         first_ts: all[0]?.created_at ?? null,
