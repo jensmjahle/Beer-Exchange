@@ -62,7 +62,6 @@ onMounted(load)
           <div class="min-w-0">
             <div class="font-semibold truncate">{{ c.name }}</div>
             <div class="text-xs opacity-70 truncate">{{ c.sexual_orientation || '—' }}</div>
-            <div class="text-xs opacity-70">{{ c.gender }}</div>
           </div>
         </div>
 
