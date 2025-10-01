@@ -4,6 +4,7 @@ import { useRouter } from 'vue-router'
 import BeerCard from './BeerCard.vue'
 import BuyBeerModal from './BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
+import LiveIndicator from "@/components/LiveIndicator.vue";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -46,8 +47,10 @@ async function confirmBuy(payload) {
 
 <template>
   <div class="rounded-2xl border p-4 bg-[var(--color-button4)]">
-    <h2 class="font-bold text-lg mb-3">Live Prices</h2>
-
+    <div class="flex flex-row  mb-3 gap-4">
+        <h2 class="font-bold text-lg">Beer Prices</h2>
+        <LiveIndicator />
+    </div>
     <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
       <BeerCard
         v-for="b in beers" :key="b.id"

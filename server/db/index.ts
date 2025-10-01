@@ -20,7 +20,16 @@ export type Customer = {
   event_id: string
   name: string
   phone?: string | null
+  shoe_size?: string | null
+  weight?: string | null
+  profile_image_url?: string | null
+  work_relationship?: string | null
+  gender?: string | null
+  sexual_orientation?: string | null
+  ethnicity?: string | null
+  experience_level?: string | null
 }
+
 export type EventBeer = {
   id: string
   event_id: string

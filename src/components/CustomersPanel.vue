@@ -50,6 +50,7 @@ onMounted(load)
         <div class="min-w-0">
           <div class="font-semibold truncate">{{ c.name }}</div>
           <div class="text-xs opacity-70" v-if="c.phone">{{ c.phone }}</div>
+          <div class="text-xs opacity-70" >{{c.gender}}</div>
         </div>
         <div class="text-right shrink-0">
           <div class="font-extrabold tabular-nums">{{ money(c.tab) }} {{ currency }}</div>
