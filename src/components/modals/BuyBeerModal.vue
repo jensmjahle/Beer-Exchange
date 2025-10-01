@@ -1,7 +1,7 @@
 <script setup>
 import { ref, watch, onMounted, computed } from 'vue'
 import { listEventCustomers } from '@/services/customers.service.js'
-import NewCustomerModal from '@/components/NewCustomerModal.vue'
+import NewCustomerModal from '@/components/modals/NewCustomerModal.vue'
 
 // base components
 import BaseInput from '@/components/base/BaseInput.vue'

@@ -30,9 +30,23 @@
       "light": "Lyst",
       "dark": "Mørkt"
     }
-
+  },
+  "beer": {
+    "add_new_beer": "Legg til ny øl",
+    "beer_name": "Ølnavn",
+    "brewery": "Bryggeri",
+    "style": "Stil",
+    "description": "Beskrivelse",
+    "volume_ml": "Volum (ml)",
+    "abv_percent": "ABV (%)",
+    "ibu": "IBU",
+    "image_url": "Bilde-URL",
+    "base_price": "Grunnpris",
+    "min_price": "Minstepris",
+    "max_price": "Makspris",
+    "current_price": "Nåværende pris",
+    "cancel": "Avbryt",
+    "add": "Legg til",
+    "adding": "Legger til..."
   }
 }
-
-
-
