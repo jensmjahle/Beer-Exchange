@@ -109,7 +109,7 @@ function reset() {
 
       <div class="space-y-3">
         <!-- name -->
-        <BaseInput v-model="name" type="text" placeholder="Name" />
+        <BaseInput v-model="name" type="text"  required placeholder="Name" />
 
         <!-- phone -->
         <BaseInput v-model="phone" type="text" placeholder="Phone (optional)" />
