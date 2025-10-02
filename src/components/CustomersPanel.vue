@@ -3,6 +3,8 @@ import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { listEventCustomersWithStats } from '@/services/customers.service.js'
 import BACMini from '@/components/BACMini.vue'
+import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
+import BaseButton from "@/components/base/BaseButton.vue";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -13,7 +15,8 @@ const router = useRouter()
 const loading = ref(true)
 const error = ref(null)
 const customers = ref([])
-
+const showAddCustomer = ref(false)
+const emit = defineEmits(['close', 'confirm'])
 function money(n) {
   if (n == null || Number.isNaN(n)) return '0.0'
   return Number(n).toFixed(1)
@@ -29,7 +32,9 @@ async function load() {
 function openCustomer(c) {
   router.push({ name: 'customer-detail', params: { eventId: props.eventId, customerId: c.id } })
 }
-
+function onCustomerCreated(c) {
+  customers.value.unshift(c)
+}
 onMounted(load)
 </script>
 
@@ -37,8 +42,16 @@ onMounted(load)
   <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
       <h2 class="font-bold text-lg">Customers</h2>
+      <div>
       <button class="rounded-lg border px-3 py-1.5 text-sm border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
               @click="load">Refresh</button>
+       <BaseButton variant="button2" @click="load">
+  Refresh
+</BaseButton>
+        <BaseButton variant="button4" type="button" @click="showAddCustomer = true">
+              New
+            </BaseButton>
+     </div>
     </div>
 
     <div v-if="loading" class="rounded-xl border border-dashed p-4">Loading…</div>
@@ -80,4 +93,10 @@ onMounted(load)
       <li v-if="!customers.length" class="py-3 text-sm opacity-60 italic">No customers yet</li>
     </ul>
   </div>
+      <NewCustomerModal
+      :open="showAddCustomer"
+      :event-id="eventId"
+      @close="showAddCustomer = false"
+      @created="onCustomerCreated"
+    />
 </template>

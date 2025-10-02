@@ -4,8 +4,8 @@ import { useLanguageStore } from '../store/useLanguageStore'; // Import Pinia st
 // Create i18n instance with no default messages
 const i18n = createI18n({
   legacy: false, // Use Composition API mode
-  locale: 'en',  // Default language
-  fallbackLocale: 'en', // Fallback language
+  locale: 'no',  // Default language
+  fallbackLocale: 'no', // Fallback language
   messages: {}, // We'll set the messages dynamically
 });
 

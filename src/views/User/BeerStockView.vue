@@ -142,25 +142,54 @@ function backToEvent() {
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
+        <div class="rounded-xl border p-4 bg-bg2">
           <div class="text-xs opacity-70">Change ({{ range }})</div>
           <div :class="['text-xl font-extrabold', priceChangePct >= 0 ? 'text-green-600' : 'text-red-600']">
             {{ priceChangePct.toFixed(1) }}%
           </div>
         </div>
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
+        <div class="rounded-xl border p-4 bg-bg2">
           <div class="text-xs opacity-70">All-time high</div>
           <div class="text-xl font-extrabold">{{ stats?.ath?.toFixed?.(1) ?? '-' }}</div>
         </div>
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
+        <div class="rounded-xl border p-4 bg-bg2">
           <div class="text-xs opacity-70">All-time low</div>
           <div class="text-xl font-extrabold">{{ stats?.atl?.toFixed?.(1) ?? '-' }}</div>
         </div>
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
+        <div class="rounded-xl border p-4 bg-bg2">
           <div class="text-xs opacity-70">Last price</div>
           <div class="text-xl font-extrabold">{{ stats?.last_price?.toFixed?.(1) ?? '-' }}</div>
         </div>
       </div>
+<div class="rounded-2xl border p-5 bg-bg2">
+  <header class="flex items-center justify-between mb-3">
+    <h2 class="text-xl font-extrabold">{{ stats.name}}</h2>
+    <div v-if="stats?.abv" class="text-xs px-2 py-1 rounded-full border border-[var(--color-border3)]">
+      {{ stats.abv }}% ABV
+    </div>
+  </header>
+
+  <!-- Description -->
+  <p class="text-base leading-relaxed whitespace-pre-line">
+    {{ stats?.description || 'No description available.' }}
+  </p>
+
+  <!-- Meta chips -->
+  <div class="mt-4 flex flex-wrap gap-2 text-sm">
+    <span v-if="stats?.brewery" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4">
+      <span class="opacity-70">Brewery:</span> <strong>{{ stats.brewery }}</strong>
+    </span>
+    <span v-if="stats?.style" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4">
+      <span class="opacity-70">Style:</span> <strong>{{ stats.style }}</strong>
+    </span>
+    <span v-if="stats?.ibu != null" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4">
+      <span class="opacity-70">IBU:</span> <strong>{{ stats.ibu }}</strong>
+    </span>
+    <span v-if="stats?.volume_ml" class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4">
+      <span class="opacity-70">Volume:</span> <strong>{{ Math.round(stats.volume_ml) }} ml</strong>
+    </span>
+  </div>
+</div>
 
       <div class="grid sm:grid-cols-2 gap-4">
         <div class="rounded-xl border p-4 bg-[var(--color-button4)]">

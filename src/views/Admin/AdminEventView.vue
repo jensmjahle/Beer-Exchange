@@ -2,12 +2,15 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getEvent } from '@/services/events.service.js'
-import { listEventBeers, attachBeerToEvent } from '@/services/beers.service.js'
 import { listEventCustomers, createCustomer } from '@/services/customers.service.js'
+import { listEventBeers } from '@/services/beers.service.js'
+import AddNewBeerModal from '@/components/modals/AddNewBeerModal.vue'
+import {useI18n} from "vue-i18n";
 
 const route = useRoute()
 const router = useRouter()
 const eventId = String(route.params.eventId || '')
+const { t } = useI18n()
 
 // state
 const loading = ref(true)
@@ -22,22 +25,10 @@ const custName = ref('')
 const custPhone = ref('')
 
 const showAddBeer = ref(false)
-const newBeer = ref({
-  beer_id: '',       // existing catalog beer id
-  base_price: 15,
-  min_price: 10,
-  max_price: 25,
-  position: 0,
-  active: 1,
-})
-
-// placeholder: if you have a catalog endpoint, fetch it; for now, manual id input or later dropdown
-const catalog = ref([]) // [{id, name}]
 
 const stats = computed(() => ({
   beers: beers.value.length,
   customers: customers.value.length,
-  // extend: revenue, orders, etc.
 }))
 
 async function loadAll() {
@@ -65,7 +56,7 @@ async function addCustomer() {
     const created = await createCustomer(eventId, {
       name: custName.value.trim(),
       phone: custPhone.value.trim() || null,
-})
+    })
     customers.value.unshift(created)
     custName.value = ''
     custPhone.value = ''
@@ -75,22 +66,9 @@ async function addCustomer() {
   }
 }
 
-async function addBeer() {
-  try {
-    const payload = { ...newBeer.value }
-    // basic sanity
-    payload.base_price = Number(payload.base_price)
-    payload.min_price = Number(payload.min_price)
-    payload.max_price = Number(payload.max_price)
-    if (!payload.beer_id) { alert('Select a beer'); return }
-    if (payload.min_price > payload.max_price) { alert('Min > Max'); return }
-    await attachBeerToEvent(eventId, payload)
-    const refreshed = await listEventBeers(eventId)
-    beers.value = refreshed
-    showAddBeer.value = false
-  } catch (e) {
-    alert(e?.message || 'Failed to add beer')
-  }
+function onBeerCreated(newBeer) {
+  beers.value.unshift(newBeer)
+  showAddBeer.value = false
 }
 
 onMounted(loadAll)
@@ -118,7 +96,9 @@ onMounted(loadAll)
 
     <!-- loading / error -->
     <div v-if="loading" class="rounded-xl border border-dashed p-6">Loading…</div>
-    <div v-else-if="error" class="rounded-xl border border-red-300 bg-red-50 p-6 text-red-700">Error: {{ error }}</div>
+    <div v-else-if="error" class="rounded-xl border border-red-300 bg-red-50 p-6 text-red-700">
+      Error: {{ error }}
+    </div>
 
     <div v-else class="space-y-6">
       <!-- overview -->
@@ -187,7 +167,9 @@ onMounted(loadAll)
                 </div>
               </div>
               <div class="text-right">
-                <div class="font-extrabold tabular-nums">{{ b.current_price?.toFixed?.(1) ?? b.current_price }} {{ ev?.currency }}</div>
+                <div class="font-extrabold tabular-nums">
+                  {{ b.current_price?.toFixed?.(1) ?? b.current_price }} {{ ev?.currency }}
+                </div>
                 <div class="text-xs opacity-70">pos {{ b.position }}</div>
               </div>
             </li>
@@ -215,39 +197,12 @@ onMounted(loadAll)
       </div>
     </div>
 
-    <!-- add beer modal -->
-    <div v-if="showAddBeer" class="fixed inset-0 z-50 flex items-center justify-center">
-      <div class="absolute inset-0 bg-black/40" @click="showAddBeer = false"></div>
-      <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-[var(--color-button4)] p-5">
-        <h3 class="text-lg font-bold mb-3">Add Beer to Event</h3>
-        <div class="space-y-3">
-          <input v-model="newBeer.beer_id" type="text" placeholder="Catalog beer id"
-                 class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
-          <div class="grid grid-cols-3 gap-3">
-            <div><label class="block text-xs opacity-70 mb-1">Base</label>
-              <input v-model.number="newBeer.base_price" type="number" step="0.5" class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
-            </div>
-            <div><label class="block text-xs opacity-70 mb-1">Min</label>
-              <input v-model.number="newBeer.min_price" type="number" step="0.5" class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
-            </div>
-            <div><label class="block text-xs opacity-70 mb-1">Max</label>
-              <input v-model.number="newBeer.max_price" type="number" step="0.5" class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
-            </div>
-          </div>
-          <div class="grid grid-cols-2 gap-3">
-            <div><label class="block text-xs opacity-70 mb-1">Position</label>
-              <input v-model.number="newBeer.position" type="number" class="w-full rounded-lg border px-3 py-2 border-[var(--color-border3)] bg-[var(--color-bg4)]" />
-            </div>
-            <div class="flex items-end">
-              <label class="inline-flex items-center gap-2"><input type="checkbox" v-model="newBeer.active" class="h-4 w-4" /><span class="text-sm">Active</span></label>
-            </div>
-          </div>
-        </div>
-        <div class="flex justify-end gap-2 mt-4">
-          <button class="rounded-lg border px-3 py-1.5 border-[var(--color-border3)]" @click="showAddBeer=false">Cancel</button>
-          <button class="rounded-lg px-3 py-1.5 bg-[var(--color-button1)] hover:bg-[var(--color-button1-hover)]" @click="addBeer">Add</button>
-        </div>
-      </div>
-    </div>
+    <!-- add beer modal (replaced with component) -->
+    <AddNewBeerModal
+      :open="showAddBeer"
+      :event-id="eventId"
+      @close="showAddBeer = false"
+      @created="onBeerCreated"
+    />
   </section>
 </template>

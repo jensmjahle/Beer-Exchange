@@ -102,69 +102,103 @@ function reset() {
   <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
-    <div
-      class="relative z-10 w-[min(460px,92vw)] rounded-2xl border bg-bg2 p-5 max-h-[90vh] overflow-y-auto"
-    >
-      <h3 class="text-lg font-bold mb-4">New Customer</h3>
+    <div class="relative z-10 w-[min(460px,92vw)] rounded-2xl border bg-bg4 p-5 max-h-[90vh] overflow-y-auto">
+      <h3 class="text-lg font-extrabold mb-4">New Customer</h3>
 
-      <div class="space-y-3">
-        <!-- name -->
-        <BaseInput v-model="name" type="text"  required placeholder="Name" />
+      <div class="space-y-4">
+        <!-- Name -->
+        <BaseInput
+          v-model="name"
+          label="Name"
+          type="text"
+          required
+          placeholder="Full name"
+        />
 
-        <!-- phone -->
-        <BaseInput v-model="phone" type="text" placeholder="Phone (optional)" />
+        <!-- Phone -->
+        <BaseInput
+          v-model="phone"
+          label="Phone"
+          type="text"
+          placeholder="Phone (optional)"
+        />
 
-        <!-- shoe size -->
-        <BaseInput v-model="shoe_size" type="number" placeholder="Shoe size (EU)" />
-
-        <!-- weight (required) -->
-        <BaseInput v-model="weight" type="number" required placeholder="Weight (kg)" />
-
-        <!-- work relationship -->
-        <BaseDropdown v-model="work_relationship">
-          <option value="">— Work relationship —</option>
-          <option value="fulltidsjobb">Fulltidsjobb</option>
-          <option value="deltidsjobb">Deltidsjobb</option>
-          <option value="student">Student</option>
-          <option value="arbeidsledig">Arbeidsledig</option>
-        </BaseDropdown>
-
-        <!-- gender (required) -->
-        <BaseDropdown v-model="gender" required>
-          <option disabled value="">— Gender —</option>
-          <option value="male">Male</option>
-          <option value="female">Female</option>
-        </BaseDropdown>
-
-        <!-- sexual orientation -->
-        <div class="flex gap-2">
+        <div class="grid grid-cols-2 gap-3">
+          <!-- Shoe size -->
           <BaseInput
-            v-model="sexual_orientation"
-            type="text"
-            placeholder="Sexual orientation"
-            class="flex-1"
+            v-model="shoe_size"
+            label="Shoe size (EU)"
+            type="number"
+            placeholder="e.g. 43"
           />
-          <BaseButton variant="button4" type="button" @click="randomOrientation">🎲</BaseButton>
+          <!-- Weight (required) -->
+          <BaseInput
+            v-model.number="weight"
+            label="Weight"
+            help="You can write e.g. 82 or 82 kg"
+            type="number"
+            required
+            placeholder="e.g. 82"
+          />
         </div>
 
-        <!-- ethnicity -->
+        <!-- Work relationship -->
         <div>
-          <label class="block text-sm mb-1">Ethnicity</label>
+          <label class="mb-1 block text-sm font-medium">Work relationship</label>
+          <BaseDropdown v-model="work_relationship" class="w-full">
+            <option value="">— Select —</option>
+            <option value="fulltidsjobb">Fulltidsjobb</option>
+            <option value="deltidsjobb">Deltidsjobb</option>
+            <option value="student">Student</option>
+            <option value="arbeidsledig">Arbeidsledig</option>
+          </BaseDropdown>
+        </div>
+
+        <!-- Gender (required) -->
+        <div>
+          <label class="mb-1 block text-sm font-medium">Gender</label>
+          <BaseDropdown v-model="gender" class="w-full">
+            <option disabled value="">— Select —</option>
+            <option value="male">Male</option>
+            <option value="female">Female</option>
+          </BaseDropdown>
+        </div>
+
+        <!-- Sexual orientation + random -->
+        <div>
+          <label class="mb-1 block text-sm font-medium">Sexual orientation</label>
+          <div class="flex gap-2">
+            <BaseInput
+              v-model="sexual_orientation"
+              type="text"
+              placeholder="Optional"
+              class="flex-1"
+            />
+            <BaseButton variant="button4" type="button" @click="randomOrientation">🎲</BaseButton>
+          </div>
+        </div>
+
+        <!-- Ethnicity slider -->
+        <div>
+          <label class="mb-1 block text-sm font-medium">Ethnicity</label>
           <input
             v-model="ethnicity"
             type="range"
             min="0"
             max="100"
             step="1"
-            class="w-full h-10 rounded-lg appearance-none cursor-pointer"
+            class="w-full h-3 rounded-lg appearance-none cursor-pointer bg-bg2"
             :style="{
-              background: 'linear-gradient(to right, #4b2e2b 0%, #ffffff 50%, #f5e642 100%)',
+              background:
+                'linear-gradient(to right, #4b2e2b 0%, #ffffff 50%, #f5e642 100%)'
             }"
           />
+          <div class="mt-1 text-xs opacity-70">Value: {{ ethnicity }}</div>
         </div>
 
-        <!-- profile image -->
+        <!-- Profile image -->
         <div>
+          <label class="mb-1 block text-sm font-medium">Profile image</label>
           <input type="file" accept="image/*" @change="onFileChange" class="w-full text-sm" />
           <div v-if="profile_preview" class="mt-2">
             <img
