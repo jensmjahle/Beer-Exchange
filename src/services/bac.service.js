@@ -300,7 +300,7 @@ function calculateBACFromAlcoholGrams({ weightKg, gender, totalAlcoholGrams, hou
   }
 
   // Widmark formula constants (body water percentage)
-  const r = gender === 'male' ? 3 : gender === 'female' ? 0.55 : (0.68 + 0.55) / 2
+  const r = gender === 'male' ? 0.68 : gender === 'female' ? 0.55 : (0.68 + 0.55) / 2
   
   // BAC = (alcohol in grams / (body weight in grams × r)) × 100 - (elimination rate × hours)
   const bacBeforeElimination = (validAlcohol / (validWeight * 1000 * r)) * 100
