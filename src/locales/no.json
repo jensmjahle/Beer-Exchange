@@ -1,4 +1,8 @@
 {
+  "home": {
+    "live_exchanges_headline": "Live Ølbørser",
+    "live_exchanges_subtitle": "Hopp inn i et hvilket som helst live arrangement nedenfor."
+  },
   "navbar": {
     "home": "Hjem",
     "games": "Spill",
@@ -14,10 +18,6 @@
     "terms": "Vilkår",
     "about": "Om oss",
     "contact": "Kontakt"
-  },
-  "home": {
-    "welcome": "Velkommen til vår nettside!",
-    "description": "Dette er en eksempeltekst for hjemmesiden."
   },
   "settings": {
     "language": "Språk",

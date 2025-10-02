@@ -5,10 +5,12 @@ import { getEvent } from '@/services/events.service.js'
 import { listEventCustomers, createCustomer } from '@/services/customers.service.js'
 import { listEventBeers } from '@/services/beers.service.js'
 import AddNewBeerModal from '@/components/modals/AddNewBeerModal.vue'
+import {useI18n} from "vue-i18n";
 
 const route = useRoute()
 const router = useRouter()
 const eventId = String(route.params.eventId || '')
+const { t } = useI18n()
 
 // state
 const loading = ref(true)
