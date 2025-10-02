@@ -17,6 +17,7 @@ const loading = ref(false)
 const error = ref(null)
 const bacData = ref(null)
 const currentTime = ref(new Date())
+const lastUpdate = ref(new Date())
 
 // Computed properties for display
 const bacStatus = computed(() => {
@@ -54,16 +55,31 @@ async function calculateBAC() {
   loading.value = true
   error.value = null
   
+  // Always use the current time for accurate calculations
+  const now = new Date()
+  currentTime.value = now
+  
+  console.log('Calculating BAC at time:', now.toISOString())
+  
   try {
     bacData.value = await calculateCustomerBACFromTransactions(
       props.customer, 
       props.eventId, 
-      currentTime.value
+      now // Pass current time explicitly
     )
     
     if (bacData.value.error) {
       error.value = bacData.value.error
     }
+    
+    console.log('BAC calculation completed:', {
+      bac: bacData.value.bac,
+      hoursSinceFirstDrink: bacData.value.hoursSinceFirstDrink,
+      currentTime: now.toISOString()
+    })
+    
+    // Update last update time
+    lastUpdate.value = now
   } catch (e) {
     error.value = e.message || 'Failed to calculate BAC'
     console.error('BAC calculation error:', e)
@@ -77,12 +93,14 @@ let refreshInterval = null
 
 function startAutoRefresh() {
   if (!props.autoRefresh) return
+
+  console.log('Starting BAC auto-refresh (every 30 seconds)')
   
-  // Update current time and recalculate BAC every minute
+  // Update current time and recalculate BAC every 30 seconds for testing
   refreshInterval = setInterval(() => {
-    currentTime.value = new Date()
-    calculateBAC()
-  }, 60000) // 60 seconds
+    console.log('Auto-refreshing BAC at:', new Date().toISOString())
+    calculateBAC() // This will set currentTime.value inside the function
+  }, 30000) // 30 seconds for faster testing
 }
 
 function stopAutoRefresh() {
@@ -207,7 +225,9 @@ onUnmounted(() => {
 
       <!-- Refresh info -->
       <div v-if="autoRefresh" class="text-xs text-center opacity-50">
-        🔄 Auto-updating every minute
+        🔄 Auto-updating every 30 seconds
+        <br>
+        Last update: {{ lastUpdate.toLocaleTimeString() }}
       </div>
     </div>
   </div>
