@@ -3,6 +3,7 @@ import { ref, onMounted } from 'vue'
 import {useRoute, useRouter} from 'vue-router'
 import { getCustomerDetails } from '@/services/customers.service.js'
 import BaseButton from "@/components/base/BaseButton.vue";
+import BACDisplay from "@/components/BACDisplay.vue";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -61,6 +62,17 @@ onMounted(load)
 
       <h2 class="text-3xl font-bold text-center mb-2">{{ customer.name }}</h2>
       <p class="text-center text-lg opacity-70">{{ customer.sexual_orientation || '—' }}</p>
+
+      <!-- BAC Display -->
+      <div class="mt-6">
+        <h3 class="font-bold mb-3">🍺 Blood Alcohol Content (BAC)</h3>
+        <BACDisplay 
+          :customer="customer" 
+          :event-id="eventId" 
+          :auto-refresh="true"
+          :show-details="true"
+        />
+      </div>
 
       <!-- details -->
       <div class="grid grid-cols-2 gap-3 mt-4 text-md">

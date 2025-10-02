@@ -16,6 +16,7 @@ import NewEventView from "@/views/Admin/NewEventView.vue";
 import AdminEventView from "@/views/Admin/AdminEventView.vue";
 import BeerStockView from "@/views/User/BeerStockView.vue";
 import CustomersDetailView from "@/views/User/CustomersDetailView.vue";
+import BACDemoView from "@/views/BACDemoView.vue";
 
 const routes = [
   {
@@ -55,6 +56,12 @@ const routes = [
   component: CustomersDetailView,
   props: true,
 },
+      {
+        path: 'event/:eventId/bac-demo',
+        name: 'bac-demo',
+        component: BACDemoView,
+        props: true,
+      },
 
     ],
   },
