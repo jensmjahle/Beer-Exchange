@@ -3,14 +3,14 @@
   <section class="mx-auto max-w-6xl px-4 py-8 space-y-6">
       <SettingsWidget class="fixed top-0 right-0 z-50 p-6 sm:block"></SettingsWidget>
     <header class="text-center space-y-2">
-      <h1 class="text-3xl font-extrabold">Live Beer Exchanges</h1>
-      <p class="opacity-70">Jump into any live event below.</p>
+      <h1 class="text-3xl font-extrabold">{{ t('home.live_exchanges_headline')}}</h1>
+      <p class="opacity-70">{{t('home.live_exchanges_subtitle')}}</p>
     </header>
 
     <div v-if="loading" class="rounded-xl border border-dashed p-6 text-center">
       Loading…
     </div>
-    <div v-else-if="error" class="rounded-xl border border-red-300 bg-red-50 p-6 text-red-700 text-center">
+    <div v-else-if="error" class="rounded-xl border border-danger-border bg-danger p-6 text-text1 text-center">
       {{ error }}
     </div>
 
@@ -23,7 +23,7 @@
         <article
           v-for="e in liveEvents"
           :key="e.id"
-          class="rounded-xl border border-[var(--color-border3)] bg-[var(--color-button4)] overflow-hidden flex flex-col"
+          class="rounded-xl border border-border2 bg-bg2 overflow-hidden flex flex-col"
         >
           <img
             v-if="e.image_url"
@@ -56,10 +56,12 @@
 import { ref, computed, onMounted } from 'vue'
 import { listEvents } from '@/services/events.service.js'
 import SettingsWidget from "@/components/settings/SettingsWidget.vue";
+import {useI18n} from "vue-i18n";
 
 const loading = ref(true)
 const error = ref(null)
 const events = ref([])
+const { t } = useI18n()
 
 function fmt(d) {
   try { return new Date(d).toLocaleString([], { dateStyle: 'medium', timeStyle: 'short' }) }

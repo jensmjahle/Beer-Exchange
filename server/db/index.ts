@@ -35,6 +35,13 @@ export type EventBeer = {
   event_id: string
   beer_id: string
   name?: string | null
+  volume_ml: number | null
+  abv: number | null
+  description?: string | null
+  brewery?: string | null
+  style?: string | null
+  ibu?: number | null
+  image_url?: string | null
   base_price: number
   min_price: number
   max_price: number

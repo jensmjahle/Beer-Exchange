@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import BeerCard from './BeerCard.vue'
-import BuyBeerModal from './BuyBeerModal.vue'
+import BuyBeerModal from './modals/BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
 import LiveIndicator from "@/components/LiveIndicator.vue";
 
