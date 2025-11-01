@@ -63,13 +63,15 @@ async function confirmBuy(payload) {
       </div>
     </div>
 
+
     <BuyBeerModal
-      v-if="selectedBeer"
-      :open="buying"
-      :event-id="eventId"
-      :beer="selectedBeer"
-      :currency="currency"
-      @close="closeBuy"
-      @confirm="confirmBuy" />
+  v-if="selectedBeer"
+  :visible="buying"
+  :event-id="eventId"
+  :beer="selectedBeer"
+  :currency="currency"
+  @close="closeBuy"
+  @bought="confirmBuy" />
+
   </div>
 </template>

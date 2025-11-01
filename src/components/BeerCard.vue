@@ -18,6 +18,12 @@ function pctOfRange(b) {
   if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0
   return Math.max(0, Math.min(100, ((cur - min) / (max - min)) * 100))
 }
+
+const onBuy = (e) => {
+  e.stopPropagation()
+  emit('buy', props.beer)
+}
+
 </script>
 
 <template>
@@ -58,7 +64,7 @@ function pctOfRange(b) {
       <BaseButton
         class="w-full"
         variant="button1"
-        @click="$emit('buy', beer)">
+        @click="onBuy">
         Buy Now
       </BaseButton>
     </div>
