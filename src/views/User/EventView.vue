@@ -5,6 +5,7 @@ import { getEvent } from '@/services/events.service.js'
 import { listEventBeers } from '@/services/beers.service.js'
 import { listTransactions, createTransaction } from '@/services/transactions.service.js'
 
+
 import BiggestMovers from '@/components/BiggestMovers.vue'
 import PriceGrid from '@/components/PriceGrid.vue'
 import TransactionHistory from '@/components/TransactionHistory.vue'

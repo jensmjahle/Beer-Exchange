@@ -5,7 +5,8 @@ import BeerCard from './BeerCard.vue'
 import BuyBeerModal from './modals/BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
 import LiveIndicator from "@/components/LiveIndicator.vue";
-import { fetchBeersForEvent } from '@/services/beers.service'
+import { connectLive, on, off } from '@/services/live.service.js'
+import {fetchBeersForEvent} from "@/services/beers.service.js";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -46,28 +47,24 @@ async function confirmBuy(payload) {
   }
 }
 
-onMounted(() => {
-  // Åpne SSE-tilkobling
-  const src = new EventSource(`${import.meta.env.VITE_API_BASE}/api/live/events/${props.eventId}/stream`)
-  liveSource.value = src
 
-  src.addEventListener('priceUpdate', async () => {
+
+
+onMounted(() => {
+  connectLive(props.eventId)
+
+  const handlePrices = async () => {
     try {
       const updated = await fetchBeersForEvent(props.eventId)
+      // Bruk props.beers (reactivt array)
       props.beers.splice(0, props.beers.length, ...updated)
-    } catch (e) {
-      console.warn('Klarte ikke oppdatere priser:', e)
+    } catch (err) {
+      console.error('[PriceGrid] refresh failed', err)
     }
-  })
-
-  src.onerror = (err) => {
-    console.warn('SSE-kobling mistet:', err)
-    src.close()
   }
-})
 
-onUnmounted(() => {
-  if (liveSource.value) liveSource.value.close()
+  on('priceUpdate', handlePrices)
+  onUnmounted(() => off('priceUpdate', handlePrices))
 })
 
 </script>

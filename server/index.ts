@@ -36,6 +36,7 @@ const { customers }     = await import('./api/customers.js')
 const { transactions }  = await import('./api/transactions.js')
 const { analytics }     = await import('./api/analytics.js') // ← add this
 const { admin }         = await import('./api/admin.js')
+const { live }          = await import('./api/live.js')
 
 app.use('/api/events', events)
 app.use('/api/beers', beers)
@@ -43,6 +44,7 @@ app.use('/api/customers', customers)
 app.use('/api/transactions', transactions)
 app.use('/api/analytics', analytics)
 app.use('/api/admin', admin)
+app.use('/api/live', live)
 
 const PORT = Number(process.env.PORT || 3000)
 server.listen(PORT, '127.0.0.1', () => {

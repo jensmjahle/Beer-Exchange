@@ -23,3 +23,9 @@ export async function attachBeerToEvent(eventId, beer) {
   if (!res.ok) throw new Error('Failed to attach beer')
   return res.json()
 }
+
+export async function fetchBeersForEvent(eventId) {
+  const res = await authedFetch(`${BASE}/event/${eventId}`)
+  if (!res.ok) throw new Error('Kunne ikke hente øl for event')
+  return res.json()
+}

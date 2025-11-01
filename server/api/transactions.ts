@@ -158,5 +158,19 @@ transactions.post('/', async (req, res) => {
     console.error('[pricing] recalculation failed:', e)
   }
 
+  try {
+  await recalcPricesForEvent(String(event_id), String(event_beer_id), Math.max(1, Number(qty || 1)))
+
+  // Notify all clients connected to the event stream
+  const clients = globalThis.eventStreams?.get(event_id)
+  if (clients) {
+    for (const res of clients) {
+      res.write(`event: priceUpdate\ndata: {"eventId":"${event_id}"}\n\n`)
+    }
+  }
+} catch (e) {
+  console.error('[pricing] recalculation failed:', e)
+}
+
   return res.json(tx)
 })
