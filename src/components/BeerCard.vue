@@ -1,4 +1,6 @@
 <script setup>
+import BaseButton from "@/components/base/BaseButton.vue";
+
 const props = defineProps({
   beer: { type: Object, required: true },
   currency: { type: String, default: 'NOK' }
@@ -27,7 +29,7 @@ function pctOfRange(b) {
       <div class="min-w-0">
         <h3 class="font-semibold truncate">{{ beer.name ?? beer.beer_id }}</h3>
         <div class="text-xs opacity-70">
-          {{ fmt(beer.abv) }}% · {{ Math.round(beer.volume_ml) }}ml · {{ beer.style }}
+          {{ fmt(beer.abv) }}% · {{ beer.style }}
         </div>
       </div>
       <div class="text-right">
@@ -53,16 +55,12 @@ function pctOfRange(b) {
     </div>
 
     <div class="mt-2">
-      <button
-        class="w-full rounded-lg px-3 py-2 font-semibold
-               border border-[var(--color-button1-border)]
-               bg-[var(--color-button1)]
-               text-[var(--color-button1-meta)]
-               hover:bg-[var(--color-button1-hover)]"
-        @click.stop="$emit('buy', beer)"
-      >
-        Buy
-      </button>
+      <BaseButton
+        class="w-full"
+        variant="button1"
+        @click="$emit('buy', beer)">
+        Buy Now
+      </BaseButton>
     </div>
   </article>
 </template>
