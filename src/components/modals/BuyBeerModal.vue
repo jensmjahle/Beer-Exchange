@@ -90,7 +90,7 @@ async function buy() {
 
 <template>
   <div class="modal" v-if="visible">
-    <div class="modal-content">
+    <div class="modal-content bg-bg2 text-text2">
       <h2 class="font-semibold text-lg mb-3">Kjøp {{ beer?.name }}</h2>
 
       <BaseDropdown
@@ -135,6 +135,6 @@ async function buy() {
 
 <style scoped>
 .modal { @apply fixed inset-0 bg-black/50 flex items-center justify-center; }
-.modal-content { @apply bg-white p-6 rounded-2xl shadow-xl w-80; }
+.modal-content { @apply p-6 rounded-2xl shadow-xl w-80; }
 .price { @apply font-semibold; }
 </style>
