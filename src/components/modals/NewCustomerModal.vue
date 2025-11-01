@@ -59,6 +59,11 @@ async function onSubmit() {
   if (!name.value.trim()) return alert('Name is required')
   if (!weight.value) return alert('Weight is required')
   if (!gender.value) return alert('Gender is required')
+  if (!name.value.trim()) {
+  alert('Please enter a valid name')
+  return
+}
+
 
   try {
     loading.value = true
@@ -107,13 +112,14 @@ function reset() {
 
       <div class="space-y-4">
         <!-- Name -->
-        <BaseInput
-          v-model="name"
-          label="Name"
-          type="text"
-          required
-          placeholder="Full name"
-        />
+       <BaseInput
+  v-model="name"
+  label="Full name"
+  type="text"
+  required
+  placeholder="John Doe"
+/>
+
 
         <!-- Phone -->
         <BaseInput

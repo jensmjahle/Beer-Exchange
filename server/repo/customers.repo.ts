@@ -2,6 +2,9 @@
 import crypto from 'node:crypto'
 import db, { Customer } from '../db/index.js'
 
+/**
+ * Finn alle kunder for et event
+ */
 export async function listCustomers(eventId: string): Promise<Customer[]> {
   if (db.kind === 'memory') {
     return db.mem.customers
@@ -29,6 +32,21 @@ export async function listCustomers(eventId: string): Promise<Customer[]> {
   return rows
 }
 
+/**
+ * Beregn kurtasje-prosent basert på jobbstatus
+ */
+export function getKurtasjePct(work_relationship?: string | null): number {
+  switch ((work_relationship ?? '').toLowerCase()) {
+    case 'student': return 0.02
+    case 'staff':   return 0.03
+    case 'vip':     return 0.01
+    default:        return 0.05
+  }
+}
+
+/**
+ * Opprett ny kunde
+ */
 type CreateCustomerInput = {
   name: string
   phone?: string | null
@@ -43,10 +61,13 @@ type CreateCustomerInput = {
 }
 
 export async function createCustomer(eventId: string, input: CreateCustomerInput): Promise<Customer> {
+  if (!input.name || !input.name.trim()) {
+    throw new Error('Customer name required')
+  }
   const c: Customer = {
     id: crypto.randomUUID(),
     event_id: eventId,
-    name: input.name,
+    name: input.name.trim(),
     phone: input.phone ?? null,
     shoe_size: input.shoe_size ?? null,
     weight: input.weight ?? null,
@@ -89,6 +110,9 @@ export async function createCustomer(eventId: string, input: CreateCustomerInput
   return c
 }
 
+/**
+ * Oppdater kunde
+ */
 type UpdateCustomerInput = Partial<CreateCustomerInput> & { name?: string }
 
 export async function updateCustomer(
@@ -176,7 +200,9 @@ export async function updateCustomer(
   return { ...c, ...next }
 }
 
-/** Customers + aggregate stats (beers count, tab total) for an event */
+/**
+ * Hent kunder + summeringer (beers/tab)
+ */
 export async function listCustomersWithStats(eventId: string) {
   if (db.kind === 'memory') {
     const base = await listCustomers(eventId)
@@ -226,7 +252,9 @@ export async function listCustomersWithStats(eventId: string) {
   return rows
 }
 
-/** Full details for a customer in an event: profile + summary + transactions (with beer names) */
+/**
+ * Full detalj for kunde
+ */
 export async function getCustomerDetails(customerId: string, eventId: string) {
   if (db.kind === 'memory') {
     const customer = db.mem.customers.find(c => c.id === customerId && c.event_id === eventId) || null
@@ -278,7 +306,6 @@ export async function getCustomerDetails(customerId: string, eventId: string) {
     return { customer, summary, transactions }
   }
 
-  // pg
   const { rows: cRows } = await db.pool.query(`
     SELECT id,event_id,name,phone,
            shoe_size,weight,profile_image_url,work_relationship,

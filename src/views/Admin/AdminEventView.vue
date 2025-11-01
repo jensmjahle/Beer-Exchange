@@ -2,7 +2,7 @@
 import { ref, computed, onMounted } from 'vue'
 import { useRouter, useRoute } from 'vue-router'
 import { getEvent } from '@/services/events.service.js'
-import { listEventCustomers, createCustomer } from '@/services/customers.service.js'
+import { listCustomers, createCustomer } from '@/services/customers.service.js'
 import { listEventBeers } from '@/services/beers.service.js'
 import AddNewBeerModal from '@/components/modals/AddNewBeerModal.vue'
 import {useI18n} from "vue-i18n";
@@ -38,7 +38,7 @@ async function loadAll() {
     const [e, b, c] = await Promise.all([
       getEvent(eventId),
       listEventBeers(eventId),
-      listEventCustomers(eventId),
+      listCustomers(eventId),
     ])
     ev.value = e
     beers.value = b
@@ -197,12 +197,13 @@ onMounted(loadAll)
       </div>
     </div>
 
-    <!-- add beer modal (replaced with component) -->
     <AddNewBeerModal
-      :open="showAddBeer"
-      :event-id="eventId"
-      @close="showAddBeer = false"
-      @created="onBeerCreated"
-    />
+     v-if="showAddBeer"
+     :visible="showAddBeer"
+    :event-id="eventId"
+     @close="showAddBeer = false"
+     @saved="refreshBeers"
+/>
+
   </section>
 </template>

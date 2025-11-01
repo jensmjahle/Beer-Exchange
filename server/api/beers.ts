@@ -1,53 +1,55 @@
-import { Router } from 'express'
-import { attachBeerToEvent, listEventBeers } from '../repo/beers.repo.js'
+import { Router } from "express"
+import { attachBeerToEvent, listEventBeers } from "../repo/beers.repo.js"
 
 export const beers = Router()
 
-// list event beers
-beers.get('/event/:eventId', async (req, res) => {
+// Hent alle event-øl
+beers.get("/event/:eventId", async (req, res) => {
   try {
     const rows = await listEventBeers(req.params.eventId)
     res.json(rows)
   } catch (e) {
-    console.error('[beers:list] failed', e)
-    res.status(500).json({ error: 'Failed to list beers' })
+    console.error("[beers:list] failed", e)
+    res.status(500).json({ error: "Failed to list beers" })
   }
 })
 
-// attach new beer to event
-beers.post('/event/:eventId', async (req, res) => {
+// Legg til ny øl direkte som event_beer
+beers.post("/event/:eventId", async (req, res) => {
   try {
+    const { eventId } = req.params
     const {
-      beer_id,
-      name = null,
-      volume_ml = null,
-      abv = null,
-      description = null,
-      brewery = null,
-      style = null,
-      ibu = null,
-      image_url = null,
+      name,
+      brewery,
+      style,
+      abv,
+      description,
+      ibu,
+      image_url,
       base_price,
       min_price,
       max_price,
       current_price,
       position = 0,
       active = 1,
+      volumes = [],
     } = req.body || {}
 
-    if (!beer_id) return res.status(400).json({ error: 'beer_id required' })
-    if (base_price == null || min_price == null || max_price == null || current_price == null) {
-      return res.status(400).json({ error: 'pricing fields required' })
-    }
+    if (!name) return res.status(400).json({ error: "name required" })
+    if (
+      base_price == null ||
+      min_price == null ||
+      max_price == null ||
+      current_price == null
+    )
+      return res.status(400).json({ error: "pricing fields required" })
 
-    const row = await attachBeerToEvent(req.params.eventId, {
-      beer_id,
+    const beer = await attachBeerToEvent(eventId, {
       name,
-      volume_ml,
-      abv,
-      description,
       brewery,
       style,
+      abv,
+      description,
       ibu,
       image_url,
       base_price,
@@ -56,11 +58,12 @@ beers.post('/event/:eventId', async (req, res) => {
       current_price,
       position,
       active,
+      volumes,
     })
 
-    res.json(row)
+    res.json(beer)
   } catch (e) {
-    console.error('[beers:attach] failed', e)
-    res.status(500).json({ error: 'Failed to attach beer to event' })
+    console.error("[beers:attach] failed", e)
+    res.status(500).json({ error: "Failed to attach beer" })
   }
 })

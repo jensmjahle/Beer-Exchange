@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { listEventCustomersWithStats } from '@/services/customers.service.js'
+import { listCustomersWithStats, updateCustomer } from '@/services/customers.service'
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
 import BaseButton from "@/components/base/BaseButton.vue";
 
@@ -23,7 +23,7 @@ function money(n) {
 
 async function load() {
   loading.value = true; error.value = null
-  try { customers.value = await listEventCustomersWithStats(props.eventId) }
+  try { customers.value = await listCustomersWithStats(props.eventId) }
   catch (e) { error.value = e?.message || 'Failed to load' }
   finally { loading.value = false }
 }
@@ -73,12 +73,11 @@ onMounted(load)
 
           <!-- name + orientation -->
           <div class="min-w-0">
-            <div class="font-semibold truncate">{{ c.name }}</div>
+            <div class="font-semibold truncate">{{ c.name || 'Unknown customer' }}</div>
             <div class="text-xs opacity-70 truncate">{{ c.sexual_orientation || '—' }}</div>
           </div>
         </div>
 
-        <!-- stats (unchanged) -->
         <div class="text-right shrink-0">
           <div class="font-extrabold tabular-nums">{{ money(c.tab) }} {{ currency }}</div>
           <div class="text-xs opacity-70">{{ c.beers }} beers</div>

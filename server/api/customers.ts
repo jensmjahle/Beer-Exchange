@@ -2,42 +2,72 @@ import { Router } from 'express'
 import multer from 'multer'
 import path from 'node:path'
 import fs from 'node:fs'
-import crypto from 'node:crypto'
-
 import {
-  listCustomers,
   createCustomer,
+  listCustomers,
   listCustomersWithStats,
   getCustomerDetails,
-  updateCustomer
+  updateCustomer,
 } from '../repo/customers.repo.js'
 
 export const customers = Router()
 
-// uploads dir
+// Ensure uploads dir exists
 const uploadDir = path.join(process.cwd(), 'uploads')
 if (!fs.existsSync(uploadDir)) fs.mkdirSync(uploadDir, { recursive: true })
+
 const storage = multer.diskStorage({
   destination: (_req, _file, cb) => cb(null, uploadDir),
-  filename: (_req, file, cb) => cb(null, `${crypto.randomUUID()}${path.extname(file.originalname || '')}`),
+  filename: (_req, file, cb) => {
+    const ext = path.extname(file.originalname || '').toLowerCase()
+    cb(null, `${Date.now()}-${Math.random().toString(36).slice(2)}${ext}`)
+  },
 })
 const upload = multer({ storage })
 
-// list
+// 🔹 GET all customers for an event
 customers.get('/event/:eventId', async (req, res) => {
-  res.json(await listCustomers(req.params.eventId))
+  try {
+    const rows = await listCustomers(req.params.eventId)
+    res.json(rows)
+  } catch (e) {
+    console.error('[customers:list] failed', e)
+    res.status(500).json({ error: 'Failed to list customers' })
+  }
 })
 
-// create (JSON or multipart)
+// 🔹 GET with stats (optional)
+customers.get('/event/:eventId/stats', async (req, res) => {
+  try {
+    const rows = await listCustomersWithStats(req.params.eventId)
+    res.json(rows)
+  } catch (e) {
+    console.error('[customers:stats] failed', e)
+    res.status(500).json({ error: 'Failed to list customers with stats' })
+  }
+})
+
+// 🔹 GET customer details
+customers.get('/:customerId/event/:eventId', async (req, res) => {
+  try {
+    const details = await getCustomerDetails(req.params.customerId, req.params.eventId)
+    res.json(details)
+  } catch (e) {
+    console.error('[customers:details] failed', e)
+    res.status(500).json({ error: 'Failed to load customer details' })
+  }
+})
+
+// 🔹 POST create (JSON or multipart)
 customers.post('/event/:eventId', upload.single('image'), async (req, res) => {
   try {
-    const name = String(req.body?.name || '')
-    if (!name.trim()) return res.status(400).json({ error: 'name required' })
+    const name = (req.body?.name || '').trim()
+    if (!name) return res.status(400).json({ error: 'Name is required' })
 
     const file = (req as any).file as Express.Multer.File | undefined
-    const profile_image_url = file ? `/uploads/${path.basename(file.path)}` : (req.body?.profile_image_url ?? null)
+    const profile_image_url = file ? `/uploads/${path.basename(file.path)}` : null
 
-    const input = {
+    const c = await createCustomer(req.params.eventId, {
       name,
       phone: req.body?.phone ?? null,
       shoe_size: req.body?.shoe_size ?? null,
@@ -48,9 +78,8 @@ customers.post('/event/:eventId', upload.single('image'), async (req, res) => {
       sexual_orientation: req.body?.sexual_orientation ?? null,
       ethnicity: req.body?.ethnicity ?? null,
       experience_level: req.body?.experience_level ?? null,
-    }
+    })
 
-    const c = await createCustomer(req.params.eventId, input)
     res.json(c)
   } catch (e) {
     console.error('[customers:create] failed', e)
@@ -58,18 +87,16 @@ customers.post('/event/:eventId', upload.single('image'), async (req, res) => {
   }
 })
 
-// update (JSON or multipart)
+// 🔹 PUT update (JSON or multipart)
 customers.put('/:customerId', upload.single('image'), async (req, res) => {
   try {
     const eventId = String(req.body?.eventId || req.query?.eventId || '')
     if (!eventId) return res.status(400).json({ error: 'eventId required' })
 
     const file = (req as any).file as Express.Multer.File | undefined
-    const profile_image_url = file
-      ? `/uploads/${path.basename(file.path)}`
-      : (req.body?.profile_image_url) // undefined if omitted
+    const profile_image_url = file ? `/uploads/${path.basename(file.path)}` : req.body?.profile_image_url
 
-    const input = {
+    const updated = await updateCustomer(req.params.customerId, eventId, {
       name: req.body?.name,
       phone: req.body?.phone,
       shoe_size: req.body?.shoe_size,
@@ -80,38 +107,12 @@ customers.put('/:customerId', upload.single('image'), async (req, res) => {
       sexual_orientation: req.body?.sexual_orientation,
       ethnicity: req.body?.ethnicity,
       experience_level: req.body?.experience_level,
-    }
+    })
 
-    const c = await updateCustomer(req.params.customerId, eventId, input)
-    if (!c) return res.status(404).json({ error: 'Customer not found' })
-    res.json(c)
+    if (!updated) return res.status(404).json({ error: 'Customer not found' })
+    res.json(updated)
   } catch (e) {
     console.error('[customers:update] failed', e)
     res.status(500).json({ error: 'Failed to update customer' })
-  }
-})
-
-// with stats
-customers.get('/event/:eventId/with-stats', async (req, res) => {
-  try {
-    const rows = await listCustomersWithStats(req.params.eventId)
-    res.json(rows)
-  } catch (e) {
-    console.error('[customers:with-stats] failed', e)
-    res.status(500).json({ error: 'Failed to list customers with stats' })
-  }
-})
-
-// details
-customers.get('/:customerId/details', async (req, res) => {
-  const eventId = String(req.query.eventId || '')
-  if (!eventId) return res.status(400).json({ error: 'eventId required' })
-  try {
-    const data = await getCustomerDetails(req.params.customerId, eventId)
-    if (!data.customer) return res.status(404).json({ error: 'Customer not found' })
-    res.json(data)
-  } catch (e) {
-    console.error('[customers:details] failed', e)
-    res.status(500).json({ error: 'Failed to load customer details' })
   }
 })
