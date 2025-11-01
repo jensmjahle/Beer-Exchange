@@ -1,10 +1,11 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import BeerCard from './BeerCard.vue'
 import BuyBeerModal from './modals/BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
 import LiveIndicator from "@/components/LiveIndicator.vue";
+import { fetchBeersForEvent } from '@/services/beers.service'
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -16,6 +17,7 @@ const router = useRouter()
 
 const buying = ref(false)
 const selectedBeer = ref(null)
+const liveSource = ref(null)
 
 function openBuy(beer) {
   selectedBeer.value = beer
@@ -43,6 +45,31 @@ async function confirmBuy(payload) {
     alert(e?.message || 'Purchase failed')
   }
 }
+
+onMounted(() => {
+  // Åpne SSE-tilkobling
+  const src = new EventSource(`${import.meta.env.VITE_API_BASE}/api/live/events/${props.eventId}/stream`)
+  liveSource.value = src
+
+  src.addEventListener('priceUpdate', async () => {
+    try {
+      const updated = await fetchBeersForEvent(props.eventId)
+      props.beers.splice(0, props.beers.length, ...updated)
+    } catch (e) {
+      console.warn('Klarte ikke oppdatere priser:', e)
+    }
+  })
+
+  src.onerror = (err) => {
+    console.warn('SSE-kobling mistet:', err)
+    src.close()
+  }
+})
+
+onUnmounted(() => {
+  if (liveSource.value) liveSource.value.close()
+})
+
 </script>
 
 <template>

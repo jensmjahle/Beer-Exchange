@@ -1,13 +1,13 @@
-<script setup>
-import { ref } from 'vue'
-import { createCustomer } from '@/services/customers.service.js'
+<script setup xmlns="http://www.w3.org/1999/html">
+import {ref} from 'vue'
+import {createCustomer} from '@/services/customers.service.js'
 import BaseInput from '@/components/base/BaseInput.vue'
 import BaseButton from '@/components/base/BaseButton.vue'
 import BaseDropdown from '@/components/base/BaseDropdown.vue'
 
 const props = defineProps({
-  open: { type: Boolean, default: false },
-  eventId: { type: String, required: true },
+  open: {type: Boolean, default: false},
+  eventId: {type: String, required: true},
 })
 
 const emit = defineEmits(['close', 'created'])
@@ -25,6 +25,19 @@ const profile_image = ref(null)
 const profile_preview = ref(null)
 
 const loading = ref(false)
+
+const genderOptions = [
+  {label: 'Male', value: 'male'},
+  {label: 'Female', value: 'female'},
+]
+
+// Bruk verdier backend faktisk gjenkjenner (kurtasje: student/staff/vip/other)
+const workRelOptions = [
+  {label: 'Fulltidsjobb', value: 'fulltidsjobb'},
+  {label: 'Deltidsjobb', value: 'deltidsjobb'},
+  {label: 'Student', value: 'student'},
+  {label: 'Arbeidsledig', value: 'arbeidsledig'}
+]
 
 const orientations = [
   'Hetero',
@@ -44,7 +57,7 @@ const orientations = [
 
 function randomOrientation() {
   sexual_orientation.value =
-    orientations[Math.floor(Math.random() * orientations.length)]
+      orientations[Math.floor(Math.random() * orientations.length)]
 }
 
 function onFileChange(e) {
@@ -56,27 +69,46 @@ function onFileChange(e) {
 }
 
 async function onSubmit() {
-  if (!name.value.trim()) return alert('Name is required')
-  if (!weight.value) return alert('Weight is required')
-  if (!gender.value) return alert('Gender is required')
   if (!name.value.trim()) {
-  alert('Please enter a valid name')
-  return
-}
-
+    return alert('Name is required')
+  }
+  if (!weight.value) {
+    return alert('Weight is required')
+  }
+  if (!gender.value) {
+    return alert('Gender is required')
+  }
+  if (!name.value.trim()) {
+    alert('Please enter a valid name')
+    return
+  }
 
   try {
     loading.value = true
     const form = new FormData()
     form.append('name', name.value.trim())
-    if (phone.value) form.append('phone', phone.value)
-    if (shoe_size.value) form.append('shoe_size', shoe_size.value)
-    if (weight.value) form.append('weight', weight.value)
-    if (work_relationship.value) form.append('work_relationship', work_relationship.value)
-    if (gender.value) form.append('gender', gender.value)
-    if (sexual_orientation.value) form.append('sexual_orientation', sexual_orientation.value)
+    if (phone.value) {
+      form.append('phone', phone.value)
+    }
+    if (shoe_size.value) {
+      form.append('shoe_size', shoe_size.value)
+    }
+    if (weight.value) {
+      form.append('weight', weight.value)
+    }
+    if (work_relationship.value) {
+      form.append('work_relationship', work_relationship.value)
+    }
+    if (gender.value) {
+      form.append('gender', gender.value)
+    }
+    if (sexual_orientation.value) {
+      form.append('sexual_orientation', sexual_orientation.value)
+    }
     form.append('ethnicity', ethnicity.value.toString())
-    if (profile_image.value) form.append('image', profile_image.value)
+    if (profile_image.value) {
+      form.append('image', profile_image.value)
+    }
 
     const c = await createCustomer(props.eventId, form, true)
     emit('created', c)
@@ -108,7 +140,7 @@ function reset() {
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
     <div class="relative z-10 w-[min(460px,92vw)] rounded-2xl border bg-bg4 p-5 max-h-[90vh] overflow-y-auto">
-      <h3 class="text-lg font-extrabold mb-4">New Customer</h3>
+      <h3 class="text-lg font-extrabold mb-4">Ny kunde</h3>
 
       <div class="space-y-4">
         <!-- Name -->
@@ -134,6 +166,7 @@ function reset() {
           <BaseInput
             v-model="shoe_size"
             label="Shoe size (EU)"
+            help="You can write e.g. 43 or 45"
             type="number"
             placeholder="e.g. 43"
           />
@@ -148,27 +181,27 @@ function reset() {
           />
         </div>
 
-        <!-- Work relationship -->
-        <div>
-          <label class="mb-1 block text-sm font-medium">Work relationship</label>
-          <BaseDropdown v-model="work_relationship" class="w-full">
-            <option value="">— Select —</option>
-            <option value="fulltidsjobb">Fulltidsjobb</option>
-            <option value="deltidsjobb">Deltidsjobb</option>
-            <option value="student">Student</option>
-            <option value="arbeidsledig">Arbeidsledig</option>
-          </BaseDropdown>
-        </div>
 
-        <!-- Gender (required) -->
-        <div>
-          <label class="mb-1 block text-sm font-medium">Gender</label>
-          <BaseDropdown v-model="gender" class="w-full">
-            <option disabled value="">— Select —</option>
-            <option value="male">Male</option>
-            <option value="female">Female</option>
-          </BaseDropdown>
-        </div>
+          <!-- Work relationship -->
+<BaseDropdown
+  v-model="work_relationship"
+  :options="workRelOptions"
+  label="Work relationship"
+  placeholder="— Select —"
+  class="w-full"
+/>
+
+<!-- Gender (required) -->
+<BaseDropdown
+  v-model="gender"
+  :options="genderOptions"
+  label="Gender"
+  placeholder="— Select —"
+  class="w-full"
+/>
+
+
+
 
         <!-- Sexual orientation + random -->
         <div>
@@ -217,11 +250,11 @@ function reset() {
       </div>
 
       <div class="flex justify-end gap-2 mt-5">
-        <BaseButton variant="button4" @click="$emit('close')">Cancel</BaseButton>
+        <BaseButton variant="button4" @click="$emit('close')">Avbryt</BaseButton>
         <BaseButton variant="button1" :disabled="loading" @click="onSubmit">
-          {{ loading ? 'Adding...' : 'Add' }}
+          {{ loading ? 'Adding...' : 'Legg til' }}
         </BaseButton>
       </div>
     </div>
-  </div>
+</div>
 </template>
