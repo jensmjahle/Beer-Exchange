@@ -50,9 +50,13 @@ const onBuy = (e) => {
         <div class="h-full"
              :style="{ width: pctOfRange(beer) + '%' }"
              :class="[
-               pctOfRange(beer) < 33 ? 'bg-red-400' :
-               pctOfRange(beer) < 66 ? 'bg-amber-400' : 'bg-green-500'
-             ]"></div>
+  pctOfRange(beer) < 20 ? 'bg-red-500' :
+  pctOfRange(beer) < 40 ? 'bg-orange-400' :
+  pctOfRange(beer) < 60 ? 'bg-yellow-300' :
+  pctOfRange(beer) < 80 ? 'bg-lime-400' :
+  'bg-green-500'
+]"
+></div>
       </div>
       <div class="flex justify-between text-[10px] opacity-70 mt-1">
         <span>{{ fmt(beer.min_price) }}</span>
@@ -65,7 +69,7 @@ const onBuy = (e) => {
         class="w-full"
         variant="button1"
         @click="onBuy">
-        Buy Now
+        Kjøp Nå
       </BaseButton>
     </div>
   </article>
