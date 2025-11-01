@@ -1,12 +1,12 @@
 // server/api/transactions.ts
 import { Router } from 'express'
 import db from '../db/index.js'
-import { listTransactions, createTransaction } from '../repo/transactions.repo.js'
+import { listTransactions, createTransaction, computeHouseFactor } from '../repo/transactions.repo.js'
+import { getKurtasjePct } from '../repo/customers.repo.js'
 import { recalcPricesForEvent } from '../pricing.js'
 
 export const transactions = Router()
 
-// ⬇️ Return enriched rows: customer_name, beer_name, beer_id, ts
 transactions.get('/event/:eventId', async (req, res) => {
   const { eventId } = req.params
   const limit = Math.max(1, Math.min(500, Number(req.query.limit ?? 100)))
@@ -19,7 +19,7 @@ transactions.get('/event/:eventId', async (req, res) => {
         .slice(0, limit)
 
       const byCustomer = new Map(db.mem.customers.map(c => [c.id, c]))
-      const byBeer     = new Map(db.mem.eventBeers.map(b => [b.id, b]))
+      const byBeer = new Map(db.mem.eventBeers.map(b => [b.id, b]))
 
       const rows = raw.map(t => {
         const c = t.customer_id ? byCustomer.get(t.customer_id) : null
@@ -63,7 +63,6 @@ transactions.get('/event/:eventId', async (req, res) => {
       return res.json(rows)
     }
 
-    // pg
     const { rows } = await db.pool.query(`
       SELECT
         t.id,
@@ -90,14 +89,12 @@ transactions.get('/event/:eventId', async (req, res) => {
   }
 })
 
-// POST: compute authoritative unit_price and recalc prices (unchanged)
 transactions.post('/', async (req, res) => {
-  const { event_id, event_beer_id, customer_id = null, qty = 1 } = req.body || {}
+  const { event_id, event_beer_id, customer_id = null, qty = 1, volume_ml = null } = req.body || {}
   if (!event_id || !event_beer_id) {
     return res.status(400).json({ error: 'event_id and event_beer_id required' })
   }
 
-  // fetch beer for price
   let beer: any
   try {
     if (db.kind === 'memory') {
@@ -115,7 +112,38 @@ transactions.post('/', async (req, res) => {
   if (!beer) return res.status(404).json({ error: 'Beer not found for this event' })
   if (beer.active === 0) return res.status(400).json({ error: 'Beer is inactive' })
 
-  const unit_price = Number(beer.current_price ?? beer.base_price ?? 0)
+  const pricePerLiter = Number(beer.current_price ?? beer.base_price ?? 0)
+  const volLiters = (volume_ml ?? beer.volume_ml ?? 500) / 1000
+  let unit_price = pricePerLiter * volLiters
+
+  let kurtasjePct = 0.05
+  try {
+    if (customer_id) {
+      let workRel: string | null = null
+      if (db.kind === 'memory') {
+        workRel = db.mem.customers.find(c => c.id === customer_id)?.work_relationship ?? null
+      } else if (db.kind === 'sqlite') {
+        const row = db.sql.prepare(`SELECT work_relationship FROM customer WHERE id=?`).get(customer_id)
+        workRel = row?.work_relationship ?? null
+      } else {
+        const { rows } = await db.pool.query(`SELECT work_relationship FROM customer WHERE id=$1`, [customer_id])
+        workRel = rows[0]?.work_relationship ?? null
+      }
+      kurtasjePct = getKurtasjePct(workRel)
+    }
+  } catch (e) {
+    console.warn('[transactions:kurtasje] lookup failed', e)
+  }
+  unit_price *= (1 + kurtasjePct)
+
+  let houseFactor = 1.0
+  try {
+    houseFactor = await computeHouseFactor(event_id)
+  } catch (e) {
+    console.warn('[transactions:houseFactor] failed', e)
+  }
+  unit_price *= houseFactor
+
   const tx = await createTransaction({
     event_id: String(event_id),
     event_beer_id: String(event_beer_id),
@@ -125,11 +153,24 @@ transactions.post('/', async (req, res) => {
   })
 
   try {
-    const { recalcPricesForEvent } = await import('../pricing.js')
     await recalcPricesForEvent(String(event_id), String(event_beer_id), Math.max(1, Number(qty || 1)))
   } catch (e) {
     console.error('[pricing] recalculation failed:', e)
   }
 
-  res.json(tx)
+  try {
+  await recalcPricesForEvent(String(event_id), String(event_beer_id), Math.max(1, Number(qty || 1)))
+
+  // Notify all clients connected to the event stream
+  const clients = globalThis.eventStreams?.get(event_id)
+  if (clients) {
+    for (const res of clients) {
+      res.write(`event: priceUpdate\ndata: {"eventId":"${event_id}"}\n\n`)
+    }
+  }
+} catch (e) {
+  console.error('[pricing] recalculation failed:', e)
+}
+
+  return res.json(tx)
 })

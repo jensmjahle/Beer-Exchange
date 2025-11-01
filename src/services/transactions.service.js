@@ -1,26 +1,41 @@
+// src/services/transactions.service.js
 import { authedFetch } from './authService'
-const BASE = '/api'
 
-async function parse(res) {
-  if (!res.ok) {
-    let msg = `HTTP ${res.status}`
-    try { const j = await res.json(); if (j?.error) msg = j.error } catch {}
-    throw new Error(msg)
+const BASE = '/api/transactions'
+
+export async function listTransactions(eventId, limit = 100) {
+  const res = await authedFetch(`${BASE}/event/${eventId}?limit=${limit}`)
+  if (!res.ok) throw new Error('Failed to fetch transactions')
+  return res.json()
+}
+
+/**
+ * createTransaction
+ * @param {Object} opts
+ * @param {string} opts.event_id
+ * @param {string} opts.event_beer_id
+ * @param {string} [opts.customer_id]
+ * @param {number} [opts.qty]
+ * @param {number} [opts.volume_ml] – optional, e.g. 330 or 500
+ */
+export async function createTransaction(opts) {
+  const body = {
+    event_id: opts.event_id,
+    event_beer_id: opts.event_beer_id,
+    customer_id: opts.customer_id || null,
+    qty: opts.qty ?? 1,
+    volume_ml: opts.volume_ml || null,
   }
-  try { return await res.json() } catch { return null }
-}
 
-export async function listEventTransactions(eventId, { limit = 200 } = {}) {
-  const res = await fetch(`${BASE}/transactions/event/${encodeURIComponent(eventId)}?limit=${limit}`)
-  return parse(res)
-}
-
-// Server will compute unit_price from current beer price — we do NOT send it.
-export async function createTransaction({ event_id, event_beer_id, customer_id = null, qty = 1 }) {
-  const res = await authedFetch(`${BASE}/transactions`, {
+  const res = await authedFetch(BASE, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ event_id, event_beer_id, customer_id, qty }),
+    body: JSON.stringify(body),
   })
-  return parse(res)
+
+  if (!res.ok) {
+    const err = await res.text()
+    throw new Error(`Transaction failed: ${err}`)
+  }
+  return res.json()
 }

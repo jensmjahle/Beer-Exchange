@@ -44,7 +44,10 @@ export type EventBeer = {
   current_price: number
   position: number
   active: 0 | 1
+  volume_ml?: number | null
+  volumes?: { volume_ml: number; price_factor?: number }[] | null
 }
+
 
 export type Tx = {
   id: string

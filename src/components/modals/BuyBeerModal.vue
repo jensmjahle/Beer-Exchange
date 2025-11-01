@@ -1,144 +1,140 @@
 <script setup>
-import { ref, watch, onMounted, computed } from 'vue'
-import { listEventCustomers } from '@/services/customers.service.js'
-import NewCustomerModal from '@/components/modals/NewCustomerModal.vue'
-
-// base components
-import BaseInput from '@/components/base/BaseInput.vue'
-import BaseButton from '@/components/base/BaseButton.vue'
+import { ref, computed, watch, onMounted } from 'vue'
+import { createTransaction } from '@/services/transactions.service'
+import { listCustomers } from '@/services/customers.service.js'
 import BaseDropdown from '@/components/base/BaseDropdown.vue'
+import BaseButton from '@/components/base/BaseButton.vue'
 
 const props = defineProps({
-  open: { type: Boolean, default: false },
-  eventId: { type: String, required: true },
-  beer: { type: Object, required: true },
-  currency: { type: String, default: 'NOK' },
+  visible: Boolean,
+  beer: Object,
+  eventId: String,
 })
+const emit = defineEmits(['close', 'bought'])
 
-const emit = defineEmits(['close', 'confirm'])
-
-const customers = ref([])
-const error = ref(null)
-
-const selectedCustomerId = ref('')
 const qty = ref(1)
+const customers = ref([])          // [{ id,name, ... }]
+const volumes = ref([])            // [{ label, value }]
+const selectedCustomer = ref('')   // string id
+const selectedVolume = ref('')     // string (BaseDropdown sender string)
 
-const showAddCustomer = ref(false)
-
-const unitPrice = computed(() => Number(props.beer?.current_price || 0))
-const total = computed(() => (Math.max(1, Number(qty.value || 1)) * unitPrice.value))
+const loadingCustomers = ref(false)
 
 async function loadCustomers() {
-  error.value = null
   try {
-    customers.value = await listEventCustomers(props.eventId)
+    loadingCustomers.value = true
+    const rows = await listCustomers(props.eventId)
+    customers.value = Array.isArray(rows) ? rows : []
+    // IKKE autoselect:
+    selectedCustomer.value = ''
   } catch (e) {
-    error.value = e?.message || 'Failed to load customers'
+    console.error('Feil ved henting av kunder:', e)
+    alert('Kunne ikke hente kundeliste')
+  } finally {
+    loadingCustomers.value = false
   }
 }
 
-function onCustomerCreated(c) {
-  customers.value.unshift(c)
-  selectedCustomerId.value = c.id
+function rebuildVolumes() {
+  const list = Array.isArray(props.beer?.volumes) ? props.beer.volumes : []
+  volumes.value = list.map(v => ({ label: `${v.volume_ml} ml`, value: String(v.volume_ml) }))
+  // IKKE autoselect:
+  selectedVolume.value = ''
 }
 
-function onConfirm() {
-  if (!selectedCustomerId.value) return alert('Select a customer')
-  emit('confirm', {
-    event_beer_id: props.beer.id,
-    customer_id: selectedCustomerId.value,
-    qty: Math.max(1, Number(qty.value || 1)),
-  })
-}
-
-watch(() => props.open, (v) => {
-  if (v && props.beer) {
-    qty.value = 1
-    selectedCustomerId.value = ''
+watch(() => props.visible, (v) => {
+  if (v) {
+    rebuildVolumes()
     loadCustomers()
   }
 })
 
-onMounted(() => { if (props.open) loadCustomers() })
+onMounted(() => {
+  if (props.visible) {
+    rebuildVolumes()
+    loadCustomers()
+  }
+})
+
+const displayPrice = computed(() => {
+  if (!props.beer || !selectedVolume.value) return '0.0'
+  const liters = Number(selectedVolume.value) / 1000
+  return (Number(props.beer.current_price) * liters * Number(qty.value)).toFixed(1)
+})
+
+async function buy() {
+  if (!selectedCustomer.value) {
+    alert('Velg en kunde først.')
+    return
+  }
+  if (!selectedVolume.value) {
+    alert('Velg et volum først.')
+    return
+  }
+  try {
+    const res = await createTransaction({
+      event_id: props.eventId,
+      event_beer_id: props.beer.id,
+      customer_id: selectedCustomer.value,
+      qty: Number(qty.value),
+      volume_ml: Number(selectedVolume.value),
+    })
+    emit('bought', res)
+    emit('close')
+  } catch (e) {
+    console.error('Feil ved kjøp:', e)
+    alert('Kunne ikke fullføre kjøpet.')
+  }
+}
 </script>
 
 <template>
-  <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
-    <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
+  <div class="modal" v-if="visible">
+    <div class="modal-content">
+      <h2 class="font-semibold text-lg mb-3">Kjøp {{ beer?.name }}</h2>
 
-    <div class="relative z-10 w-[min(560px,92vw)] rounded-2xl border bg-[var(--color-button4)] p-5">
-      <!-- Header -->
-      <header class="mb-4">
-        <h3 class="text-xl font-extrabold">Buy {{ beer?.name ?? beer?.beer_id }}</h3>
-        <p class="text-sm opacity-70">
-          Unit price:
-          <strong>{{ unitPrice.toFixed(1) }} {{ currency }}</strong>
-        </p>
-      </header>
+      <BaseDropdown
+        v-if="volumes.length"
+        v-model="selectedVolume"
+        :options="volumes"
+        label="Velg volum"
+        description="Flaskestørrelse / serveringsvolum"
+        placeholder="-- velg volum --"
+        class="w-full mb-3"
+      />
 
-      <!-- Error -->
-      <div v-if="error" class="mb-3 rounded-lg border border-[var(--color-danger-border)] bg-red-50 px-3 py-2 text-sm text-[var(--color-danger)]">
-        {{ error }}
-      </div>
+      <BaseDropdown
+        v-model="selectedCustomer"
+        :options="customers.map(c => ({ label: c.name, value: c.id }))"
+        label="Velg kunde"
+        :description="loadingCustomers ? 'Laster kunder…' : 'Hvem skal kjøpet registreres på?'"
+        placeholder="-- velg kunde --"
+        class="w-full mb-3"
+      />
 
-      <div class="space-y-4">
-        <!-- Customer -->
-        <div>
-          <label class="mb-1 block text-sm font-medium">Customer</label>
-          <p class="mb-2 text-xs text-[var(--color-text2-faded)]">
-            Choose who is buying. Not on the list? Create a new customer.
-          </p>
-          <div class="flex gap-2">
-            <BaseDropdown v-model="selectedCustomerId" class="flex-1">
-              <option value="">— Select customer —</option>
-              <option v-for="c in customers" :key="c.id" :value="c.id">
-                {{ c.name }} <span v-if="c.phone">({{ c.phone }})</span>
-              </option>
-            </BaseDropdown>
-            <BaseButton variant="button4" type="button" @click="showAddCustomer = true">
-              New
-            </BaseButton>
-          </div>
-        </div>
+      <label for="qty" class="block text-sm font-medium text-text2 mb-1">Antall</label>
+      <input
+        id="qty"
+        type="number"
+        v-model.number="qty"
+        min="1"
+        class="w-full mb-3 border rounded px-2 py-1"
+      />
 
-        <!-- Quantity -->
-        <div>
-          <label class="mb-1 block text-sm font-medium">Quantity</label>
-          <p class="mb-2 text-xs text-[var(--color-text2-faded)]">
-            Number of units to purchase.
-          </p>
-          <div class="grid grid-cols-[1fr_auto] items-end gap-3">
-            <BaseInput
-              v-model.number="qty"
-              type="number"
-              min="1"
-              :label="null"
-              :help="null"
-            />
-            <div class="text-right">
-              <div class="mb-1 text-sm opacity-70">Total</div>
-              <div class="text-xl font-extrabold tabular-nums">
-                {{ total.toFixed(1) }} {{ currency }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <p class="price mb-4">
+        Pris: <strong>{{ displayPrice }} kr</strong>
+      </p>
 
-      <!-- Actions -->
-      <div class="mt-5 flex justify-end gap-2">
-        <BaseButton variant="button4" @click="$emit('close')">Cancel</BaseButton>
-        <BaseButton variant="button1" @click="onConfirm">Buy</BaseButton>
+      <div class="actions flex justify-end gap-2">
+        <BaseButton variant="button1" @click="buy">Kjøp</BaseButton>
+        <BaseButton variant="secondary" @click="$emit('close')">Avbryt</BaseButton>
       </div>
     </div>
-
-    <!-- New Customer Modal -->
-    <NewCustomerModal
-      :open="showAddCustomer"
-      :event-id="eventId"
-      @close="showAddCustomer = false"
-      @created="onCustomerCreated"
-    />
   </div>
 </template>
 
+<style scoped>
+.modal { @apply fixed inset-0 bg-black/50 flex items-center justify-center; }
+.modal-content { @apply bg-white p-6 rounded-2xl shadow-xl w-80; }
+.price { @apply font-semibold; }
+</style>

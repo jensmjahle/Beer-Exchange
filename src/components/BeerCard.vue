@@ -1,4 +1,6 @@
 <script setup>
+import BaseButton from "@/components/base/BaseButton.vue";
+
 const props = defineProps({
   beer: { type: Object, required: true },
   currency: { type: String, default: 'NOK' }
@@ -16,6 +18,12 @@ function pctOfRange(b) {
   if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0
   return Math.max(0, Math.min(100, ((cur - min) / (max - min)) * 100))
 }
+
+const onBuy = (e) => {
+  e.stopPropagation()
+  emit('buy', props.beer)
+}
+
 </script>
 
 <template>
@@ -27,7 +35,7 @@ function pctOfRange(b) {
       <div class="min-w-0">
         <h3 class="font-semibold truncate">{{ beer.name ?? beer.beer_id }}</h3>
         <div class="text-xs opacity-70">
-          {{ fmt(beer.abv) }}% · {{ Math.round(beer.volume_ml) }}ml · {{ beer.style }}
+          {{ fmt(beer.abv) }}% · {{ beer.style }}
         </div>
       </div>
       <div class="text-right">
@@ -42,9 +50,13 @@ function pctOfRange(b) {
         <div class="h-full"
              :style="{ width: pctOfRange(beer) + '%' }"
              :class="[
-               pctOfRange(beer) < 33 ? 'bg-red-400' :
-               pctOfRange(beer) < 66 ? 'bg-amber-400' : 'bg-green-500'
-             ]"></div>
+  pctOfRange(beer) < 20 ? 'bg-red-500' :
+  pctOfRange(beer) < 40 ? 'bg-orange-400' :
+  pctOfRange(beer) < 60 ? 'bg-yellow-300' :
+  pctOfRange(beer) < 80 ? 'bg-lime-400' :
+  'bg-green-500'
+]"
+></div>
       </div>
       <div class="flex justify-between text-[10px] opacity-70 mt-1">
         <span>{{ fmt(beer.min_price) }}</span>
@@ -53,16 +65,12 @@ function pctOfRange(b) {
     </div>
 
     <div class="mt-2">
-      <button
-        class="w-full rounded-lg px-3 py-2 font-semibold
-               border border-[var(--color-button1-border)]
-               bg-[var(--color-button1)]
-               text-[var(--color-button1-meta)]
-               hover:bg-[var(--color-button1-hover)]"
-        @click.stop="$emit('buy', beer)"
-      >
-        Buy
-      </button>
+      <BaseButton
+        class="w-full"
+        variant="button1"
+        @click="onBuy">
+        Kjøp Nå
+      </BaseButton>
     </div>
   </article>
 </template>

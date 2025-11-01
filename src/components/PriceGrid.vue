@@ -1,10 +1,12 @@
 <script setup>
-import { ref } from 'vue'
+import {onMounted, onUnmounted, ref} from 'vue'
 import { useRouter } from 'vue-router'
 import BeerCard from './BeerCard.vue'
 import BuyBeerModal from './modals/BuyBeerModal.vue'
 import { createTransaction } from '@/services/transactions.service.js'
 import LiveIndicator from "@/components/LiveIndicator.vue";
+import { connectLive, on, off } from '@/services/live.service.js'
+import {fetchBeersForEvent} from "@/services/beers.service.js";
 
 const props = defineProps({
   eventId: { type: String, required: true },
@@ -16,6 +18,7 @@ const router = useRouter()
 
 const buying = ref(false)
 const selectedBeer = ref(null)
+const liveSource = ref(null)
 
 function openBuy(beer) {
   selectedBeer.value = beer
@@ -43,6 +46,27 @@ async function confirmBuy(payload) {
     alert(e?.message || 'Purchase failed')
   }
 }
+
+
+
+
+onMounted(() => {
+  connectLive(props.eventId)
+
+  const handlePrices = async () => {
+    try {
+      const updated = await fetchBeersForEvent(props.eventId)
+      // Bruk props.beers (reactivt array)
+      props.beers.splice(0, props.beers.length, ...updated)
+    } catch (err) {
+      console.error('[PriceGrid] refresh failed', err)
+    }
+  }
+
+  on('priceUpdate', handlePrices)
+  onUnmounted(() => off('priceUpdate', handlePrices))
+})
+
 </script>
 
 <template>
@@ -63,13 +87,15 @@ async function confirmBuy(payload) {
       </div>
     </div>
 
+
     <BuyBeerModal
-      v-if="selectedBeer"
-      :open="buying"
-      :event-id="eventId"
-      :beer="selectedBeer"
-      :currency="currency"
-      @close="closeBuy"
-      @confirm="confirmBuy" />
+  v-if="selectedBeer"
+  :visible="buying"
+  :event-id="eventId"
+  :beer="selectedBeer"
+  :currency="currency"
+  @close="closeBuy"
+  @bought="confirmBuy" />
+
   </div>
 </template>

@@ -162,3 +162,23 @@ export async function recalcPricesForEvent(eventId: string, boughtBeerId: string
     }
   }
 }
+export async function computeHouseFactor(eventId: string) {
+  const { rows } = await db.pool.query(`
+    SELECT
+      SUM(qty * unit_price) AS total_income,
+      SUM(qty * eb.base_price) AS fair_income
+    FROM "transaction" t
+    JOIN event_beer eb ON eb.id = t.event_beer_id
+    WHERE t.event_id = $1
+  `, [eventId])
+
+  const total = Number(rows[0].total_income || 0)
+  const fair = Number(rows[0].fair_income || 0)
+  if (fair === 0) return 1.0
+
+  const diff = total - fair
+  const ratio = diff / fair
+  // litt damping, så det ikke svinger for voldsomt:
+  const factor = 1 + ratio * 0.1
+  return Math.max(0.8, Math.min(1.2, factor))
+}

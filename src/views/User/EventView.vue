@@ -3,7 +3,8 @@ import { ref, computed, onMounted } from 'vue'
 import { useRoute } from 'vue-router'
 import { getEvent } from '@/services/events.service.js'
 import { listEventBeers } from '@/services/beers.service.js'
-import { listEventTransactions } from '@/services/transactions.service.js'
+import { listTransactions, createTransaction } from '@/services/transactions.service.js'
+
 
 import BiggestMovers from '@/components/BiggestMovers.vue'
 import PriceGrid from '@/components/PriceGrid.vue'
@@ -28,7 +29,7 @@ async function loadAll() {
     const [e, b, t] = await Promise.all([
       getEvent(eventId),
       listEventBeers(eventId),
-      listEventTransactions(eventId, { limit: 200 }),
+      listTransactions(eventId, { limit: 200 }),
     ])
     ev.value = e
     beers.value = Array.isArray(b) ? b : []

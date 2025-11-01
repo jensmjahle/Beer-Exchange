@@ -1,6 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
+import { listCustomersWithStats, updateCustomer } from '@/services/customers.service'
 import { listEventCustomersWithStats } from '@/services/customers.service.js'
 import BACMini from '@/components/BACMini.vue'
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
@@ -24,7 +25,7 @@ function money(n) {
 
 async function load() {
   loading.value = true; error.value = null
-  try { customers.value = await listEventCustomersWithStats(props.eventId) }
+  try { customers.value = await listCustomersWithStats(props.eventId) }
   catch (e) { error.value = e?.message || 'Failed to load' }
   finally { loading.value = false }
 }
@@ -74,7 +75,7 @@ onMounted(load)
 
           <!-- name + orientation + BAC -->
           <div class="min-w-0">
-            <div class="font-semibold truncate">{{ c.name }}</div>
+            <div class="font-semibold truncate">{{ c.name || 'Unknown customer' }}</div>
             <div class="text-xs opacity-70 truncate">{{ c.sexual_orientation || '—' }}</div>
             <div class="flex items-center gap-2 text-xs">
               <span class="opacity-70">{{ c.gender }}</span>
@@ -83,7 +84,6 @@ onMounted(load)
           </div>
         </div>
 
-        <!-- stats (unchanged) -->
         <div class="text-right shrink-0">
           <div class="font-extrabold tabular-nums">{{ money(c.tab) }} {{ currency }}</div>
           <div class="text-xs opacity-70">{{ c.beers }} beers</div>
