@@ -3,8 +3,6 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import process from 'node:process'
-import Database from 'better-sqlite3'
-const sql = new Database(file)
 
 
 export type DBKind = 'memory' | 'sqlite' | 'pg'
