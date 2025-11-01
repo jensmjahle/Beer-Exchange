@@ -1,65 +1,9 @@
-<template>
-  <div class="modal" v-if="visible">
-    <div class="modal-content">
-      <h2>Kjøp {{ beer?.name }}</h2>
-
-      <div v-if="beer?.volumes?.length">
-        <label for="volume">Velg volum:</label>
-        <select id="volume" v-model="selectedVolume">
-          <option
-            v-for="v in beer.volumes"
-            :key="v.volume_ml"
-            :value="v.volume_ml"
-          >
-            {{ v.volume_ml }} ml
-          </option>
-        </select>
-      </div>
-
-      <div>
-        <label for="customer">Velg kunde:</label>
-        <select id="customer" v-model="selectedCustomer" class="w-full mb-2 border rounded px-2 py-1">
-          <option disabled value="">-- velg kunde --</option>
-          <option v-for="c in customers" :key="c.id" :value="c.id">
-            {{ c.name }}
-          </option>
-        </select>
-      </div>
-
-
-      <div v-if="beer?.volumes?.length">
-        <label for="volume">Velg volum:</label>
-        <select id="volume" v-model="selectedVolume">
-          <option
-            v-for="v in costumers"
-            :key="v.volume_ml"
-            :value="v.volume_ml"
-          >
-            {{ v.name}} ml
-          </option>
-        </select>
-      </div>
-
-      <label for="qty">Antall</label>
-      <input id="qty" type="number" v-model.number="qty" min="1" />
-
-      <p class="price">
-        Pris:
-        <strong>{{ displayPrice }} kr</strong>
-      </p>
-
-      <div class="actions">
-        <button @click="buy">Kjøp</button>
-        <button @click="$emit('close')">Avbryt</button>
-      </div>
-    </div>
-  </div>
-</template>
-
 <script setup>
-import {ref, computed, onMounted, watch} from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { createTransaction } from '@/services/transactions.service'
-import {listCustomers} from "@/services/customers.service.js";
+import { listCustomers } from '@/services/customers.service.js'
+import BaseDropdown from '@/components/base/BaseDropdown.vue'
+import BaseButton from '@/components/base/BaseButton.vue'
 
 const props = defineProps({
   visible: Boolean,
@@ -69,16 +13,19 @@ const props = defineProps({
 const emit = defineEmits(['close', 'bought'])
 
 const qty = ref(1)
-const selectedVolume = ref(props.beer?.volumes?.[0]?.volume_ml || 500)
-const customers = ref([])
+const customers = ref([])          // [{ id,name, ... }]
+const volumes = ref([])            // [{ label, value }]
+const selectedCustomer = ref('')   // string id
+const selectedVolume = ref('')     // string (BaseDropdown sender string)
+
 const loadingCustomers = ref(false)
-const selectedCustomer = ref('')
 
 async function loadCustomers() {
   try {
     loadingCustomers.value = true
     const rows = await listCustomers(props.eventId)
     customers.value = Array.isArray(rows) ? rows : []
+    // IKKE autoselect:
     selectedCustomer.value = ''
   } catch (e) {
     console.error('Feil ved henting av kunder:', e)
@@ -88,13 +35,31 @@ async function loadCustomers() {
   }
 }
 
-watch(() => props.visible, (v) => { if (v) loadCustomers() })
-onMounted(() => { if (props.visible) loadCustomers() })
+function rebuildVolumes() {
+  const list = Array.isArray(props.beer?.volumes) ? props.beer.volumes : []
+  volumes.value = list.map(v => ({ label: `${v.volume_ml} ml`, value: String(v.volume_ml) }))
+  // IKKE autoselect:
+  selectedVolume.value = ''
+}
 
+watch(() => props.visible, (v) => {
+  if (v) {
+    rebuildVolumes()
+    loadCustomers()
+  }
+})
+
+onMounted(() => {
+  if (props.visible) {
+    rebuildVolumes()
+    loadCustomers()
+  }
+})
 
 const displayPrice = computed(() => {
-  const liters = selectedVolume.value / 1000
-  return (props.beer.current_price * liters * qty.value).toFixed(1)
+  if (!props.beer || !selectedVolume.value) return '0.0'
+  const liters = Number(selectedVolume.value) / 1000
+  return (Number(props.beer.current_price) * liters * Number(qty.value)).toFixed(1)
 })
 
 async function buy() {
@@ -102,14 +67,17 @@ async function buy() {
     alert('Velg en kunde først.')
     return
   }
-
+  if (!selectedVolume.value) {
+    alert('Velg et volum først.')
+    return
+  }
   try {
     const res = await createTransaction({
       event_id: props.eventId,
       event_beer_id: props.beer.id,
       customer_id: selectedCustomer.value,
-      qty: qty.value,
-      volume_ml: selectedVolume.value,
+      qty: Number(qty.value),
+      volume_ml: Number(selectedVolume.value),
     })
     emit('bought', res)
     emit('close')
@@ -120,10 +88,53 @@ async function buy() {
 }
 </script>
 
+<template>
+  <div class="modal" v-if="visible">
+    <div class="modal-content">
+      <h2 class="font-semibold text-lg mb-3">Kjøp {{ beer?.name }}</h2>
+
+      <BaseDropdown
+        v-if="volumes.length"
+        v-model="selectedVolume"
+        :options="volumes"
+        label="Velg volum"
+        description="Flaskestørrelse / serveringsvolum"
+        placeholder="-- velg volum --"
+        class="w-full mb-3"
+      />
+
+      <BaseDropdown
+        v-model="selectedCustomer"
+        :options="customers.map(c => ({ label: c.name, value: c.id }))"
+        label="Velg kunde"
+        :description="loadingCustomers ? 'Laster kunder…' : 'Hvem skal kjøpet registreres på?'"
+        placeholder="-- velg kunde --"
+        class="w-full mb-3"
+      />
+
+      <label for="qty" class="block text-sm font-medium text-text2 mb-1">Antall</label>
+      <input
+        id="qty"
+        type="number"
+        v-model.number="qty"
+        min="1"
+        class="w-full mb-3 border rounded px-2 py-1"
+      />
+
+      <p class="price mb-4">
+        Pris: <strong>{{ displayPrice }} kr</strong>
+      </p>
+
+      <div class="actions flex justify-end gap-2">
+        <BaseButton variant="button1" @click="buy">Kjøp</BaseButton>
+        <BaseButton variant="secondary" @click="$emit('close')">Avbryt</BaseButton>
+      </div>
+    </div>
+  </div>
+</template>
+
 <style scoped>
 .modal { @apply fixed inset-0 bg-black/50 flex items-center justify-center; }
 .modal-content { @apply bg-white p-6 rounded-2xl shadow-xl w-80; }
-.actions { @apply mt-4 flex justify-end gap-2; }
-.price { @apply mt-3 font-semibold; }
-select, input { @apply border rounded px-2 py-1 w-full mb-2; }
+.price { @apply font-semibold; }
 </style>
