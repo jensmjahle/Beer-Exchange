@@ -1,8 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { listCustomersWithStats, updateCustomer } from '@/services/customers.service'
-import { listEventCustomersWithStats } from '@/services/customers.service.js'
+import { listCustomersWithStats } from '@/services/customers.service'
 import BACMini from '@/components/BACMini.vue'
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
 import BaseButton from "@/components/base/BaseButton.vue";
@@ -42,15 +41,13 @@ onMounted(load)
 <template>
   <div class="rounded-2xl border p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
-      <h2 class="font-bold text-lg">Customers</h2>
-      <div>
-      <button class="rounded-lg border px-3 py-1.5 text-sm border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
-              @click="load">Refresh</button>
-       <BaseButton variant="button2" @click="load">
+      <h2 class="font-bold text-lg">Kunder</h2>
+      <div class="flex items-center gap-2">
+       <BaseButton variant="button2" type="button" @click="load">
   Refresh
 </BaseButton>
         <BaseButton variant="button4" type="button" @click="showAddCustomer = true">
-              New
+              Ny Kunde
             </BaseButton>
      </div>
     </div>

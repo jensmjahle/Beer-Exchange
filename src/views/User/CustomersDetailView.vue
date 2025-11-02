@@ -70,7 +70,7 @@ onMounted(load)
           <p v-if="details.customer.phone" class="mt-1 text-sm opacity-80">📞 {{ details.customer.phone }}</p>
           <p v-if="details.customer.weight" class="text-sm opacity-80">⚖️ {{ details.customer.weight }} kg</p>
         </div>
-
+      </div>
       <!-- BAC Display -->
       <div class="mt-6">
         <h3 class="font-bold mb-3">🍺 Blood Alcohol Content (BAC)</h3>
