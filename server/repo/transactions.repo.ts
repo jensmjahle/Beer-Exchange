@@ -66,40 +66,16 @@ export async function listTransactions(eventId: string, limit=100): Promise<Tx[]
 /**
  * Opprett transaksjon med volum, kurtasje og house-factor justering
  */
-export async function createTransaction(t: Omit<Tx,'id'|'created_at'> & { volume_ml?: number }): Promise<Tx> {
+// server/repo/transactions.repo.ts
+export async function createTransaction(t) {
   const now = new Date().toISOString()
-  let price = Number(t.unit_price)
 
-  // --- beregn volumpris & kurtasje ------------------------------------
-  const beer = db.kind === 'memory'
-    ? db.mem.eventBeers.find(b => b.id === t.event_beer_id)
-    : db.kind === 'sqlite'
-      ? db.sql.prepare(`SELECT * FROM event_beer WHERE id=?`).get(t.event_beer_id)
-      : (await db.pool.query(`SELECT * FROM event_beer WHERE id=$1`, [t.event_beer_id])).rows[0]
-
-  if (beer) {
-    const pricePerLiter = beer.current_price ?? beer.base_price ?? 0
-    const volL = (t.volume_ml ?? beer.volume_ml ?? 500) / 1000
-    price = pricePerLiter * volL
-  }
-
-  // kurtasje
-  let kurtasjePct = 0.05
-  if (t.customer_id) {
-    const c =
-      db.kind === 'memory'
-        ? db.mem.customers.find(x => x.id === t.customer_id)
-        : db.kind === 'sqlite'
-          ? db.sql.prepare(`SELECT work_relationship FROM customer WHERE id=?`).get(t.customer_id)
-          : (await db.pool.query(`SELECT work_relationship FROM customer WHERE id=$1`, [t.customer_id])).rows[0]
-    kurtasjePct = getKurtasjePct(c?.work_relationship)
-  }
-  price *= (1 + kurtasjePct)
-
-  // --- juster mot house factor ----------------------------------------
-  const hf = await computeHouseFactor(t.event_id)
-  price *= hf
-  // -------------------------------------------------------------------
+  const price =
+    t.price_client !== undefined && t.price_client !== null
+      ? Number(t.price_client)
+      : t.unit_price !== undefined && t.unit_price !== null
+      ? Number(t.unit_price)
+      : 0
 
   const tx: Tx = {
     ...t,
@@ -108,18 +84,43 @@ export async function createTransaction(t: Omit<Tx,'id'|'created_at'> & { volume
     unit_price: price,
   }
 
-  // lagre
-  if (db.kind === 'memory') { db.mem.transactions.unshift(tx); return tx }
-  if (db.kind === 'sqlite') {
-    db.sql.prepare(`
-      INSERT INTO "transaction" (id,event_id,event_beer_id,customer_id,qty,unit_price,created_at)
-      VALUES (?,?,?,?,?,?,?)
-    `).run(tx.id, tx.event_id, tx.event_beer_id, tx.customer_id, tx.qty, tx.unit_price, tx.created_at)
+  console.log('[TX] inserting', tx.event_beer_id, tx.qty, '×', tx.unit_price, 'NOK')
+
+  if (db.kind === 'memory') {
+    db.mem.transactions.unshift(tx)
     return tx
   }
-  await db.pool.query(`
-    INSERT INTO "transaction" (id,event_id,event_beer_id,customer_id,qty,unit_price,created_at)
-    VALUES ($1,$2,$3,$4,$5,$6,$7)
-  `, [tx.id, tx.event_id, tx.event_beer_id, tx.customer_id, tx.qty, tx.unit_price, tx.created_at])
+  if (db.kind === 'sqlite') {
+    db.sql.prepare(`
+      INSERT INTO "transaction" (id,event_id,event_beer_id,customer_id,qty,volume_ml,unit_price,created_at)
+      VALUES (?,?,?,?,?,?,?,?)
+    `).run(
+      tx.id,
+      tx.event_id,
+      tx.event_beer_id,
+      tx.customer_id,
+      tx.qty,
+      t.volume_ml ?? 500,
+      tx.unit_price,
+      tx.created_at,
+    )
+    return tx
+  }
+  await db.pool.query(
+    `
+      INSERT INTO "transaction" (id,event_id,event_beer_id,customer_id,qty,volume_ml,unit_price,created_at)
+      VALUES ($1,$2,$3,$4,$5,$6,$7,$8)
+    `,
+    [
+      tx.id,
+      tx.event_id,
+      tx.event_beer_id,
+      tx.customer_id,
+      tx.qty,
+      t.volume_ml ?? 500,
+      tx.unit_price,
+      tx.created_at,
+    ],
+  )
   return tx
 }

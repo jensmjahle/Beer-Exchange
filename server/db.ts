@@ -59,6 +59,8 @@ export type Tx = {
   qty: number
   unit_price: number
   created_at: string
+  volume_ml: number
+  price_client: number
 }
 
 function createMemory() {

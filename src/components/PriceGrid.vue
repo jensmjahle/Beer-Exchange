@@ -32,22 +32,6 @@ function openStock(beer) {
   router.push({ name: 'beer-stock', params: { eventId: props.eventId, eventBeerId: beer.id } })
 }
 
-async function confirmBuy(payload) {
-  try {
-    await createTransaction({
-      event_id: props.eventId,
-      event_beer_id: payload.event_beer_id,
-      customer_id: payload.customer_id,
-      qty: payload.qty,
-    })
-    closeBuy()
-    emit('updated')
-  } catch (e) {
-    alert(e?.message || 'Purchase failed')
-  }
-}
-
-
 
 
 onMounted(() => {
@@ -94,8 +78,7 @@ onMounted(() => {
   :event-id="eventId"
   :beer="selectedBeer"
   :currency="currency"
-  @close="closeBuy"
-  @bought="confirmBuy" />
+  @close="closeBuy"/>
 
   </div>
 </template>

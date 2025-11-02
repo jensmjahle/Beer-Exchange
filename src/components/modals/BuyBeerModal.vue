@@ -13,23 +13,29 @@ const props = defineProps({
 const emit = defineEmits(['close', 'bought'])
 
 const qty = ref(1)
-const customers = ref([])          // [{ id,name, ... }]
-const volumes = ref([])            // [{ label, value }]
-const selectedCustomer = ref('')   // string id
-const selectedVolume = ref('')     // string (BaseDropdown sender string)
-
+const customers = ref([])
+const volumes = ref([])
+const selectedCustomer = ref('')
+const selectedVolume = ref('')
 const loadingCustomers = ref(false)
+const submitting = ref(false)
+
+const kurtasjeRates = [
+  { label: 'Student', value: 0.8 },
+  { label: 'Deltidsjobb', value: 0.16 },
+  { label: 'Fulltidsjobb', value: 0.16 },
+  { label: 'Arbeidsledig', value: 0.06 },
+]
 
 async function loadCustomers() {
   try {
     loadingCustomers.value = true
     const rows = await listCustomers(props.eventId)
     customers.value = Array.isArray(rows) ? rows : []
-    // IKKE autoselect:
     selectedCustomer.value = ''
   } catch (e) {
-    console.error('Feil ved henting av kunder:', e)
     alert('Kunne ikke hente kundeliste')
+    console.error(e)
   } finally {
     loadingCustomers.value = false
   }
@@ -38,9 +44,21 @@ async function loadCustomers() {
 function rebuildVolumes() {
   const list = Array.isArray(props.beer?.volumes) ? props.beer.volumes : []
   volumes.value = list.map(v => ({ label: `${v.volume_ml} ml`, value: String(v.volume_ml) }))
-  // IKKE autoselect:
   selectedVolume.value = ''
 }
+
+const kurtasje = ref(0)
+watch(selectedCustomer, (id) => {
+  const customer = customers.value.find(c => c.id === id)
+  if (!customer) {
+    kurtasje.value = 0
+    return
+  }
+  const match = kurtasjeRates.find(k =>
+    customer.work_relationship?.toLowerCase() === k.label.toLowerCase()
+  )
+  kurtasje.value = match ? match.value : 0
+})
 
 watch(() => props.visible, (v) => {
   if (v) {
@@ -48,7 +66,6 @@ watch(() => props.visible, (v) => {
     loadCustomers()
   }
 })
-
 onMounted(() => {
   if (props.visible) {
     rebuildVolumes()
@@ -56,36 +73,40 @@ onMounted(() => {
   }
 })
 
-const displayPrice = computed(() => {
-  if (!props.beer || !selectedVolume.value) return '0.0'
+const basePrice = computed(() => {
+  if (!props.beer || !selectedVolume.value) return 0
   const liters = Number(selectedVolume.value) / 1000
-  return (Number(props.beer.current_price) * liters * Number(qty.value)).toFixed(1)
+  return Number(props.beer.current_price) * liters * Number(qty.value)
 })
+const kurtasjeAmount = computed(() => basePrice.value * Number(kurtasje.value || 0))
+const totalPrice = computed(() => basePrice.value + kurtasjeAmount.value)
 
 async function buy() {
-  if (!selectedCustomer.value) {
-    alert('Velg en kunde først.')
-    return
+  if (!selectedCustomer.value) return alert('Velg en kunde først.')
+  if (!selectedVolume.value) return alert('Velg et volum først.')
+
+  const payload = {
+    event_id: props.eventId,
+    event_beer_id: props.beer.id,
+    customer_id: selectedCustomer.value,
+    qty: Number(qty.value),
+    volume_ml: Number(selectedVolume.value),
+    price_client: Number(totalPrice.value.toFixed(2)),
   }
-  if (!selectedVolume.value) {
-    alert('Velg et volum først.')
-    return
-  }
+
+  console.log('[BUYBEER] Sending transaction payload →', payload)
+
   try {
-    const res = await createTransaction({
-      event_id: props.eventId,
-      event_beer_id: props.beer.id,
-      customer_id: selectedCustomer.value,
-      qty: Number(qty.value),
-      volume_ml: Number(selectedVolume.value),
-    })
+    const res = await createTransaction(payload)
+    console.log('[BUYBEER] Response ←', res)
     emit('bought', res)
     emit('close')
   } catch (e) {
-    console.error('Feil ved kjøp:', e)
+    console.error('[BUYBEER] Failed to create transaction:', e)
     alert('Kunne ikke fullføre kjøpet.')
   }
 }
+
 </script>
 
 <template>
@@ -121,13 +142,21 @@ async function buy() {
         class="w-full mb-3 border rounded px-2 py-1"
       />
 
-      <p class="price mb-4">
-        Pris: <strong>{{ displayPrice }} kr</strong>
-      </p>
+      <div class="space-y-1 mb-4 text-sm">
+        <p>Grunnpris: <strong>{{ basePrice.toFixed(2) }} kr</strong></p>
+        <p>Kurtasje: <strong>{{ kurtasjeAmount.toFixed(2) }} kr</strong> ({{ (kurtasje * 100).toFixed(1) }}%)</p>
+        <p class="border-t pt-1 mt-1 text-base font-semibold">
+          Total: <strong>{{ totalPrice.toFixed(2) }} kr</strong>
+        </p>
+      </div>
 
       <div class="actions flex justify-end gap-2">
-        <BaseButton variant="button1" @click="buy">Kjøp</BaseButton>
-        <BaseButton variant="secondary" @click="$emit('close')">Avbryt</BaseButton>
+        <BaseButton :disabled="submitting" variant="button1" @click="buy">
+          {{ submitting ? 'Kjøper…' : 'Kjøp' }}
+        </BaseButton>
+        <BaseButton :disabled="submitting" variant="secondary" @click="$emit('close')">
+          Avbryt
+        </BaseButton>
       </div>
     </div>
   </div>
@@ -136,5 +165,4 @@ async function buy() {
 <style scoped>
 .modal { @apply fixed inset-0 bg-black/50 flex items-center justify-center; }
 .modal-content { @apply p-6 rounded-2xl shadow-xl w-80; }
-.price { @apply font-semibold; }
 </style>
