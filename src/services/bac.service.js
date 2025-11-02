@@ -4,7 +4,7 @@
  * Supports both simple drink counting and precise ABV/volume calculations.
  */
 
-import { listEventTransactions } from './transactions.service.js'
+import { listTransactions } from './transactions.service.js'
 import { listEventBeers } from './beers.service.js'
 
 // Standard drink alcohol content (can be customized per beer type)
@@ -99,7 +99,7 @@ async function calculateCustomerBACFromTransactions(customer, eventId, currentTi
     
     // Get all transactions and beer data for the event
     const [transactions, eventBeers] = await Promise.all([
-      listEventTransactions(eventId),
+      listTransactions(eventId),
       listEventBeers(eventId)
     ])
     

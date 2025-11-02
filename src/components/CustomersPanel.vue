@@ -1,8 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
-import { listCustomersWithStats, updateCustomer } from '@/services/customers.service'
-import { listEventCustomersWithStats } from '@/services/customers.service.js'
+import { listCustomersWithStats } from '@/services/customers.service'
 import BACMini from '@/components/BACMini.vue'
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
 import BaseButton from "@/components/base/BaseButton.vue";
