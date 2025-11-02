@@ -2,6 +2,15 @@
 import { ref, onMounted } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { getCustomerDetails } from '@/services/customers.service.js'
+import BaseButton from "@/components/base/BaseButton.vue";
+import BACDisplay from "@/components/BACDisplay.vue";
+
+const props = defineProps({
+  eventId: { type: String, required: true },
+  customerId: { type: String, required: true },
+  currency: { type: String, default: 'NOK' }
+})
+
 
 const route = useRoute()
 const router = useRouter()
@@ -43,6 +52,7 @@ onMounted(load)
       <p class="italic opacity-70">Customer not found.</p>
     </div>
 
+
     <div v-else class="space-y-6">
       <div class="flex flex-wrap gap-6 items-start">
         <img
@@ -60,6 +70,28 @@ onMounted(load)
           <p v-if="details.customer.phone" class="mt-1 text-sm opacity-80">📞 {{ details.customer.phone }}</p>
           <p v-if="details.customer.weight" class="text-sm opacity-80">⚖️ {{ details.customer.weight }} kg</p>
         </div>
+
+      <!-- BAC Display -->
+      <div class="mt-6">
+        <h3 class="font-bold mb-3">🍺 Blood Alcohol Content (BAC)</h3>
+        <BACDisplay 
+          :customer="customer" 
+          :event-id="eventId" 
+          :auto-refresh="true"
+          :show-details="true"
+        />
+      </div>
+
+      <!-- details -->
+      <div class="grid grid-cols-2 gap-3 mt-4 text-md">
+        <div><strong>Phone:</strong> {{ customer.phone || '—' }}</div>
+        <div><strong>Shoe size:</strong> {{ customer.shoe_size || '—' }}</div>
+        <div><strong>Weight:</strong> {{ customer.weight ? customer.weight + ' kg' : '—' }}</div>
+        <div><strong>Work:</strong> {{ customer.work_relationship || '—' }}</div>
+        <div><strong>Gender:</strong> {{ customer.gender || '—' }}</div>
+        <div><strong>Ethnicity:</strong> {{ customer.ethnicity || '—' }}</div>
+        <div><strong>Experience:</strong> {{ customer.experience_level || '—' }}</div>
+
       </div>
 
       <div class="grid sm:grid-cols-3 gap-4">
