@@ -2,15 +2,15 @@
   <div
     class="flex flex-row h-screen w-screen overflow-hidden bg-bg1 p-6 gap-6 text-text1 divide-border1/10"
   >
-    <section class="flex flex-[3] flex-col items-center justify-center">
+    <section class="flex flex-[3] flex-col items-center gap-2 justify-center">
       <slot name="right">
         <div class="flex flex-[1] flex-col items-center text-center justify-center">
           <h1 class="text-4xl md:text-6xl font-bold">
             {{ ev?.name ?? "Beer Exchange" }}
           </h1>
         </div>
-        <div class="flex flex-[8] flex-row w-full items-center justify-start gap-6">
-          <div class="flex flex-[3] flex-col w-full items-center justify-center gap-6">
+        <div class="flex flex-[8] flex-row w-full items-start justify-start gap-6">
+          <div class="flex flex-[7] flex-col w-full items-center justify-center gap-6">
            <BeerList
               title="Øl på børsen"
               :beers="beers"
@@ -35,20 +35,20 @@
               />
             </div>
           </div>
-          <div class="flex flex-[2] flex-col w-full items-center justify-start gap-6">
+          <div class="flex flex-[5] flex-col w-full items-center justify-start gap-6">
             <div class="grid md:grid-cols-2 w-full gap-4">
-              <BiggestMovers
-                title="Største vinnere siste timen"
+              <BiggestMoversKiosk
+                title="Vinnere siste timen"
                 :currency="ev?.currency ?? 'NOK'"
                 :items="biggestWinners"
               />
-              <BiggestMovers
-                title="Største tapere siste timen"
+              <BiggestMoversKiosk
+                title="Tapere siste timen"
                 :currency="ev?.currency ?? 'NOK'"
                 :items="biggestLosers"
               />
             </div>
-            <TransactionHistory
+            <TransactionHistoryKiosk
               :event-id="eventId"
               :currency="ev?.currency ?? 'NOK'"
               class="flex w-full max-h-[50vh] overflow-y-hidden"
@@ -119,6 +119,8 @@ import { listEventBeers } from "@/services/beers.service.js";
 import { listTransactions } from "@/services/transactions.service.js";
 import TransactionHistory from "@/components/TransactionHistory.vue";
 import BeerList from "@/components/BeerList.vue";
+import BiggestMoversKiosk from "@/components/BiggestMoversKiosk.vue";
+import TransactionHistoryKiosk from "@/components/TransactionHistoryKiosk.vue";
 const route = useRoute();
 const ev = ref(null);
 const eventId = String(route.params.eventId || "");

@@ -2,7 +2,7 @@
   <div class="p-4 rounded-2xl border bg-bg2 border-border2">
     <!-- Header -->
     <div class="flex flex-row items-center justify-between mb-4">
-      <h2 class="text-3xl font-bold">{{ title }}</h2>
+      <h2 class="text-4xl font-bold">{{ title }}</h2>
       <LiveIndicator />
     </div>
 
