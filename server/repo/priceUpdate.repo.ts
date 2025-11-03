@@ -92,3 +92,63 @@ export async function insertPriceUpdate(eventBeerId: string, oldPrice: number | 
   );
   return row;
 }
+
+
+/**
+ * Finn pris for et øl én time tilbake, og nåværende pris.
+ * Håndterer tilfeller hvor siste update var tidligere enn timegrensen.
+ */
+export async function listRecentPriceForBeer(eventBeerId: string, since: Date) {
+  let updates: any[] = [];
+
+  if (db.kind === "memory") {
+    updates = db.mem.priceUpdates
+      .filter((u) => u.event_beer_id === eventBeerId)
+      .sort((a, b) => (a.updated_at ?? "").localeCompare(b.updated_at ?? ""));
+  } else if (db.kind === "sqlite") {
+    updates = db.sql
+      .prepare(
+        `SELECT new_price AS price, updated_at AS ts
+         FROM "PriceUpdate"
+         WHERE event_beer_id = ?
+         ORDER BY datetime(updated_at) ASC`,
+      )
+      .all(eventBeerId);
+  } else {
+    const { rows } = await db.pool.query(
+      `SELECT new_price AS price, updated_at AS ts
+       FROM "PriceUpdate"
+       WHERE event_beer_id = $1
+       ORDER BY updated_at ASC`,
+      [eventBeerId],
+    );
+    updates = rows;
+  }
+
+  console.log("Updates for beer", eventBeerId, updates);
+  if (!updates.length) return { oldPrice: null, newPrice: null };
+
+  const oneHourAgo = since;
+
+  // 🔧 normalize price + ts across db kinds
+  const normalized = updates.map((u) => ({
+    ts: u.ts ?? u.updated_at,
+    price: u.price ?? u.new_price ?? u.old_price ?? null,
+  }));
+
+  const current = normalized[normalized.length - 1];
+  const newPrice = Number(current.price);
+
+
+  let oldPrice = Number(normalized[0].price);
+  for (const u of normalized) {
+    const t = new Date(u.ts);
+    if (t <= oneHourAgo) oldPrice = Number(u.price);
+    else break;
+  }
+
+  console.log(
+    `For beer ${eventBeerId}, oldPrice: ${oldPrice}, newPrice: ${newPrice}`,
+  );
+  return { oldPrice, newPrice };
+}

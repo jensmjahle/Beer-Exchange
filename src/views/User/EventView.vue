@@ -23,6 +23,8 @@ const error = ref(null);
 const ev = ref(null);
 const beers = ref([]);
 const transactions = ref([]);
+const biggestWinners = ref([]);
+const biggestLosers = ref([]);
 let eventSource;
 
 function connectLive() {
@@ -59,6 +61,14 @@ async function loadAll() {
     ev.value = e;
     beers.value = Array.isArray(b) ? b : [];
     transactions.value = Array.isArray(t) ? t : [];
+
+    const sorted = [...beers.value].sort(
+    (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0)
+  );
+
+  biggestWinners.value = sorted.slice(0, 3);
+  biggestLosers.value = sorted.slice(-3).reverse();
+    console.log("Loaded event data:", { event: e, beers: b, transactions: t });
   } catch (e) {
     error.value = e?.message || "Failed to load";
   } finally {
@@ -66,16 +76,6 @@ async function loadAll() {
   }
 }
 
-const topWinners = computed(() =>
-  [...beers.value]
-    .sort((a, b) => (b.current_price ?? 0) - (a.current_price ?? 0))
-    .slice(0, 5),
-);
-const topLosers = computed(() =>
-  [...beers.value]
-    .sort((a, b) => (a.current_price ?? 0) - (b.current_price ?? 0))
-    .slice(0, 5),
-);
 
 async function onUpdated() {
   // After a purchase: refresh beers & transactions
@@ -136,12 +136,8 @@ onUnmounted(() => {
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
-        <BiggestMovers
-          title="Biggest Winners"
-          :items="topWinners"
-          side="left"
-        />
-        <BiggestMovers title="Biggest Losers" :items="topLosers" side="right" />
+              <BiggestMovers title="Største vinnere siste timen" :items="biggestWinners" />
+    <BiggestMovers title="Største tapere siste timen" :items="biggestLosers" />
       </div>
 
       <PriceGrid

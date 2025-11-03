@@ -1,25 +1,43 @@
 import crypto from "node:crypto";
 import db, { EventBeer } from "../db/index.js";
+import {listRecentPriceForBeer} from "./priceUpdate.repo";
 
 // Hent alle øl for et event
-export async function listEventBeers(eventId: string): Promise<EventBeer[]> {
-  if (db.kind === "memory")
-    return db.mem.eventBeers
+export async function listEventBeers(eventId: string): Promise<any[]> {
+  let beers: any[] = [];
+
+  if (db.kind === "memory") {
+    beers = db.mem.eventBeers
       .filter((b) => b.event_id === eventId)
       .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
+  } else {
+    const { rows } = await db.pool.query(
+      `SELECT * FROM event_beer WHERE event_id=$1 ORDER BY position, id`,
+      [eventId],
+    );
+    beers = rows;
+  }
 
-  if (db.kind === "sqlite")
-    return db.sql
-      .prepare(
-        `SELECT * FROM event_beer WHERE event_id=? ORDER BY position, id`,
-      )
-      .all(eventId);
+  // --- legg til prisendring siste time ---
+  const now = new Date();
+  const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
-  const { rows } = await db.pool.query(
-    `SELECT * FROM event_beer WHERE event_id=$1 ORDER BY position, id`,
-    [eventId],
-  );
-  return rows;
+  const enriched: any[] = [];
+  for (const b of beers) {
+    const { oldPrice, newPrice } = await listRecentPriceForBeer(b.id, oneHourAgo);
+    let changePct: number | null = null;
+    if (oldPrice != null && newPrice != null && oldPrice > 0) {
+      changePct = ((newPrice - oldPrice) / oldPrice) * 100;
+    }
+    console.log(`Beer ${b.id} price change last hour: ${oldPrice} -> ${newPrice} = ${changePct}%`);
+    enriched.push({
+      ...b,
+      last_hours_change:
+        changePct != null ? Number(changePct.toFixed(1)) : null,
+    });
+  }
+
+  return enriched;
 }
 
 // Opprett ny event_beer direkte
