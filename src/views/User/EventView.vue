@@ -14,7 +14,7 @@ import TransactionHistory from "@/components/TransactionHistory.vue";
 import CustomersPanel from "@/components/CustomersPanel.vue";
 import LiveIndicator from "@/components/LiveIndicator.vue";
 import SettingsWidget from "@/components/settings/SettingsWidget.vue";
-import {connectLive, off, on} from "@/services/live.service.js";
+import { connectLive, off, on } from "@/services/live.service.js";
 
 const route = useRoute();
 const eventId = String(route.params.eventId || "");
@@ -27,8 +27,6 @@ const transactions = ref([]);
 const biggestWinners = ref([]);
 const biggestLosers = ref([]);
 let eventSource;
-
-
 
 async function loadAll() {
   loading.value = true;
@@ -58,7 +56,7 @@ async function loadAll() {
 }
 function recomputeMovers() {
   const sorted = [...beers.value].sort(
-    (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0)
+    (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0),
   );
   biggestWinners.value = sorted.slice(0, 3);
   biggestLosers.value = sorted.slice(-3).reverse();
@@ -81,9 +79,8 @@ onMounted(async () => {
   await connectLive(eventId);
 });
 
-  on("priceUpdate", handlePriceUpdate);
+on("priceUpdate", handlePriceUpdate);
 onUnmounted(() => off("priceUpdate", handlePriceUpdate));
-
 </script>
 
 <template>

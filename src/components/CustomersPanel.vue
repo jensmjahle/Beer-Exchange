@@ -27,6 +27,7 @@ async function load() {
   error.value = null;
   try {
     customers.value = await listCustomersWithStats(props.eventId);
+    console.log("Loaded customers:", customers.value);
   } catch (e) {
     error.value = e?.message || "Failed to load";
   } finally {

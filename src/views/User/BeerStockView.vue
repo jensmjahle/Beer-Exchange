@@ -143,11 +143,10 @@ function backToEvent() {
   <section class="space-y-6">
     <header class="flex items-center justify-between">
       <div>
-        <h1 class="text-2xl font-extrabold">Beer Stock</h1>
-        <p class="opacity-70 text-sm">
-          Event: {{ eventId }} · Beer:
+        <h1 class="text-2xl font-extrabold">
           {{ stats?.name ?? stats?.beer_id ?? eventBeerId }}
-        </p>
+        </h1>
+        <p class="opacity-70 text-sm">Event: {{ ev?.name ?? "—" }}</p>
       </div>
       <button
         class="rounded-lg border px-3 py-1.5 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
@@ -247,14 +246,14 @@ function backToEvent() {
         <div class="mt-4 flex flex-wrap gap-2 text-sm">
           <span
             v-if="stats?.brewery"
-            class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4"
+            class="inline-flex items-center gap-1 px-2 py-1 rounded-full border text-text4 border-border4 bg-bg4"
           >
             <span class="opacity-70">Brewery:</span>
             <strong>{{ stats.brewery }}</strong>
           </span>
           <span
             v-if="stats?.style"
-            class="inline-flex items-center gap-1 px-2 py-1 rounded-full border border-border4 bg-bg4"
+            class="inline-flex items-center gap-1 px-2 py-1 rounded-full border text-text4 border-border4 bg-bg4"
           >
             <span class="opacity-70">Style:</span>
             <strong>{{ stats.style }}</strong>
@@ -277,8 +276,8 @@ function backToEvent() {
       </div>
 
       <div class="grid sm:grid-cols-2 gap-4">
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
-          <div class="text-xs opacity-70">Cheapest buyer</div>
+        <div class="rounded-xl border p-4 bg-bg2">
+          <div class="text-xs opacity-70">Kunde med billigste kjøp</div>
           <div class="font-bold">
             {{ stats?.cheapest?.customer_name ?? "—" }}
           </div>
@@ -288,8 +287,8 @@ function backToEvent() {
             }})
           </div>
         </div>
-        <div class="rounded-xl border p-4 bg-[var(--color-button4)]">
-          <div class="text-xs opacity-70">Most expensive buyer</div>
+        <div class="rounded-xl border p-4 bg-bg2">
+          <div class="text-xs opacity-70">Kunde med dyreste kjøp</div>
           <div class="font-bold">
             {{ stats?.priciest?.customer_name ?? "—" }}
           </div>

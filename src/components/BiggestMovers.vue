@@ -8,10 +8,10 @@
         class="flex justify-between text-text3 items-center bg-bg3 p-2 rounded border"
       >
         <div>
-           <span>{{ beer.name }}</span>
-        <div class="text-xs opacity-70">
-          {{ (beer.current_price) }} {{ currency }}
-        </div>
+          <span>{{ beer.name }}</span>
+          <div class="text-xs opacity-70">
+            {{ beer.current_price }} {{ currency }}
+          </div>
         </div>
 
         <span
