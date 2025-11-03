@@ -136,6 +136,7 @@ onUnmounted(() => off("priceUpdate", handlePriceUpdate));
       <TransactionHistory
         :event-id="eventId"
         :currency="ev?.currency ?? 'NOK'"
+        class="max-h-[100vh] overflow-y-hidden"
       />
     </div>
   </section>
