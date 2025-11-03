@@ -59,6 +59,15 @@ export type Tx = {
   price_client: number;
 };
 
+export type PriceUpdate = {
+  id: string;
+  event_beer_id: string;
+  old_price: number | null;
+  new_price: number;
+  updated_at: string;
+};
+
+
 function createMemory() {
   return {
     kind: "memory" as const,
@@ -67,6 +76,7 @@ function createMemory() {
       customers: [] as Customer[],
       eventBeers: [] as EventBeer[],
       transactions: [] as Tx[],
+        priceUpdates: [] as PriceUpdate[],
     },
   };
 }

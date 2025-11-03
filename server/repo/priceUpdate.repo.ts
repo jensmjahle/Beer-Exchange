@@ -1,0 +1,94 @@
+// server/repo/priceUpdates.repo.ts
+import db from "../db/index.js";
+import fs from "node:fs";
+import path from "node:path";
+
+/**
+ * listPriceHistory(eventId, eventBeerId, since)
+ * Returnerer pris-historikk fra PriceUpdate-tabellen + current_price
+ */
+export async function listPriceHistory(
+  eventId: string,
+  eventBeerId: string,
+  since?: Date | null,
+): Promise<{ ts: string; price: number }[]> {
+  if (db.kind === "memory") {
+    const updates = db.mem.priceUpdates
+      .filter((u) => u.event_beer_id === eventBeerId)
+      .sort((a, b) => (a.updated_at ?? "").localeCompare(b.updated_at ?? ""));
+
+    const filtered = since
+      ? updates.filter((u) => new Date(u.updated_at) >= since)
+      : updates;
+
+    const current = db.mem.eventBeers.find((b) => b.id === eventBeerId);
+    const points = filtered.map((u) => ({
+      ts: u.updated_at,
+      price: Number(u.new_price),
+    }));
+
+    if (current?.current_price != null) {
+      points.push({
+        ts: new Date().toISOString(),
+        price: Number(current.current_price),
+      });
+    }
+
+    return points;
+  }
+
+  // For sqlite/pg bruker vi ekstern SQL-fil
+  const sqlPath = path.join(
+    process.cwd(),
+    "server",
+    "sql",
+    "listPriceHistory.sql",
+  );
+  const queryText = fs.readFileSync(sqlPath, "utf8");
+
+  const params: any[] = [eventBeerId];
+  if (since) params.push(since.toISOString());
+
+  let rows: any[] = [];
+
+
+  const { rows: pgRows } = await db.pool.query(queryText, params);
+  const { rows: cur } = await db.pool.query(
+    `SELECT current_price FROM event_beer WHERE id=$1`,
+    [eventBeerId],
+  );
+  const result = pgRows.map((r) => ({
+    ts: r.ts,
+    price: Number(r.price ?? r.new_price),
+  }));
+
+  if (cur[0]?.current_price != null) {
+    result.push({
+      ts: new Date().toISOString(),
+      price: Number(cur[0].current_price),
+    });
+  }
+
+  return result;
+}
+export async function insertPriceUpdate(eventBeerId: string, oldPrice: number | null, newPrice: number) {
+  const row = {
+    id: crypto.randomUUID(),
+    event_beer_id: eventBeerId,
+    old_price: oldPrice,
+    new_price: newPrice,
+    updated_at: new Date().toISOString(),
+  };
+
+  if (db.kind === "memory") {
+    db.mem.priceUpdates.push(row);
+    return row;
+  }
+
+  await db.pool.query(
+    `INSERT INTO "PriceUpdate" (id, event_beer_id, old_price, new_price, updated_at)
+     VALUES ($1,$2,$3,$4,$5)`,
+    [row.id, row.event_beer_id, row.old_price, row.new_price, row.updated_at],
+  );
+  return row;
+}

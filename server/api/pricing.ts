@@ -43,3 +43,4 @@ pricing.get("/event/:eventId/mispricing", async (req, res) => {
   });
   res.json(out);
 });
+

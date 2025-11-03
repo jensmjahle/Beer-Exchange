@@ -1,6 +1,7 @@
 // server/api/analytics.ts
 import { Router } from "express";
 import db from "../db/index.js";
+import {listPriceHistory} from "../repo/priceUpdate.repo";
 
 export const analytics = Router();
 
@@ -18,7 +19,7 @@ function sinceFromRange(range: string): Date | null {
 
 // GET /api/analytics/event/:eventId/beer/:eventBeerId/price-history?range=1h|3h|day|all
 analytics.get(
-  "/event/:eventId/beer/:eventBeerId/price-history",
+  "/event/:eventId/beerssssss/:eventBeerId/price-history",
   async (req, res) => {
     const { eventId, eventBeerId } = req.params;
     const range = String(req.query.range || "day");
@@ -98,6 +99,19 @@ analytics.get(
     }
   },
 );
+analytics.get("/event/:eventId/beer/:eventBeerId/price-history", async (req, res) => {
+  const { eventId, eventBeerId } = req.params;
+  const range = String(req.query.range || "day");
+  const since = sinceFromRange(range);
+
+  try {
+    const points = await listPriceHistory(eventId, eventBeerId, since);
+    return res.json(points);
+  } catch (e) {
+    console.error("[analytics:price-history] failed", e);
+    return res.status(500).json({ error: "Failed to get price history" });
+  }
+});
 
 // GET /api/analytics/event/:eventId/beer/:eventBeerId/stats
 analytics.get("/event/:eventId/beer/:eventBeerId/stats", async (req, res) => {

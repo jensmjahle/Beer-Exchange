@@ -122,6 +122,8 @@ async function loadAll() {
     ev.value = e;
     history.value = Array.isArray(h) ? h : [];
     stats.value = s;
+
+    console.log("Loaded beer stock data:", { event: e, history: h, stats: s });
   } catch (err) {
     error.value = err?.message || "Failed to load";
   } finally {

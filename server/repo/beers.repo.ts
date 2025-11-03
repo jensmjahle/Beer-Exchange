@@ -33,14 +33,25 @@ export async function attachBeerToEvent(
     ...p,
     id: crypto.randomUUID(),
     event_id: eventId,
-    beer_id: null, // ikke brukt lenger
   };
+  const priceUpdate = {
+    id: crypto.randomUUID(),
+    event_beer_id: b.id,
+    old_price: null,
+    new_price: b.current_price,
+    updated_at: new Date().toISOString(),
+  }
 
   if (db.kind === "memory") {
     if (!db.mem.eventBeers) db.mem.eventBeers = [];
     db.mem.eventBeers.push(b);
+
+    if (!db.mem.priceUpdates) db.mem.priceUpdates = [];
+    db.mem.priceUpdates.push(priceUpdate);
+
     return b;
   }
+
 
   const cols = [
     "id",
