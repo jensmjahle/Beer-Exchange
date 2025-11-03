@@ -1,10 +1,8 @@
 <template>
-  <div class="podium-container flex flex-col items-center gap-0">
-    <!-- Tittel -->
-    <h2 class="text-2xl font-extrabold text-center">{{ title }}</h2>
+  <div class="podium-container flex flex-col items-center">
+    <h2 class="text-3xl font-extrabold text-center mb-2">{{ title }}</h2>
 
-    <!-- Pall -->
-    <div class="relative flex items-end justify-center gap-5 h-56">
+    <div class="relative flex items-end justify-center gap-6 h-64">
       <!-- 2. plass -->
       <div
         v-if="entries[1]"
@@ -12,16 +10,16 @@
         style="z-index: 1"
       >
         <div
-          class="podium-block bg-gray-300 rounded-t-lg w-24 flex flex-col items-center justify-end"
+          class="podium-block bg-gray-300 text-black rounded-t-lg w-28 flex flex-col items-center justify-end"
           style="height: 120px"
         >
           <PodiumAvatar
             :entry="entries[1]"
             :place="2"
             :unit="unit"
-            class="translate-y-[-50%]"
+            class="translate-y-[-26%]"
           />
-          <div class="absolute bottom-2 font-bold text-gray-800">2</div>
+          <div class="absolute bottom-2 text-xl font-bold text-gray-800">2</div>
         </div>
       </div>
 
@@ -32,16 +30,16 @@
         style="z-index: 2"
       >
         <div
-          class="podium-block bg-yellow-400 rounded-t-lg w-28 flex flex-col items-center justify-end"
+          class="podium-block bg-yellow-400 text-black rounded-t-lg w-32 flex flex-col items-center justify-end"
           style="height: 160px"
         >
           <PodiumAvatar
             :entry="entries[0]"
             :place="1"
             :unit="unit"
-            class="translate-y-[-60%]"
+            class="translate-y-[-35%]"
           />
-          <div class="absolute bottom-2 font-bold text-gray-900">1</div>
+          <div class="absolute bottom-2 text-2xl font-extrabold text-gray-900">1</div>
         </div>
       </div>
 
@@ -52,16 +50,16 @@
         style="z-index: 1"
       >
         <div
-          class="podium-block bg-amber-600 rounded-t-lg w-24 flex flex-col items-center justify-end"
+          class="podium-block bg-amber-600 text-black rounded-t-lg w-28 flex flex-col items-center justify-end"
           style="height: 100px"
         >
           <PodiumAvatar
             :entry="entries[2]"
             :place="3"
             :unit="unit"
-            class="translate-y-[-45%]"
+            class="translate-y-[-20%]"
           />
-          <div class="absolute bottom-2 font-bold text-gray-50">3</div>
+          <div class="absolute bottom-2 text-xl font-bold text-gray-50">3</div>
         </div>
       </div>
     </div>
@@ -69,7 +67,7 @@
 </template>
 
 <script setup>
-import PodiumAvatar from "@/components/PodiumAvatar.vue";
+import PodiumAvatar from "./PodiumAvatar.vue";
 
 defineProps({
   title: { type: String, required: true },
@@ -84,6 +82,6 @@ defineProps({
 <style scoped>
 .podium-block {
   position: relative;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.25);
 }
 </style>

@@ -1,12 +1,19 @@
 <template>
   <div class="flex flex-col items-center text-center">
+    <!-- større bilde -->
     <div
-      class="w-20 h-20 rounded-full overflow-hidden border-4 border-border1 shadow-lg mb-2"
+      class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3"
     >
-      <img :src="entry.image" alt="" class="w-full h-full object-cover" />
+      <img
+        :src="entry.image"
+        alt=""
+        class="w-full h-full object-cover"
+      />
     </div>
-    <div class="font-semibold text-sm truncate w-24">{{ entry.name }}</div>
-    <div class="text-xs opacity-70 font-medium">
+
+    <!-- større tekst -->
+    <div class="font-bold text-xl truncate w-32">{{ entry.name }}</div>
+    <div class="text-lg opacity-80 font-medium">
       {{ entry.score.toFixed(1) }}{{ unit }}
     </div>
   </div>

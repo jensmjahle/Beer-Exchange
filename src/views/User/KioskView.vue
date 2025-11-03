@@ -59,7 +59,7 @@
     </section>
 
     <section
-      class="flex flex-col flex-[1] items-center divide-y justify-between"
+      class="flex flex-col flex-[1] items-center  justify-between"
     >
       <slot name="left">
         <Podium
