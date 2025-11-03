@@ -3,9 +3,9 @@
  * @returns {{Authorization: string}}
  */
 export function getAuthHeaders() {
-  const token = sessionStorage.getItem('jwt')
-  if (!token) throw new Error('No authentication token found')
+  const token = sessionStorage.getItem("jwt");
+  if (!token) throw new Error("No authentication token found");
   return {
-    Authorization: `Bearer ${token}`
-  }
+    Authorization: `Bearer ${token}`,
+  };
 }

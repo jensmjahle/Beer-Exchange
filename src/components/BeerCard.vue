@@ -3,27 +3,26 @@ import BaseButton from "@/components/base/BaseButton.vue";
 
 const props = defineProps({
   beer: { type: Object, required: true },
-  currency: { type: String, default: 'NOK' }
-})
-const emit = defineEmits(['buy','open'])
+  currency: { type: String, default: "NOK" },
+});
+const emit = defineEmits(["buy", "open"]);
 
 function fmt(n) {
-  if (n == null || Number.isNaN(n)) return ''
-  return Number(n).toFixed(1)
+  if (n == null || Number.isNaN(n)) return "";
+  return Number(n).toFixed(1);
 }
 function pctOfRange(b) {
-  const min = Number(b.min_price ?? 0)
-  const max = Number(b.max_price ?? 0)
-  const cur = Number(b.current_price ?? 0)
-  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0
-  return Math.max(0, Math.min(100, ((cur - min) / (max - min)) * 100))
+  const min = Number(b.min_price ?? 0);
+  const max = Number(b.max_price ?? 0);
+  const cur = Number(b.current_price ?? 0);
+  if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) return 0;
+  return Math.max(0, Math.min(100, ((cur - min) / (max - min)) * 100));
 }
 
 const onBuy = (e) => {
-  e.stopPropagation()
-  emit('buy', props.beer)
-}
-
+  e.stopPropagation();
+  emit("buy", props.beer);
+};
 </script>
 
 <template>
@@ -47,16 +46,21 @@ const onBuy = (e) => {
 
     <div class="mt-1">
       <div class="h-2 rounded bg-bg3 overflow-hidden">
-        <div class="h-full"
-             :style="{ width: pctOfRange(beer) + '%' }"
-             :class="[
-  pctOfRange(beer) < 20 ? 'bg-red-500' :
-  pctOfRange(beer) < 40 ? 'bg-orange-400' :
-  pctOfRange(beer) < 60 ? 'bg-yellow-300' :
-  pctOfRange(beer) < 80 ? 'bg-lime-400' :
-  'bg-green-500'
-]"
-></div>
+        <div
+          class="h-full"
+          :style="{ width: pctOfRange(beer) + '%' }"
+          :class="[
+            pctOfRange(beer) < 20
+              ? 'bg-red-500'
+              : pctOfRange(beer) < 40
+                ? 'bg-orange-400'
+                : pctOfRange(beer) < 60
+                  ? 'bg-yellow-300'
+                  : pctOfRange(beer) < 80
+                    ? 'bg-lime-400'
+                    : 'bg-green-500',
+          ]"
+        ></div>
       </div>
       <div class="flex justify-between text-[10px] opacity-70 mt-1">
         <span>{{ fmt(beer.min_price) }}</span>
@@ -65,10 +69,7 @@ const onBuy = (e) => {
     </div>
 
     <div class="mt-2">
-      <BaseButton
-        class="w-full"
-        variant="button1"
-        @click="onBuy">
+      <BaseButton class="w-full" variant="button1" @click="onBuy">
         Kjøp Nå
       </BaseButton>
     </div>

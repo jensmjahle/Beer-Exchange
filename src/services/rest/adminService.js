@@ -1,5 +1,5 @@
-import axios from '@/config/axiosConfig.js'
-import { getAuthHeaders } from '@/utils/authHeaders.js'
+import axios from "@/config/axiosConfig.js";
+import { getAuthHeaders } from "@/utils/authHeaders.js";
 import api from "@/config/axiosConfig.js";
 
 /**
@@ -10,16 +10,16 @@ import api from "@/config/axiosConfig.js";
  */
 export const getPaginatedAdmins = async (page = 0, size = 10) => {
   try {
-    const response = await axios.get('/api/admin', {
+    const response = await axios.get("/api/admin", {
       params: { page, size },
-      headers: getAuthHeaders()
-    })
-    return response.data
+      headers: getAuthHeaders(),
+    });
+    return response.data;
   } catch (error) {
-    console.error('Failed to fetch admin list:', error)
-    throw error
+    console.error("Failed to fetch admin list:", error);
+    throw error;
   }
-}
+};
 
 /**
  * Updates the current admin's profile information.
@@ -28,14 +28,14 @@ export const getPaginatedAdmins = async (page = 0, size = 10) => {
  */
 export const updateAdminProfile = async (profileData) => {
   try {
-    await axios.put('/api/admin/profile', profileData, {
-      headers: getAuthHeaders()
-    })
+    await axios.put("/api/admin/profile", profileData, {
+      headers: getAuthHeaders(),
+    });
   } catch (error) {
-    console.error('Failed to update admin profile:', error)
-    throw error
+    console.error("Failed to update admin profile:", error);
+    throw error;
   }
-}
+};
 
 /**
  * Changes the current admin's password.
@@ -44,14 +44,14 @@ export const updateAdminProfile = async (profileData) => {
  */
 export const changeAdminPassword = async (passwordData) => {
   try {
-    await axios.put('/api/admin/password', passwordData, {
-      headers: getAuthHeaders()
-    })
+    await axios.put("/api/admin/password", passwordData, {
+      headers: getAuthHeaders(),
+    });
   } catch (error) {
-    console.error('Failed to change admin password:', error)
-    throw error
+    console.error("Failed to change admin password:", error);
+    throw error;
   }
-}
+};
 
 /**
  * Deletes the current admin account.
@@ -59,14 +59,14 @@ export const changeAdminPassword = async (passwordData) => {
  */
 export const deleteAdminAccount = async () => {
   try {
-    await axios.delete('/api/admin/delete', {
-      headers: getAuthHeaders()
-    })
+    await axios.delete("/api/admin/delete", {
+      headers: getAuthHeaders(),
+    });
   } catch (error) {
-    console.error('Failed to delete admin account:', error)
-    throw error
+    console.error("Failed to delete admin account:", error);
+    throw error;
   }
-}
+};
 
 /**
  * Fetches the current admin's profile from the /me endpoint.
@@ -74,16 +74,16 @@ export const deleteAdminAccount = async () => {
  */
 export const getAdminMe = async () => {
   try {
-    const response = await axios.get('/api/admin/me', {
-      headers: getAuthHeaders()
-    })
-    return response.data
+    const response = await axios.get("/api/admin/me", {
+      headers: getAuthHeaders(),
+    });
+    return response.data;
   } catch (error) {
-    console.error('Failed to load admin profile:', error)
-    throw error
+    console.error("Failed to load admin profile:", error);
+    throw error;
   }
-}
+};
 export async function createAdmin(adminData) {
-  const response = await api.post('/api/admin/superuser/create', adminData);
+  const response = await api.post("/api/admin/superuser/create", adminData);
   return response.data;
 }

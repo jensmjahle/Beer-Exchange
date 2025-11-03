@@ -1,10 +1,10 @@
-import { defineStore } from 'pinia';
-import en from '../locales/en.json'; // Import English translations
-import no from '../locales/no.json'; // Import Norwegian translations
+import { defineStore } from "pinia";
+import en from "../locales/en.json"; // Import English translations
+import no from "../locales/no.json"; // Import Norwegian translations
 
-export const useLanguageStore = defineStore('language', {
+export const useLanguageStore = defineStore("language", {
   state: () => ({
-    locale: localStorage.getItem('locale') || 'no',
+    locale: localStorage.getItem("locale") || "no",
     messages: {
       en,
       no,
@@ -14,7 +14,7 @@ export const useLanguageStore = defineStore('language', {
     setLanguage(lang) {
       if (this.messages[lang]) {
         this.locale = lang;
-        localStorage.setItem('locale', lang);
+        localStorage.setItem("locale", lang);
       }
     },
   },

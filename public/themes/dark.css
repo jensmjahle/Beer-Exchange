@@ -1,19 +1,19 @@
 :root {
   /* Text Colors */
-  --color-text1: #fdf6e3;             /* main text - light ivory */
+  --color-text1: #fdf6e3; /* main text - light ivory */
   --color-text1-faded: #e0d7c2;
   --color-text2: #fdf6e3;
   --color-text2-faded: #c8c2ad;
   --color-text3: #fdf6e3;
   --color-text3-faded: #b5ae97;
-  --color-text4: #3b1c0f;           /* dark text on light surfaces */
+  --color-text4: #3b1c0f; /* dark text on light surfaces */
   --color-text4-faded: #44403c;
 
   /* Backgrounds */
-  --color-bg1: #3b1c0f;               /* deep brown - pub wood */
-  --color-bg2: #5c2b18;               /* secondary background */
+  --color-bg1: #3b1c0f; /* deep brown - pub wood */
+  --color-bg2: #5c2b18; /* secondary background */
   --color-bg3: #5c2b50;
-  --color-bg4: #fef3c7;               /* light amber */
+  --color-bg4: #fef3c7; /* light amber */
 
   --color-bg1-gradient1: #3b1c0f;
   --color-bg1-gradient2: #5c2b18;
@@ -25,7 +25,7 @@
   --color-border4: #78350f;
 
   /* Buttons */
-  --color-button1: #65a30d;            /* vibrant green */
+  --color-button1: #65a30d; /* vibrant green */
   --color-button1-meta: #fdf6e3;
   --color-button1-meta-hover: #ffffff;
   --color-button1-hover: #4d7c0f;
@@ -34,7 +34,7 @@
   --color-button1-gradient1: #84cc16;
   --color-button1-gradient2: #65a30d;
 
-  --color-button2: #d97706;            /* amber/orange */
+  --color-button2: #d97706; /* amber/orange */
   --color-button2-meta: #fdf6e3;
   --color-button2-hover: #b45309;
   --color-button2-border: #92400e;
@@ -67,10 +67,10 @@
   --color-success-border: #166534;
 
   /* Status */
-  --color-status-pending: #fef3c7;         /* light amber */
+  --color-status-pending: #fef3c7; /* light amber */
   --color-status-pending-text: #92400e;
   --color-status-pending-border: #facc15;
-  --color-status-completed: #bbf7d0;       /* soft green */
+  --color-status-completed: #bbf7d0; /* soft green */
   --color-status-completed-text: #166534;
   --color-status-completed-border: #4ade80;
   --color-status-rejected: #fecaca;

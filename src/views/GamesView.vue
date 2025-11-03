@@ -1,5 +1,3 @@
 <template>
-    <p>
-        Games View
-    </p>
+  <p>Games View</p>
 </template>

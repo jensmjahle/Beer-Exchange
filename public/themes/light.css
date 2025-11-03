@@ -1,32 +1,31 @@
 :root {
   /* Text Colors */
-  --color-text1: #1a1a1a;             /* main text - strong */
+  --color-text1: #1a1a1a; /* main text - strong */
   --color-text1-faded: #4a4a4a;
   --color-text2: #1a1a1a;
   --color-text2-faded: #6b6b6b;
   --color-text3: #1a1a1a;
   --color-text3-faded: #8c8c8c;
-  --color-text4: #1a1a1a;             /* for dark buttons */
+  --color-text4: #1a1a1a; /* for dark buttons */
   --color-text4-faded: #1a1a1a;
 
   /* Backgrounds */
-  --color-bg1: #fffdf7;   /* off-white, wheat */
-  --color-bg2: #f3f4f6;   /* light gray, softer than bg1 */
-  --color-bg3: #e5e7eb;   /* medium gray highlight that sits well on bg2 */
-  --color-bg4: #f9fafb;   /* very light gray for cards */
-
+  --color-bg1: #fffdf7; /* off-white, wheat */
+  --color-bg2: #f3f4f6; /* light gray, softer than bg1 */
+  --color-bg3: #e5e7eb; /* medium gray highlight that sits well on bg2 */
+  --color-bg4: #f9fafb; /* very light gray for cards */
 
   --color-bg1-gradient1: #fffdf7;
   --color-bg1-gradient2: #fde68a;
 
   /* Borders */
   --color-border1: #d4d4d4;
-  --color-border2: #f59e0b;           /* amber/orange border */
+  --color-border2: #f59e0b; /* amber/orange border */
   --color-border3: #e5e7eb;
   --color-border4: #d1d5db;
 
   /* Buttons */
-  --color-button1: #84cc16;            /* vibrant green */
+  --color-button1: #84cc16; /* vibrant green */
   --color-button1-meta: #ffffff;
   --color-button1-meta-hover: #fdf6e3;
   --color-button1-hover: #65a30d;
@@ -35,7 +34,7 @@
   --color-button1-gradient1: #a3e635;
   --color-button1-gradient2: #84cc16;
 
-  --color-button2: #f59e0b;            /* amber/orange */
+  --color-button2: #f59e0b; /* amber/orange */
   --color-button2-meta: #ffffff;
   --color-button2-hover: #d97706;
   --color-button2-border: #b45309;

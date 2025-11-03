@@ -1,5 +1,5 @@
 // utils/imageUtils.js
-import ExifReader from 'exifreader';
+import ExifReader from "exifreader";
 
 /**
  * Checks EXIF data in an image file
@@ -14,11 +14,15 @@ async function checkExif(file) {
  * Removes metadata from image files and renames them to mushroomX.jpg
  * based on existing file names in uploadedFiles
  */
-export async function processImageFiles(files, existingFiles = [], customNames = []) {
+export async function processImageFiles(
+  files,
+  existingFiles = [],
+  customNames = [],
+) {
   const processedFiles = [];
   let error = null;
 
-  const existingNames = existingFiles.map(f => f.name);
+  const existingNames = existingFiles.map((f) => f.name);
   let index = 1;
 
   function getUniqueMushroomName(defaultName) {
@@ -31,27 +35,29 @@ export async function processImageFiles(files, existingFiles = [], customNames =
 
   for (let i = 0; i < files.length; i++) {
     const file = files[i];
-    if (!file.type.startsWith('image/')) {
-      error = 'Only image files are allowed.';
+    if (!file.type.startsWith("image/")) {
+      error = "Only image files are allowed.";
       continue;
     }
 
     const imageBitmap = await createImageBitmap(file);
-    const canvas = document.createElement('canvas');
+    const canvas = document.createElement("canvas");
     canvas.width = imageBitmap.width;
     canvas.height = imageBitmap.height;
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     ctx.drawImage(imageBitmap, 0, 0);
 
-    const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/jpeg', 0.92));
+    const blob = await new Promise((resolve) =>
+      canvas.toBlob(resolve, "image/jpeg", 0.92),
+    );
     if (!blob) {
-      error = 'Could not process image.';
+      error = "Could not process image.";
       continue;
     }
 
     const preferredName = customNames[i] ?? `mushroom${index}.jpg`;
     const newFileName = getUniqueMushroomName(preferredName);
-    const newFile = new File([blob], newFileName, { type: 'image/jpeg' });
+    const newFile = new File([blob], newFileName, { type: "image/jpeg" });
 
     processedFiles.push(newFile);
   }

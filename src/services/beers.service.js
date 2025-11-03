@@ -1,12 +1,12 @@
 // src/services/beers.service.js
-import { authedFetch } from './authService'
+import { authedFetch } from "./authService";
 
-const BASE = '/api/beers'
+const BASE = "/api/beers";
 
 export async function listEventBeers(eventId) {
-  const res = await authedFetch(`${BASE}/event/${eventId}`)
-  if (!res.ok) throw new Error('Failed to list beers')
-  return res.json()
+  const res = await authedFetch(`${BASE}/event/${eventId}`);
+  if (!res.ok) throw new Error("Failed to list beers");
+  return res.json();
 }
 
 /**
@@ -16,16 +16,16 @@ export async function listEventBeers(eventId) {
  */
 export async function attachBeerToEvent(eventId, beer) {
   const res = await authedFetch(`${BASE}/event/${eventId}`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(beer),
-  })
-  if (!res.ok) throw new Error('Failed to attach beer')
-  return res.json()
+  });
+  if (!res.ok) throw new Error("Failed to attach beer");
+  return res.json();
 }
 
 export async function fetchBeersForEvent(eventId) {
-  const res = await authedFetch(`${BASE}/event/${eventId}`)
-  if (!res.ok) throw new Error('Kunne ikke hente øl for event')
-  return res.json()
+  const res = await authedFetch(`${BASE}/event/${eventId}`);
+  if (!res.ok) throw new Error("Kunne ikke hente øl for event");
+  return res.json();
 }

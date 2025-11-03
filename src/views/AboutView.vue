@@ -1,5 +1,3 @@
 <template>
-    <h2>
-        tottel
-    </h2>
+  <h2>tottel</h2>
 </template>

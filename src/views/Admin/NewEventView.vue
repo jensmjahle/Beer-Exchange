@@ -1,72 +1,71 @@
 <script setup>
-import { ref, onMounted } from 'vue'
-import { useRouter } from 'vue-router'
-import { createEventMultipart } from '@/services/events.service.js'
+import { ref, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { createEventMultipart } from "@/services/events.service.js";
 
-const router = useRouter()
+const router = useRouter();
 
 // form state
-const name = ref('')
-const currency = ref('NOK')
-const startLive = ref(true)
-const imageFile = ref(null)
-const imagePreview = ref(null)
+const name = ref("");
+const currency = ref("NOK");
+const startLive = ref(true);
+const imageFile = ref(null);
+const imagePreview = ref(null);
 
-const creating = ref(false)
-const currencies = ref([])
+const creating = ref(false);
+const currencies = ref([]);
 
 function loadCurrencies() {
   try {
     // Modern browsers: dynamic list from the runtime
-    if (typeof Intl.supportedValuesOf === 'function') {
-      currencies.value = Intl.supportedValuesOf('currency')
-        .filter(c => typeof c === 'string')
-        .sort()
+    if (typeof Intl.supportedValuesOf === "function") {
+      currencies.value = Intl.supportedValuesOf("currency")
+        .filter((c) => typeof c === "string")
+        .sort();
     } else {
       // Fallback minimal set (edit as you like)
-      currencies.value = ['NOK', 'SEK', 'DKK', 'EUR', 'USD', 'GBP']
+      currencies.value = ["NOK", "SEK", "DKK", "EUR", "USD", "GBP"];
     }
   } catch {
-    currencies.value = ['NOK', 'SEK', 'DKK', 'EUR', 'USD', 'GBP']
+    currencies.value = ["NOK", "SEK", "DKK", "EUR", "USD", "GBP"];
   }
 }
 
 function onFileChange(e) {
-  const f = e.target.files?.[0]
-  imageFile.value = f || null
+  const f = e.target.files?.[0];
+  imageFile.value = f || null;
   if (f) {
-    const reader = new FileReader()
-    reader.onload = () => (imagePreview.value = reader.result)
-    reader.readAsDataURL(f)
+    const reader = new FileReader();
+    reader.onload = () => (imagePreview.value = reader.result);
+    reader.readAsDataURL(f);
   } else {
-    imagePreview.value = null
+    imagePreview.value = null;
   }
 }
 
 async function submit() {
   if (!name.value.trim()) {
-    alert('Please enter a name')
-    return
+    alert("Please enter a name");
+    return;
   }
-  creating.value = true
+  creating.value = true;
   try {
-    const formData = new FormData()
-    formData.append('name', name.value.trim())
-    formData.append('currency', currency.value)
-    formData.append('startLive', String(startLive.value))
-    if (imageFile.value) formData.append('image', imageFile.value)
+    const formData = new FormData();
+    formData.append("name", name.value.trim());
+    formData.append("currency", currency.value);
+    formData.append("startLive", String(startLive.value));
+    if (imageFile.value) formData.append("image", imageFile.value);
 
-    const ev = await createEventMultipart(formData)
-    router.push({ name: 'admin-event', params: { eventId: ev.id } })
-
+    const ev = await createEventMultipart(formData);
+    router.push({ name: "admin-event", params: { eventId: ev.id } });
   } catch (e) {
-    alert(e?.message || 'Failed to create event')
+    alert(e?.message || "Failed to create event");
   } finally {
-    creating.value = false
+    creating.value = false;
   }
 }
 
-onMounted(loadCurrencies)
+onMounted(loadCurrencies);
 </script>
 
 <template>
@@ -76,7 +75,10 @@ onMounted(loadCurrencies)
       <p class="opacity-70">Configure details and upload a cover image.</p>
     </header>
 
-    <form @submit.prevent="submit" class="space-y-6 rounded-2xl border p-5 border-[var(--color-border3)] bg-[var(--color-button4)]">
+    <form
+      @submit.prevent="submit"
+      class="space-y-6 rounded-2xl border p-5 border-[var(--color-border3)] bg-[var(--color-button4)]"
+    >
       <!-- Name -->
       <div>
         <label class="block text-sm mb-1">Name</label>
@@ -119,29 +121,28 @@ onMounted(loadCurrencies)
           class="block w-full text-sm file:mr-3 file:rounded-md file:border file:px-3 file:py-1.5 file:bg-[var(--color-bg4)] file:border-[var(--color-border3)]"
         />
         <div v-if="imagePreview" class="mt-3">
-          <img :src="imagePreview" alt="preview" class="max-h-56 rounded-lg border border-[var(--color-border3)]" />
+          <img
+            :src="imagePreview"
+            alt="preview"
+            class="max-h-56 rounded-lg border border-[var(--color-border3)]"
+          />
         </div>
       </div>
 
       <div class="flex items-center justify-end gap-3">
         <router-link
-        :to="{ name: 'admin-events' }"
-        class="rounded-lg border px-3 py-2 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
-  >
-  Cancel
-</router-link>
+          :to="{ name: 'admin-events' }"
+          class="rounded-lg border px-3 py-2 border-[var(--color-border3)] hover:bg-[var(--color-bg4)]"
+        >
+          Cancel
+        </router-link>
 
         <button
           type="submit"
           :disabled="creating"
-          class="rounded-lg px-4 py-2 font-semibold
-                 border border-[var(--color-button1-border)]
-                 bg-[var(--color-button1)]
-                 text-[var(--color-button1-meta)]
-                 hover:bg-[var(--color-button1-hover)]
-                 disabled:opacity-60"
+          class="rounded-lg px-4 py-2 font-semibold border border-[var(--color-button1-border)] bg-[var(--color-button1)] text-[var(--color-button1-meta)] hover:bg-[var(--color-button1-hover)] disabled:opacity-60"
         >
-          {{ creating ? 'Creating…' : 'Create Event' }}
+          {{ creating ? "Creating…" : "Create Event" }}
         </button>
       </div>
     </form>

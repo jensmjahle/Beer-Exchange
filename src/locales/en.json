@@ -198,16 +198,16 @@
       "errorCommentMissing": "Please add a brief comment."
     }
   },
-  "sideMenu" : {
-    "completedTitle" : "Completed",
-    "nextFromQueue" : "Next from Que",
-    "allRequests" : "All Requests",
-    "statistics" : "Statistics",
-    "completeRequest" : "Complete Request",
-    "putBackIntoQueue" : "Put Back into Queue",
-    "placeOnHold" : "Place on Hold",
-    "settings" : "Settings",
-    "logout" : "Logout",
+  "sideMenu": {
+    "completedTitle": "Completed",
+    "nextFromQueue": "Next from Que",
+    "allRequests": "All Requests",
+    "statistics": "Statistics",
+    "completeRequest": "Complete Request",
+    "putBackIntoQueue": "Put Back into Queue",
+    "placeOnHold": "Place on Hold",
+    "settings": "Settings",
+    "logout": "Logout",
     "menuTitle": "Menu",
     "chat": "My Chat",
     "home": "Home",
@@ -215,9 +215,9 @@
     "login": "Check Answer",
     "membership": "Become a Member",
     "support": "Support",
-    "admins" : "Administrators",
-    "allAdmins" : "All Administrators",
-    "createNewAdmin" : "Create New Administrator",
+    "admins": "Administrators",
+    "allAdmins": "All Administrators",
+    "createNewAdmin": "Create New Administrator",
     "onlineAdmins": "Admins online",
     "closeRequest": "Close Request",
     "tooltips": {
@@ -391,7 +391,6 @@
     "ALL_MUSHROOMS_ARE_UNIDENTIFIABLE": "None of the mushrooms in this basket could be identified",
     "BAD_PICTURES_MUSHROOM_PRESENT": "Some mushrooms in this basket could not be processed due to bad picture quality",
     "ALL_MUSHROOMS_ARE_BAD_PICTURES": "All mushrooms in this basket could not be processed due to bad picture quality"
-    
   },
   "request": {
     "id": "Request ID",
@@ -430,12 +429,5 @@
     "passwordNoNumber": "Password must include at least one number.",
     "passwordNoUppercase": "Password must include at least one uppercase letter.",
     "passwordsDontMatch": "Passwords do not match."
-
   }
-
 }
-
-
-
-
-

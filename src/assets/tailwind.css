@@ -1,4 +1,6 @@
-html, body, #app {
+html,
+body,
+#app {
   margin: 0;
   padding: 0;
   width: 100%;
@@ -42,8 +44,11 @@ html, body, #app {
   p {
     @apply text-base font-normal text-text1;
   }
-   html, body, #app {
-    cursor: url("data:image/svg+xml;utf8,\
+  html,
+  body,
+  #app {
+    cursor:
+      url("data:image/svg+xml;utf8,\
 <svg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 64 64'>\
   <defs>\
     <style>\
@@ -62,7 +67,9 @@ html, body, #app {
   <path class='o' d='M49 31c2 1 5 1 7 0' fill='none' stroke='#1f2a2e' stroke-width='2' stroke-linecap='round'/>\
   <path class='g' d='M34 42c-2 5-7 6-10 4 2-3 3-6 6-7 2-1 4 1 4 3z'/>\
   <path class='g' d='M43 44c-1 4-6 7-11 6 2-4 5-6 9-7 1-1 2 0 2 1z'/>\
-</svg>") 6 10, auto;
+</svg>")
+        6 10,
+      auto;
   }
 }
 
@@ -75,7 +82,7 @@ html, body, #app {
     @apply flex items-center justify-center min-h-screen w-full bg-bg1;
   }
 
-  .user-layout-inner{
+  .user-layout-inner {
     @apply flex justify-center w-[100vw] h-[100vh] sm:h-[85vh] sm:w-[80vw];
   }
   .user-display-card {
@@ -83,7 +90,7 @@ html, body, #app {
     max-height: 1000px;
     min-height: 600px;
   }
-  
+
   .user-display-card.collapsed {
     width: 100%;
   }
@@ -103,13 +110,12 @@ html, body, #app {
   .collapse-button {
     @apply absolute top-4 left-0 z-[1] pointer-events-auto border border-border2 border-l-0 bg-bg1 rounded-none rounded-tr-lg rounded-br-lg transition xl2:hidden;
   }
-  
 
   .user-sidebar.collapsed {
-    width: 60px; 
+    width: 60px;
   }
 
-  .user-sidebar-button{
+  .user-sidebar-button {
     @apply flex items-center bg-bg2 border border-border2 rounded-lg w-full transition-all duration-300 ease-in-out overflow-hidden min-w-[50px] min-h-[80px] max-w-[200px] h-[10%];
   }
 
@@ -181,36 +187,38 @@ html, body, #app {
     @apply items-center flex-1 flex flex-row justify-center rounded-lg p-2;
   }
 
-  .slide-right-enter-active, .slide-right-leave-active {
+  .slide-right-enter-active,
+  .slide-right-leave-active {
     transition: all 0.3s ease;
   }
 
-  .slide-right-enter-from, .slide-right-leave-to {
+  .slide-right-enter-from,
+  .slide-right-leave-to {
     transform: translateX(100%);
     opacity: 0;
   }
 
-  .slide-right-enter-to, .slide-right-leave-from {
+  .slide-right-enter-to,
+  .slide-right-leave-from {
     transform: translateX(0%);
     opacity: 1;
   }
 
   /* Tilpasset scrollbar-stil */
-.custom-scrollbar::-webkit-scrollbar {
-  width: 6px;
-}
-.custom-scrollbar::-webkit-scrollbar-track {
-  background: transparent;
-}
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background-color: rgba(120, 120, 120, 0.4);
-  border-radius: 6px;
-}
-.custom-scrollbar {
-  scrollbar-width: thin;
-  scrollbar-color: rgba(120, 120, 120, 0.4) transparent;
-}
-
+  .custom-scrollbar::-webkit-scrollbar {
+    width: 6px;
+  }
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background-color: rgba(120, 120, 120, 0.4);
+    border-radius: 6px;
+  }
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(120, 120, 120, 0.4) transparent;
+  }
 
   .btn {
     @apply font-semibold text-sm px-2 py-1 rounded-xl transition duration-200 disabled:opacity-50;
@@ -255,4 +263,4 @@ html, body, #app {
   .btn-icon-transparent-1 {
     @apply btn-icon border border-button-transparent-border bg-button-transparent text-button-transparent-meta hover:bg-button-transparent-hover hover:border-button-transparent-hover-border;
   }
-} 
+}
