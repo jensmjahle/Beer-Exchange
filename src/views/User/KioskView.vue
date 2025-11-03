@@ -9,8 +9,14 @@
             {{ ev?.name ?? "Beer Exchange" }}
           </h1>
         </div>
-        <div class="flex flex-[8] flex-row w-full items-center justify-start">
-          <div class="flex flex-[3] flex-col w-full items-center justify-center ">
+        <div class="flex flex-[8] flex-row w-full items-center justify-start gap-6">
+          <div class="flex flex-[3] flex-col w-full items-center justify-center gap-6">
+           <BeerList
+              title="Øl på børsen"
+              :beers="beers"
+              :currency="ev?.currency ?? 'NOK'"
+              class="w-full"
+            />
             <div class="flex flex-col items-center justify-around text-center">
               <h3 class="italic text-lg">
                 Bli med på
@@ -112,6 +118,7 @@ import { connectLive, off, on } from "@/services/live.service.js";
 import { listEventBeers } from "@/services/beers.service.js";
 import { listTransactions } from "@/services/transactions.service.js";
 import TransactionHistory from "@/components/TransactionHistory.vue";
+import BeerList from "@/components/BeerList.vue";
 const route = useRoute();
 const ev = ref(null);
 const eventId = String(route.params.eventId || "");
