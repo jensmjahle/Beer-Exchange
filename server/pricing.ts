@@ -1,6 +1,7 @@
 // server/pricing.ts
 import db from "./db/index.js";
 import { buildPricingContext } from "./pricing-context.js";
+import { insertPriceUpdate } from "./repo/priceUpdate.repo";
 
 type Row = {
   id: string;
@@ -162,6 +163,15 @@ export async function recalcPricesForEvent(
       if (b.event_id === eventId && map.has(b.id)) {
         b.current_price = map.get(b.id)!;
       }
+    }
+    for (const newRow of updated) {
+      const oldRow = rows.find((r) => r.id === newRow.id);
+      const oldPrice = oldRow ? Number(oldRow.current_price) : null;
+      const newPrice = Number(newRow.current_price);
+      await insertPriceUpdate(newRow.id, oldPrice, newPrice);
+      console.log(
+        `Price update for event_beer ${newRow.id}: ${oldPrice} -> ${newPrice}`,
+      );
     }
   } else if (db.kind === "sqlite") {
     const stmt = db.sql.prepare(

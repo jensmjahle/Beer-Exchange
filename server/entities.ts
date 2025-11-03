@@ -55,3 +55,12 @@ export type Tx = {
   volume_ml?: number | null; // store volume with tx
   created_at: string;
 };
+
+// server/entities.ts
+export type PriceUpdate = {
+  id: string;
+  event_beer_id: string;
+  old_price: number | null;
+  new_price: number;
+  updated_at: string;
+};

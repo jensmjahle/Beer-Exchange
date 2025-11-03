@@ -51,10 +51,10 @@ function money(n) {
 </script>
 
 <template>
-  <div class="flex flex-col rounded-2xl border p-4 bg-bg2">
+  <div class="flex flex-col rounded-2xl border border-border2 p-4 bg-bg2">
     <div class="flex items-center justify-between mb-3">
-      <h2 class="font-bold text-lg">Nylige Transaksjoner</h2>
-      <span class="text-xs opacity-70">{{ transactions.length }}</span>
+      <h2 class="font-bold text-4xl">Nylige Transaksjoner</h2>
+      <span class="text-lg opacity-70">{{ transactions.length }}</span>
     </div>
 
     <ul class="divide-y">
@@ -64,20 +64,20 @@ function money(n) {
         class="py-2 flex items-center justify-between gap-3"
       >
         <div class="min-w-0">
-          <div class="font-medium truncate">
+          <div class="font-medium text-xl truncate">
             {{ t.customer_name ?? "Anonymous" }} kjøpte {{ t.qty }} ×
             {{ t.beer_name ?? t.beer_id }}
             {{ t.volume_ml ? `(${t.volume_ml}ml)` : "" }}
           </div>
-          <div class="text-xs opacity-70">
+          <div class="text-lg opacity-70">
             Kl. {{ formatTime(t.created_at) }}
           </div>
         </div>
         <div class="text-right">
-          <div class="font-bold tabular-nums">
+          <div class="font-bold text-2xl tabular-nums">
             {{ money(t.unit_price) }} {{ currency }}
           </div>
-          <div class="text-xs opacity-70">
+          <div class="text-lg opacity-70">
             Totalt {{ money((t.unit_price || 0) * (t.qty || 0)) }}
             {{ currency }}
           </div>
