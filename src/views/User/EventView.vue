@@ -14,6 +14,7 @@ import TransactionHistory from "@/components/TransactionHistory.vue";
 import CustomersPanel from "@/components/CustomersPanel.vue";
 import LiveIndicator from "@/components/LiveIndicator.vue";
 import SettingsWidget from "@/components/settings/SettingsWidget.vue";
+import {connectLive, off, on} from "@/services/live.service.js";
 
 const route = useRoute();
 const eventId = String(route.params.eventId || "");
@@ -27,27 +28,7 @@ const biggestWinners = ref([]);
 const biggestLosers = ref([]);
 let eventSource;
 
-function connectLive() {
-  if (eventSource) return;
-  eventSource = new EventSource(
-    `${import.meta.env.VITE_API_BASE}/api/live/events/${eventId}/stream`,
-  );
 
-  eventSource.addEventListener("transactionUpdate", (e) => {
-    const tx = JSON.parse(e.data);
-    console.log("[LIVE] transactionUpdate", tx);
-    // Prepend to list so newest shows first
-    transactions.value.unshift(tx);
-  });
-
-  eventSource.addEventListener("priceUpdate", (e) => {
-    console.log("[LIVE] priceUpdate", e.data);
-    // you already handle this for beers
-    refreshBeers();
-  });
-
-  eventSource.onerror = (err) => console.warn("[LIVE] error", err);
-}
 
 async function loadAll() {
   loading.value = true;
@@ -75,35 +56,34 @@ async function loadAll() {
     loading.value = false;
   }
 }
-
-async function onUpdated() {
-  // After a purchase: refresh beers & transactions
-  try {
-    const [b, t] = await Promise.all([
-      listEventBeers(eventId),
-      listTransactions(eventId, { limit: 200 }),
-    ]);
-    beers.value = Array.isArray(b) ? b : [];
-    transactions.value = Array.isArray(t) ? t : [];
-  } catch (e) {
-    console.warn("Refresh after buy failed:", e?.message || e);
-  }
+function recomputeMovers() {
+  const sorted = [...beers.value].sort(
+    (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0)
+  );
+  biggestWinners.value = sorted.slice(0, 3);
+  biggestLosers.value = sorted.slice(-3).reverse();
 }
+const handlePriceUpdate = async () => {
+  const updated = await listEventBeers(eventId);
+  beers.value.splice(0, beers.value.length, ...updated);
+  recomputeMovers();
+};
+
 const today = new Date();
 const formattedDate = today.toLocaleDateString("en-GB", {
   day: "2-digit",
   month: "2-digit",
   year: "numeric",
 });
-onMounted(loadAll);
-onMounted(connectLive);
 
-onUnmounted(() => {
-  if (eventSource) {
-    eventSource.close();
-    eventSource = null;
-  }
+onMounted(async () => {
+  await loadAll();
+  await connectLive(eventId);
 });
+
+  on("priceUpdate", handlePriceUpdate);
+onUnmounted(() => off("priceUpdate", handlePriceUpdate));
+
 </script>
 
 <template>
@@ -137,10 +117,12 @@ onUnmounted(() => {
       <div class="grid md:grid-cols-2 gap-4">
         <BiggestMovers
           title="Største vinnere siste timen"
+          :currency="ev?.currency ?? 'NOK'"
           :items="biggestWinners"
         />
         <BiggestMovers
           title="Største tapere siste timen"
+          :currency="ev?.currency ?? 'NOK'"
           :items="biggestLosers"
         />
       </div>

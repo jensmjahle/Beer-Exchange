@@ -7,7 +7,13 @@
         :key="beer.id"
         class="flex justify-between text-text3 items-center bg-bg3 p-2 rounded border"
       >
-        <span>{{ beer.name }}</span>
+        <div>
+           <span>{{ beer.name }}</span>
+        <div class="text-xs opacity-70">
+          {{ (beer.current_price) }} {{ currency }}
+        </div>
+        </div>
+
         <span
           class="font-semibold"
           :class="{
@@ -27,6 +33,10 @@
 <script setup>
 defineProps({
   title: String,
+  currency: {
+    type: String,
+    default: "NOK",
+  },
   items: {
     type: Array,
     default: () => [],
