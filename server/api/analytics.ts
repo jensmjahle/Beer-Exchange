@@ -1,7 +1,7 @@
 // server/api/analytics.ts
 import { Router } from "express";
 import db from "../db/index.js";
-import {listPriceHistory} from "../repo/priceUpdate.repo";
+import { listPriceHistory } from "../repo/priceUpdate.repo";
 
 export const analytics = Router();
 
@@ -99,19 +99,22 @@ analytics.get(
     }
   },
 );
-analytics.get("/event/:eventId/beer/:eventBeerId/price-history", async (req, res) => {
-  const { eventId, eventBeerId } = req.params;
-  const range = String(req.query.range || "day");
-  const since = sinceFromRange(range);
+analytics.get(
+  "/event/:eventId/beer/:eventBeerId/price-history",
+  async (req, res) => {
+    const { eventId, eventBeerId } = req.params;
+    const range = String(req.query.range || "day");
+    const since = sinceFromRange(range);
 
-  try {
-    const points = await listPriceHistory(eventId, eventBeerId, since);
-    return res.json(points);
-  } catch (e) {
-    console.error("[analytics:price-history] failed", e);
-    return res.status(500).json({ error: "Failed to get price history" });
-  }
-});
+    try {
+      const points = await listPriceHistory(eventId, eventBeerId, since);
+      return res.json(points);
+    } catch (e) {
+      console.error("[analytics:price-history] failed", e);
+      return res.status(500).json({ error: "Failed to get price history" });
+    }
+  },
+);
 
 // GET /api/analytics/event/:eventId/beer/:eventBeerId/stats
 analytics.get("/event/:eventId/beer/:eventBeerId/stats", async (req, res) => {

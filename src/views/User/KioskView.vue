@@ -9,7 +9,7 @@
           <h1 class="text-4xl md:text-6xl font-bold">
             {{ ev?.name ?? "Beer Exchange" }}
           </h1>
-            <LiveIndicator />
+          <LiveIndicator />
         </div>
       </slot>
     </section>

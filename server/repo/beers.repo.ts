@@ -1,6 +1,6 @@
 import crypto from "node:crypto";
 import db, { EventBeer } from "../db/index.js";
-import {listRecentPriceForBeer} from "./priceUpdate.repo";
+import { listRecentPriceForBeer } from "./priceUpdate.repo";
 
 // Hent alle øl for et event
 export async function listEventBeers(eventId: string): Promise<any[]> {
@@ -24,12 +24,17 @@ export async function listEventBeers(eventId: string): Promise<any[]> {
 
   const enriched: any[] = [];
   for (const b of beers) {
-    const { oldPrice, newPrice } = await listRecentPriceForBeer(b.id, oneHourAgo);
+    const { oldPrice, newPrice } = await listRecentPriceForBeer(
+      b.id,
+      oneHourAgo,
+    );
     let changePct: number | null = null;
     if (oldPrice != null && newPrice != null && oldPrice > 0) {
       changePct = ((newPrice - oldPrice) / oldPrice) * 100;
     }
-    console.log(`Beer ${b.id} price change last hour: ${oldPrice} -> ${newPrice} = ${changePct}%`);
+    console.log(
+      `Beer ${b.id} price change last hour: ${oldPrice} -> ${newPrice} = ${changePct}%`,
+    );
     enriched.push({
       ...b,
       last_hours_change:
@@ -58,7 +63,7 @@ export async function attachBeerToEvent(
     old_price: null,
     new_price: b.current_price,
     updated_at: new Date().toISOString(),
-  }
+  };
 
   if (db.kind === "memory") {
     if (!db.mem.eventBeers) db.mem.eventBeers = [];
@@ -69,7 +74,6 @@ export async function attachBeerToEvent(
 
     return b;
   }
-
 
   const cols = [
     "id",

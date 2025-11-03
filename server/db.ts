@@ -67,7 +67,6 @@ export type PriceUpdate = {
   updated_at: string;
 };
 
-
 function createMemory() {
   return {
     kind: "memory" as const,
@@ -76,7 +75,7 @@ function createMemory() {
       customers: [] as Customer[],
       eventBeers: [] as EventBeer[],
       transactions: [] as Tx[],
-        priceUpdates: [] as PriceUpdate[],
+      priceUpdates: [] as PriceUpdate[],
     },
   };
 }

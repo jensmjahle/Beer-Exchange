@@ -51,7 +51,6 @@ export async function listPriceHistory(
 
   let rows: any[] = [];
 
-
   const { rows: pgRows } = await db.pool.query(queryText, params);
   const { rows: cur } = await db.pool.query(
     `SELECT current_price FROM event_beer WHERE id=$1`,
@@ -71,7 +70,11 @@ export async function listPriceHistory(
 
   return result;
 }
-export async function insertPriceUpdate(eventBeerId: string, oldPrice: number | null, newPrice: number) {
+export async function insertPriceUpdate(
+  eventBeerId: string,
+  oldPrice: number | null,
+  newPrice: number,
+) {
   const row = {
     id: crypto.randomUUID(),
     event_beer_id: eventBeerId,
@@ -92,7 +95,6 @@ export async function insertPriceUpdate(eventBeerId: string, oldPrice: number | 
   );
   return row;
 }
-
 
 /**
  * Finn pris for et øl én time tilbake, og nåværende pris.
@@ -138,7 +140,6 @@ export async function listRecentPriceForBeer(eventBeerId: string, since: Date) {
 
   const current = normalized[normalized.length - 1];
   const newPrice = Number(current.price);
-
 
   let oldPrice = Number(normalized[0].price);
   for (const u of normalized) {

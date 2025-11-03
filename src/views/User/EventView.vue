@@ -63,11 +63,11 @@ async function loadAll() {
     transactions.value = Array.isArray(t) ? t : [];
 
     const sorted = [...beers.value].sort(
-    (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0)
-  );
+      (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0),
+    );
 
-  biggestWinners.value = sorted.slice(0, 3);
-  biggestLosers.value = sorted.slice(-3).reverse();
+    biggestWinners.value = sorted.slice(0, 3);
+    biggestLosers.value = sorted.slice(-3).reverse();
     console.log("Loaded event data:", { event: e, beers: b, transactions: t });
   } catch (e) {
     error.value = e?.message || "Failed to load";
@@ -75,7 +75,6 @@ async function loadAll() {
     loading.value = false;
   }
 }
-
 
 async function onUpdated() {
   // After a purchase: refresh beers & transactions
@@ -136,8 +135,14 @@ onUnmounted(() => {
       </div>
 
       <div class="grid md:grid-cols-2 gap-4">
-              <BiggestMovers title="Største vinnere siste timen" :items="biggestWinners" />
-    <BiggestMovers title="Største tapere siste timen" :items="biggestLosers" />
+        <BiggestMovers
+          title="Største vinnere siste timen"
+          :items="biggestWinners"
+        />
+        <BiggestMovers
+          title="Største tapere siste timen"
+          :items="biggestLosers"
+        />
       </div>
 
       <PriceGrid
