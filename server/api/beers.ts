@@ -1,23 +1,23 @@
-import { Router } from "express"
-import { attachBeerToEvent, listEventBeers } from "../repo/beers.repo.js"
+import { Router } from "express";
+import { attachBeerToEvent, listEventBeers } from "../repo/beers.repo.js";
 
-export const beers = Router()
+export const beers = Router();
 
 // Hent alle event-øl
 beers.get("/event/:eventId", async (req, res) => {
   try {
-    const rows = await listEventBeers(req.params.eventId)
-    res.json(rows)
+    const rows = await listEventBeers(req.params.eventId);
+    res.json(rows);
   } catch (e) {
-    console.error("[beers:list] failed", e)
-    res.status(500).json({ error: "Failed to list beers" })
+    console.error("[beers:list] failed", e);
+    res.status(500).json({ error: "Failed to list beers" });
   }
-})
+});
 
 // Legg til ny øl direkte som event_beer
 beers.post("/event/:eventId", async (req, res) => {
   try {
-    const { eventId } = req.params
+    const { eventId } = req.params;
     const {
       name,
       brewery,
@@ -33,16 +33,16 @@ beers.post("/event/:eventId", async (req, res) => {
       position = 0,
       active = 1,
       volumes = [],
-    } = req.body || {}
+    } = req.body || {};
 
-    if (!name) return res.status(400).json({ error: "name required" })
+    if (!name) return res.status(400).json({ error: "name required" });
     if (
       base_price == null ||
       min_price == null ||
       max_price == null ||
       current_price == null
     )
-      return res.status(400).json({ error: "pricing fields required" })
+      return res.status(400).json({ error: "pricing fields required" });
 
     const beer = await attachBeerToEvent(eventId, {
       name,
@@ -59,11 +59,11 @@ beers.post("/event/:eventId", async (req, res) => {
       position,
       active,
       volumes,
-    })
+    });
 
-    res.json(beer)
+    res.json(beer);
   } catch (e) {
-    console.error("[beers:attach] failed", e)
-    res.status(500).json({ error: "Failed to attach beer" })
+    console.error("[beers:attach] failed", e);
+    res.status(500).json({ error: "Failed to attach beer" });
   }
-})
+});

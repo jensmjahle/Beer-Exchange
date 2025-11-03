@@ -1,39 +1,39 @@
-import { Client } from '@stomp/stompjs';
-import SockJS from 'sockjs-client';
+import { Client } from "@stomp/stompjs";
+import SockJS from "sockjs-client";
 
 let chatClient = null;
 
 export function connectToChat(userRequestId, token, onMessageCallback) {
-  const username = token ? JSON.parse(atob(token.split('.')[1])).sub : null;
+  const username = token ? JSON.parse(atob(token.split(".")[1])).sub : null;
 
   chatClient = new Client({
     webSocketFactory: () => {
-      const baseUrl = window?.env?.VITE_API_URL || 'http://localhost:8080';
+      const baseUrl = window?.env?.VITE_API_URL || "http://localhost:8080";
       return new SockJS(`${baseUrl}/ws`);
     },
     connectHeaders: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    debug: (str) => console.log('[ChatSocket] ' + str),
+    debug: (str) => console.log("[ChatSocket] " + str),
     reconnectDelay: 5000,
     onConnect: () => {
-      console.log('[ChatSocket] Connected to chatroom');
+      console.log("[ChatSocket] Connected to chatroom");
 
       chatClient.subscribe(
-          `/topic/chatroom/${userRequestId}`,
-          (message) => {
-            const body = JSON.parse(message.body);
-            onMessageCallback(body);
-          },
-          { Authorization: `Bearer ${token}` }
+        `/topic/chatroom/${userRequestId}`,
+        (message) => {
+          const body = JSON.parse(message.body);
+          onMessageCallback(body);
+        },
+        { Authorization: `Bearer ${token}` },
       );
     },
     onStompError: (frame) => {
-      console.error('[ChatSocket] STOMP error:', frame);
+      console.error("[ChatSocket] STOMP error:", frame);
     },
     onWebSocketError: (event) => {
-      console.error('[ChatSocket] WebSocket error:', event);
-    }
+      console.error("[ChatSocket] WebSocket error:", event);
+    },
   });
 
   chatClient.activate();
@@ -41,16 +41,16 @@ export function connectToChat(userRequestId, token, onMessageCallback) {
 
 export function sendMessage(userRequestId, token, message) {
   if (!chatClient || !chatClient.connected) {
-    console.error('[ChatSocket] Not connected');
+    console.error("[ChatSocket] Not connected");
     return;
   }
 
   chatClient.publish({
     destination: `/app/chat/${userRequestId}`,
     headers: {
-      Authorization: `Bearer ${token}`
+      Authorization: `Bearer ${token}`,
     },
-    body: JSON.stringify(message)
+    body: JSON.stringify(message),
   });
 }
 

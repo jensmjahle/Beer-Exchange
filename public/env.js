@@ -1,3 +1,3 @@
 window.env = {
-  VITE_API_URL: 'http://localhost:3000' // fallback default
+  VITE_API_URL: "http://localhost:3000", // fallback default
 };

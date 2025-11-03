@@ -1,36 +1,37 @@
-import {getUserRequestMushrooms} from "@/services/rest/mushroomService.js";
-import {defineStore} from "pinia";
+import { getUserRequestMushrooms } from "@/services/rest/mushroomService.js";
+import { defineStore } from "pinia";
 
-export const useMushroomStore = defineStore('mushroom', {
+export const useMushroomStore = defineStore("mushroom", {
   state: () => ({
-    mushrooms: []
+    mushrooms: [],
   }),
   actions: {
     setMushrooms(mushroomList) {
       if (Array.isArray(mushroomList)) {
-        this.mushrooms = mushroomList
+        this.mushrooms = mushroomList;
       } else {
-        this.mushrooms = []
+        this.mushrooms = [];
       }
     },
     updateMushroom(updated) {
       if (!Array.isArray(this.mushrooms)) {
-        this.mushrooms = []
+        this.mushrooms = [];
       }
-      const index = this.mushrooms.findIndex(m => m.mushroomId === updated.mushroomId)
+      const index = this.mushrooms.findIndex(
+        (m) => m.mushroomId === updated.mushroomId,
+      );
       if (index !== -1) {
-        this.mushrooms.splice(index, 1, updated)
+        this.mushrooms.splice(index, 1, updated);
       }
     },
     async fetchMushrooms(requestId) {
       try {
-        const data = await getUserRequestMushrooms(requestId)
-        console.log('[MushroomStore] Fetched mushrooms:', data)
-        this.setMushrooms(data)
+        const data = await getUserRequestMushrooms(requestId);
+        console.log("[MushroomStore] Fetched mushrooms:", data);
+        this.setMushrooms(data);
       } catch (error) {
-        console.error('[MushroomStore] Failed to fetch mushrooms:', error)
+        console.error("[MushroomStore] Failed to fetch mushrooms:", error);
       }
-    }
-  }
-})
-  
+    },
+  },
+});

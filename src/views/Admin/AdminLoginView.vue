@@ -6,25 +6,25 @@
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import AdminLoginForm from '@/components/AdminLoginForm.vue'
-import { loginAdmin } from '@/services/authService'
+import { useRouter } from "vue-router";
+import AdminLoginForm from "@/components/AdminLoginForm.vue";
+import { loginAdmin } from "@/services/authService";
 
-const router = useRouter()
+const router = useRouter();
 
 const loginUser = async (username: string, password: string) => {
   try {
-    const response = await loginAdmin(username, password)
-    const token = response.token
+    const response = await loginAdmin(username, password);
+    const token = response.token;
     if (token) {
-      sessionStorage.setItem('jwt', token)
-      await router.push({ name: 'admin-home' })
+      sessionStorage.setItem("jwt", token);
+      await router.push({ name: "admin-home" });
     } else {
-      throw new Error('Invalid credentials')
+      throw new Error("Invalid credentials");
     }
   } catch (error) {
-    console.error('Login failed:', error)
-    throw error
+    console.error("Login failed:", error);
+    throw error;
   }
-}
+};
 </script>

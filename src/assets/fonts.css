@@ -1,34 +1,35 @@
 @font-face {
-  font-family: 'AreaVariable';
-  src: url('@/assets/fonts/AreaVariable.woff2') format('woff2'),
-       url('@/assets/fonts/AreaVariable.woff')  format('woff');
-  font-weight: 100 900;      /* if it’s a variable font */
+  font-family: "AreaVariable";
+  src:
+    url("@/assets/fonts/AreaVariable.woff2") format("woff2"),
+    url("@/assets/fonts/AreaVariable.woff") format("woff");
+  font-weight: 100 900; /* if it’s a variable font */
   font-style: normal;
   font-display: swap;
 }
 
-
 @font-face {
-  font-family: 'Gagalin';
-  src: url('@/assets/fonts/gagalin/Gagalin-Regular.otf') format('opentype');
+  font-family: "Gagalin";
+  src: url("@/assets/fonts/gagalin/Gagalin-Regular.otf") format("opentype");
   font-weight: normal;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Nunito';
-  src: url('@/assets/fonts/Nunito/Nunito-VariableFont_wght.ttf') format('truetype');
+  font-family: "Nunito";
+  src: url("@/assets/fonts/Nunito/Nunito-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: normal;
   font-display: swap;
 }
 
 @font-face {
-  font-family: 'Nunito';
-  src: url('@/assets/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf') format('truetype');
+  font-family: "Nunito";
+  src: url("@/assets/fonts/Nunito/Nunito-Italic-VariableFont_wght.ttf")
+    format("truetype");
   font-weight: 100 900;
   font-style: italic;
   font-display: swap;
 }
-

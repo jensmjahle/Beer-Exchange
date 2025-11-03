@@ -1,43 +1,45 @@
-import crypto from "node:crypto"
-import db, { EventBeer } from "../db/index.js"
+import crypto from "node:crypto";
+import db, { EventBeer } from "../db/index.js";
 
 // Hent alle øl for et event
 export async function listEventBeers(eventId: string): Promise<EventBeer[]> {
   if (db.kind === "memory")
     return db.mem.eventBeers
-      .filter(b => b.event_id === eventId)
-      .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id))
+      .filter((b) => b.event_id === eventId)
+      .sort((a, b) => a.position - b.position || a.id.localeCompare(b.id));
 
   if (db.kind === "sqlite")
     return db.sql
-      .prepare(`SELECT * FROM event_beer WHERE event_id=? ORDER BY position, id`)
-      .all(eventId)
+      .prepare(
+        `SELECT * FROM event_beer WHERE event_id=? ORDER BY position, id`,
+      )
+      .all(eventId);
 
   const { rows } = await db.pool.query(
     `SELECT * FROM event_beer WHERE event_id=$1 ORDER BY position, id`,
-    [eventId]
-  )
-  return rows
+    [eventId],
+  );
+  return rows;
 }
 
 // Opprett ny event_beer direkte
 export async function attachBeerToEvent(
   eventId: string,
   p: Omit<EventBeer, "id" | "event_id"> & {
-    volumes?: { volume_ml: number; price_factor?: number }[]
-  }
+    volumes?: { volume_ml: number; price_factor?: number }[];
+  },
 ): Promise<EventBeer> {
   const b: EventBeer = {
     ...p,
     id: crypto.randomUUID(),
     event_id: eventId,
     beer_id: null, // ikke brukt lenger
-  }
+  };
 
   if (db.kind === "memory") {
-    if (!db.mem.eventBeers) db.mem.eventBeers = []
-    db.mem.eventBeers.push(b)
-    return b
+    if (!db.mem.eventBeers) db.mem.eventBeers = [];
+    db.mem.eventBeers.push(b);
+    return b;
   }
 
   const cols = [
@@ -57,7 +59,7 @@ export async function attachBeerToEvent(
     "position",
     "active",
     "volumes",
-  ]
+  ];
   const vals = [
     b.id,
     b.event_id,
@@ -75,22 +77,22 @@ export async function attachBeerToEvent(
     b.position,
     b.active,
     JSON.stringify(p.volumes ?? []),
-  ]
+  ];
 
   if (db.kind === "sqlite") {
     db.sql
       .prepare(
         `INSERT INTO event_beer (${cols.join(",")})
-         VALUES (${cols.map(() => "?").join(",")})`
+         VALUES (${cols.map(() => "?").join(",")})`,
       )
-      .run(...vals)
-    return b
+      .run(...vals);
+    return b;
   }
 
   await db.pool.query(
     `INSERT INTO event_beer (${cols.join(",")})
      VALUES (${cols.map((_, i) => `$${i + 1}`).join(",")})`,
-    vals
-  )
-  return b
+    vals,
+  );
+  return b;
 }

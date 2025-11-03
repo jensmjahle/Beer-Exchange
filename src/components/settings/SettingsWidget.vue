@@ -35,14 +35,12 @@
   </div>
 </template>
 
-
 <script setup>
-import { ref, onMounted, onBeforeUnmount } from 'vue';
-import { Settings } from 'lucide-vue-next';
-import LanguageSelect from '@/components/settings/LanguageSelect.vue';
-import ThemeSelect from '@/components/settings/ThemeSelect.vue';
-import ClearSession from '@/components/settings/ClearSession.vue'
-
+import { ref, onMounted, onBeforeUnmount } from "vue";
+import { Settings } from "lucide-vue-next";
+import LanguageSelect from "@/components/settings/LanguageSelect.vue";
+import ThemeSelect from "@/components/settings/ThemeSelect.vue";
+import ClearSession from "@/components/settings/ClearSession.vue";
 
 const isOpen = ref(false);
 const settingsRef = ref(null);
@@ -56,10 +54,10 @@ function handleClickOutside(event) {
 }
 
 onMounted(() => {
-  document.addEventListener('click', handleClickOutside);
+  document.addEventListener("click", handleClickOutside);
 });
 
 onBeforeUnmount(() => {
-  document.removeEventListener('click', handleClickOutside);
+  document.removeEventListener("click", handleClickOutside);
 });
 </script>

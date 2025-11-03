@@ -1,16 +1,24 @@
 export const formatDate = (date) => {
   return new Date(date).toLocaleString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit',
-    hour12: false
+    year: "numeric",
+    month: "short",
+    day: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  });
+};
+
+export const formatTime = (date) => {
+  return new Date(date).toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
   });
 };
 
 export const formatRelativeTime = (date, locale = navigator.language) => {
-  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: 'auto' });
+  const rtf = new Intl.RelativeTimeFormat(locale, { numeric: "auto" });
   const now = new Date();
   const updated = new Date(date);
   const seconds = Math.floor((now - updated) / 1000);
@@ -22,7 +30,7 @@ export const formatRelativeTime = (date, locale = navigator.language) => {
     day: 86400,
     hour: 3600,
     minute: 60,
-    second: 1
+    second: 1,
   };
 
   for (const [unit, value] of Object.entries(ranges)) {
@@ -32,5 +40,5 @@ export const formatRelativeTime = (date, locale = navigator.language) => {
     }
   }
 
-  return rtf.format(0, 'second');
+  return rtf.format(0, "second");
 };

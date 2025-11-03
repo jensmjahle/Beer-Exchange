@@ -1,5 +1,7 @@
 <template>
-  <nav class="sticky top-0 bg-bg1-gradient shadow-2xl border-b-2 border-b-border1 py-2 px-4 flex items-center">
+  <nav
+    class="sticky top-0 bg-bg1-gradient shadow-2xl border-b-2 border-b-border1 py-2 px-4 flex items-center"
+  >
     <div class="flex-1 flex items-center">
       <p>logo</p>
     </div>
@@ -11,7 +13,7 @@
     </div>
 
     <div class="flex-1 flex items-center justify-end gap-4">
-     <SettingsWidget/>
+      <SettingsWidget />
     </div>
   </nav>
 </template>
