@@ -2,7 +2,7 @@
   <div
     class="flex flex-row h-screen w-screen overflow-hidden bg-bg1 p-6 gap-6 text-text1 divide-border1/10"
   >
-    <section class="flex flex-[3] flex-col items-center gap-2 justify-center">
+    <section class="flex flex-[3] flex-col items-center gap-6 justify-center">
       <slot name="right">
         <div class="flex flex-[1] flex-col items-center text-center justify-center">
           <h1 class="text-4xl md:text-6xl font-bold">
