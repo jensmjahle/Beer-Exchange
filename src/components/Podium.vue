@@ -39,7 +39,9 @@
             :unit="unit"
             class="translate-y-[-35%]"
           />
-          <div class="absolute bottom-2 text-2xl font-extrabold text-gray-900">1</div>
+          <div class="absolute bottom-2 text-2xl font-extrabold text-gray-900">
+            1
+          </div>
         </div>
       </div>
 

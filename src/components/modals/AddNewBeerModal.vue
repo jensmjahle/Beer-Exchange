@@ -5,6 +5,9 @@
       <label>Navn</label>
       <input v-model="beer.name" placeholder="Navn" />
 
+      <label>Beksrivelse</label>
+      <input v-model="beer.description" placeholder="Beskrivelse" />
+
       <label>Basepris (literpris)</label>
       <input
         type="number"
@@ -54,6 +57,7 @@ const emit = defineEmits(["close", "saved"]);
 const beer = ref({
   name: "",
   beer_id: "",
+  description: "",
   base_price: 0,
   min_price: 0,
   max_price: 0,
@@ -95,7 +99,7 @@ function close() {
   @apply fixed inset-0 bg-black/50 flex items-center justify-center;
 }
 .modal-content {
-  @apply bg-white p-6 rounded-2xl shadow-xl w-96;
+  @apply bg-bg2 text-text2 p-6 rounded-2xl shadow-xl w-96;
 }
 .actions {
   @apply mt-4 flex justify-end gap-2;

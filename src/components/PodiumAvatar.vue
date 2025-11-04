@@ -4,11 +4,7 @@
     <div
       class="w-28 h-28 rounded-full overflow-hidden border-4 border-white shadow-lg mb-3"
     >
-      <img
-        :src="entry.image"
-        alt=""
-        class="w-full h-full object-cover"
-      />
+      <img :src="entry.image" alt="" class="w-full h-full object-cover" />
     </div>
 
     <!-- større tekst -->
