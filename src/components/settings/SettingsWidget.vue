@@ -17,6 +17,7 @@
           <div class="flex flex-col gap-4 mt-4">
             <LanguageSelect />
             <ThemeSelect />
+            <ChaosModeToggle />
             <ClearSession />
           </div>
         </div>
@@ -41,6 +42,8 @@ import { Settings } from "lucide-vue-next";
 import LanguageSelect from "@/components/settings/LanguageSelect.vue";
 import ThemeSelect from "@/components/settings/ThemeSelect.vue";
 import ClearSession from "@/components/settings/ClearSession.vue";
+import ChaosModeToggle from "@/components/settings/ChaosModeToggle.vue";
+import PirateModeToggle from "@/components/settings/PirateModeToggle.vue";
 
 const isOpen = ref(false);
 const settingsRef = ref(null);
