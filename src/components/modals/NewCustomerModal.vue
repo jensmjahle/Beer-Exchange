@@ -4,6 +4,9 @@ import { createCustomer } from "@/services/customers.service.js";
 import BaseInput from "@/components/base/BaseInput.vue";
 import BaseButton from "@/components/base/BaseButton.vue";
 import BaseDropdown from "@/components/base/BaseDropdown.vue";
+import { useConfirmDialog } from "@/composables/useConfirmDialog.js";
+
+const { showConfirm } = useConfirmDialog();
 
 const props = defineProps({
   open: { type: Boolean, default: false },
@@ -31,7 +34,6 @@ const genderOptions = [
   { label: "Female", value: "female" },
 ];
 
-// Bruk verdier backend faktisk gjenkjenner (kurtasje: student/staff/vip/other)
 const workRelOptions = [
   { label: "Fulltidsjobb", value: "fulltidsjobb" },
   { label: "Deltidsjobb", value: "deltidsjobb" },
@@ -78,37 +80,34 @@ async function onSubmit() {
   if (!gender.value) {
     return alert("Gender is required");
   }
-  if (!name.value.trim()) {
-    alert("Please enter a valid name");
-    return;
-  }
+
+  // 🧠 Bekreftelse før opprettelse
+  const confirmed = await showConfirm({
+    title: "Er du HELT sikker?",
+    message:
+        "Det er UMULIG å endre dette senere. " +
+        "Når du trykker bekreft, er kunden registrert for evig tid. " +
+        "Tenk deg om før du gjør det – vi gjør det ikke for deg.",
+    confirmText: "Kjør på 💀",
+    cancelText: "Vent litt...",
+  });
+
+  if (!confirmed) return;
 
   try {
     loading.value = true;
     const form = new FormData();
     form.append("name", name.value.trim());
-    if (phone.value) {
-      form.append("phone", phone.value);
-    }
-    if (shoe_size.value) {
-      form.append("shoe_size", shoe_size.value);
-    }
-    if (weight.value) {
-      form.append("weight", weight.value);
-    }
-    if (work_relationship.value) {
+    if (phone.value) form.append("phone", phone.value);
+    if (shoe_size.value) form.append("shoe_size", shoe_size.value);
+    if (weight.value) form.append("weight", weight.value);
+    if (work_relationship.value)
       form.append("work_relationship", work_relationship.value);
-    }
-    if (gender.value) {
-      form.append("gender", gender.value);
-    }
-    if (sexual_orientation.value) {
+    if (gender.value) form.append("gender", gender.value);
+    if (sexual_orientation.value)
       form.append("sexual_orientation", sexual_orientation.value);
-    }
     form.append("ethnicity", ethnicity.value.toString());
-    if (profile_image.value) {
-      form.append("image", profile_image.value);
-    }
+    if (profile_image.value) form.append("image", profile_image.value);
 
     const c = await createCustomer(props.eventId, form, true);
     emit("created", c);
@@ -136,7 +135,7 @@ function reset() {
 </script>
 
 <template>
-  <div v-if="open" class="fixed inset-0 z-50 flex items-center justify-center">
+  <div v-if="open" class="fixed inset-0 z-10 flex items-center justify-center">
     <div class="absolute inset-0 bg-black/40" @click="$emit('close')"></div>
 
     <div
