@@ -1,7 +1,9 @@
 // server/repo/beers.repo.ts
 import crypto from "node:crypto";
-import db, { EventBeer } from "../db/index.js";
-import { listRecentPriceForBeer } from "./priceUpdate.repo.js";
+import db from "../db/index.js";
+import {getPriceWindowForBeer, listRecentPriceForBeer} from "./priceUpdate.repo.js";
+import {EventBeer} from "../db";
+
 
 export async function listEventBeers(eventId: string): Promise<any[]> {
   let beers: any[] = [];
@@ -20,10 +22,25 @@ export async function listEventBeers(eventId: string): Promise<any[]> {
   const oneHourAgo = new Date(now.getTime() - 60 * 60 * 1000);
 
   const enriched: any[] = [];
+
   for (const b of beers) {
-    const recent = await listRecentPriceForBeer(b.id, oneHourAgo);
-    const oldPrice = recent?.old_price ?? null;
-    const newPrice = recent?.new_price ?? b.current_price ?? null;
+    // hent “pris da” og “pris nå”
+    const window = await getPriceWindowForBeer(b.id, oneHourAgo);
+
+    // fallbacks hvis det ikke fantes noen før
+    const oldPrice =
+      window?.old_price != null
+        ? Number(window.old_price)
+        : b.base_price != null
+          ? Number(b.base_price)
+          : null;
+
+    const newPrice =
+      window?.new_price != null
+        ? Number(window.new_price)
+        : b.current_price != null
+          ? Number(b.current_price)
+          : null;
 
     let changePct: number | null = null;
     if (oldPrice != null && newPrice != null && oldPrice > 0) {
@@ -36,7 +53,6 @@ export async function listEventBeers(eventId: string): Promise<any[]> {
         changePct != null ? Number(changePct.toFixed(1)) : null,
     });
   }
-
   return enriched;
 }
 

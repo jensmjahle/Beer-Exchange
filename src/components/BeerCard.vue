@@ -39,7 +39,7 @@ const onBuy = (e) => {
       </div>
       <div class="text-right">
         <div class="text-xl font-extrabold tabular-nums">
-          {{ fmt(beer.current_price) }} {{ currency }}
+          {{ fmt(beer.current_price) }} {{ currency }}/L
         </div>
       </div>
     </div>

@@ -45,6 +45,7 @@ async function loadAll() {
       (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0),
     );
 
+    console.log("Beer sorting:", sorted);
     biggestWinners.value = sorted.slice(0, 3);
     biggestLosers.value = sorted.slice(-3).reverse();
     console.log("Loaded event data:", { event: e, beers: b, transactions: t });
