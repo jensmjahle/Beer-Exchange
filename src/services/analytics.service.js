@@ -17,16 +17,16 @@ async function parse(res) {
 }
 
 // range: '1h' | '3h' | 'day' | 'all'
-export async function getBeerPriceHistory(eventId, eventBeerId, range = "day") {
+export async function getBeerPriceHistory(eventId, beerId, range = "day") {
   const res = await fetch(
-    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(eventBeerId)}/price-history?range=${encodeURIComponent(range)}`,
+    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(beerId)}/price-history?range=${encodeURIComponent(range)}`,
   );
   return parse(res);
 }
-
-export async function getBeerStats(eventId, eventBeerId) {
+export async function getBeerStats(eventId, beerId) {
   const res = await fetch(
-    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(eventBeerId)}/stats`,
+    `/api/analytics/event/${eventId}/beer/${beerId}/stats`,
   );
-  return parse(res);
+  if (!res.ok) throw new Error("Failed to load beer stats");
+  return await res.json();
 }

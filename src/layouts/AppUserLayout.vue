@@ -1,5 +1,5 @@
 <template>
-  <div class="flex min-h-screen p-4 pt-6 flex-col gap-4">
+  <div class="flex min-h-screen p-4 flex-col gap-4">
     <div class="flex flex-grow align-middle justify-center flex-1">
       <router-view />
     </div>
@@ -9,5 +9,4 @@
 
 <script setup>
 import Footer from "@/components/Footer.vue";
-import SettingsWidget from "@/components/settings/SettingsWidget.vue";
 </script>

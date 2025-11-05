@@ -35,15 +35,19 @@ export type Customer = {
 export type EventBeer = {
   id: string;
   event_id: string;
-  beer_id: string;
   name?: string | null;
+  brewery?: string | null;
+  style?: string | null;
+  abv?: number | null;
+  ibu?: number | null;
+  description?: string | null;
+  image_url?: string | null;
   base_price: number;
   min_price: number;
   max_price: number;
   current_price: number;
   position: number;
   active: 0 | 1;
-  volume_ml?: number | null;
   volumes?: { volume_ml: number; price_factor?: number }[] | null;
 };
 

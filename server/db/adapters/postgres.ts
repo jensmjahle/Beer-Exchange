@@ -1,43 +1,51 @@
-// server/db/adapters/postgres.ts
-import fs from "node:fs";
-import path from "node:path";
+// server/db/postgres.ts
 import pg from "pg";
-import { DBAdapter } from "../adapter.js";
+import fs from "fs";
+import path from "path";
 
-const sql = {
-  insert: fs.readFileSync(
-    path.resolve("server/db/sql/transactions/insert.sql"),
-    "utf8",
-  ),
-  list: fs.readFileSync(
-    path.resolve("server/db/sql/transactions/list.sql"),
-    "utf8",
-  ),
-};
+const sqlCache = new Map<string, string>();
 
-let pool;
+function loadSql(filePath: string): string {
+  if (sqlCache.has(filePath)) return sqlCache.get(filePath)!;
 
-export const PostgresAdapter: DBAdapter = {
-  async init() {
-    pool = new pg.Pool({ connectionString: process.env.DATABASE_URL });
-    console.log("🐘 Connected to Postgres");
-  },
+  const fullPath = path.join(process.cwd(), "server", "db", "sql", filePath);
+  if (!fs.existsSync(fullPath)) {
+    throw new Error(`SQL file not found: ${fullPath}`);
+  }
 
-  async insertTransaction(tx) {
-    await pool.query(sql.insert, [
-      tx.id,
-      tx.event_id,
-      tx.event_beer_id,
-      tx.customer_id,
-      tx.qty,
-      tx.volume_ml,
-      tx.unit_price,
-      tx.created_at,
-    ]);
-  },
+  const content = fs.readFileSync(fullPath, "utf8");
+  sqlCache.set(filePath, content);
+  return content;
+}
 
-  async listTransactions(eventId, limit = 100) {
-    const { rows } = await pool.query(sql.list, [eventId, limit]);
-    return rows;
-  },
-};
+export async function makePostgresAdapter() {
+  const pool = new pg.Pool({
+    connectionString: process.env.DATABASE_URL,
+  });
+
+  await pool.query("SELECT 1+1");
+  console.log("[DB] Adapter loaded: PostgreSQL 🐘");
+
+  return {
+    kind: "pg" as const,
+
+    async init() {
+      // Optional migrations or setup can go here
+    },
+
+    async query(text: string, params?: any[]) {
+      let sql = text;
+
+      // 💡 Kun last fra fil hvis det er et filnavn (ikke en SQL-setning)
+      if (!text.includes(" ") && text.endsWith(".sql")) {
+        sql = loadSql(text);
+      }
+
+      return pool.query(sql, params);
+    },
+
+    async close() {
+      await pool.end();
+    },
+  };
+}

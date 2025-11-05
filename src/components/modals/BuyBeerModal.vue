@@ -21,7 +21,7 @@ const loadingCustomers = ref(false);
 const submitting = ref(false);
 
 const kurtasjeRates = [
-  { label: "Student", value: 0.8 },
+  { label: "Student", value: 0.08 },
   { label: "Deltidsjobb", value: 0.16 },
   { label: "Fulltidsjobb", value: 0.16 },
   { label: "Arbeidsledig", value: 0.06 },

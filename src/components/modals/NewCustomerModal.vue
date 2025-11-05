@@ -85,9 +85,9 @@ async function onSubmit() {
   const confirmed = await showConfirm({
     title: "Er du HELT sikker?",
     message:
-        "Det er UMULIG å endre dette senere. " +
-        "Når du trykker bekreft, er kunden registrert for evig tid. " +
-        "Tenk deg om før du gjør det – vi gjør det ikke for deg.",
+      "Det er UMULIG å endre dette senere. " +
+      "Når du trykker bekreft, er kunden registrert for evig tid. " +
+      "Tenk deg om før du gjør det – vi gjør det ikke for deg.",
     confirmText: "Kjør på 💀",
     cancelText: "Vent litt...",
   });

@@ -22,21 +22,6 @@ export async function getCustomerDetails(eventId, customerId) {
   return await res.json();
 }
 
-export async function updateCustomer(customerId, eventId, input) {
-  const res = await authedFetch(`/api/customers/${customerId}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ ...input, event_id: eventId }),
-  });
-
-  if (!res.ok) {
-    const txt = await res.text();
-    throw new Error(`Failed to update customer: ${txt}`);
-  }
-
-  return res.json();
-}
-
 const API = "/api/customers";
 
 export async function listEventCustomers(eventId) {
@@ -44,22 +29,30 @@ export async function listEventCustomers(eventId) {
   if (!res.ok) throw new Error(await res.text());
   return await res.json();
 }
+export async function createCustomer(eventId, formData) {
+  const res = await fetch(`/api/customers/event/${eventId}`, {
+    method: "POST",
+    body: formData, // ← FormData directly
+  });
 
-export async function createCustomer(eventId, form, isFormData = false) {
-  let options;
-  if (isFormData) {
-    options = { method: "POST", body: form };
-  } else {
-    options = {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(form),
-    };
-  }
-  const res = await authedFetch(`${API}/event/${eventId}`, options);
   if (!res.ok) {
-    const msg = await res.text();
-    throw new Error(`Failed to create customer: ${msg}`);
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to create customer");
   }
+
+  return await res.json();
+}
+
+export async function updateCustomer(customerId, eventId, formData) {
+  const res = await fetch(`/api/customers/${customerId}/event/${eventId}`, {
+    method: "PUT",
+    body: formData, // ← same here
+  });
+
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({}));
+    throw new Error(err.error || "Failed to update customer");
+  }
+
   return await res.json();
 }

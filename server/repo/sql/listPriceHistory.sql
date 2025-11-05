@@ -1,4 +1,4 @@
--- server/sql/listPriceHistory.sql
+-- server/sql/listPriceUpdates.sql
 SELECT
   new_price AS price,
   updated_at AS ts

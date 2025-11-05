@@ -21,27 +21,26 @@
           </div>
         </div>
 
-       <!-- Høyre side -->
-<div class="flex flex-col items-end">
-  <div class="text-3xl font-bold">
-    {{ formatPrice(beer.current_price, currency) }}
-  </div>
+        <!-- Høyre side -->
+        <div class="flex flex-col items-end">
+          <div class="text-3xl font-bold">
+            {{ formatPrice(beer.current_price, currency) }}/L
+          </div>
 
-  <div class="text-lg font-semibold text-text1">
-    Over-/Underpriset:
-    <span
-      :class="{
-        'text-green-500': priceDelta(beer) > 0,
-        'text-red-500': priceDelta(beer) < 0,
-        'text-gray-400': priceDelta(beer) === 0,
-      }"
-    >
-      {{ priceDelta(beer) > 0 ? '+' : '' }}
-      {{ priceDelta(beer).toFixed(1) }}%
-    </span>
-  </div>
-</div>
-
+          <div class="text-lg font-semibold text-text1">
+            Over-/Underpriset:
+            <span
+              :class="{
+                'text-green-500': priceDelta(beer) > 0,
+                'text-red-500': priceDelta(beer) < 0,
+                'text-gray-400': priceDelta(beer) === 0,
+              }"
+            >
+              {{ priceDelta(beer) > 0 ? "+" : "" }}
+              {{ priceDelta(beer).toFixed(1) }}%
+            </span>
+          </div>
+        </div>
       </li>
     </ul>
 

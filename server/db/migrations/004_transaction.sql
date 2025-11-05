@@ -1,12 +1,10 @@
-CREATE TABLE IF NOT EXISTS "transaction" (
-  id TEXT PRIMARY KEY,
-  event_id TEXT NOT NULL,
-  event_beer_id TEXT,
-  customer_id TEXT,
-  qty INTEGER NOT NULL,
-  unit_price REAL NOT NULL,
-  created_at TEXT NOT NULL,
-  FOREIGN KEY (event_id) REFERENCES event(id) ON DELETE CASCADE,
-  FOREIGN KEY (event_beer_id) REFERENCES event_beer(id) ON DELETE SET NULL,
-  FOREIGN KEY (customer_id) REFERENCES customer(id) ON DELETE SET NULL
+create table if not exists transaction (
+  id uuid primary key default gen_random_uuid(),
+  event_id uuid not null references event(id) on delete cascade,
+  event_beer_id uuid references event_beer(id) on delete set null,
+  customer_id uuid references customer(id) on delete set null,
+  qty integer not null,
+  unit_price numeric not null,
+  volume_ml numeric,
+  created_at timestamptz not null default now()
 );

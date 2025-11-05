@@ -10,7 +10,7 @@
         <div>
           <span class="text-3xl">{{ beer.name }}</span>
           <div class="text-xl opacity-70">
-            {{ beer.current_price }} {{ currency }}
+            {{ beer.current_price }} {{ currency }}/L
           </div>
         </div>
 

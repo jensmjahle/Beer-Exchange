@@ -12,14 +12,10 @@
     >
       <span class="text-lg">🍺</span>
       <span class="font-medium">Opp ned?</span>
-      <span
-        v-if="enabled"
-        class="text-sm text-green-500 font-semibold ml-1"
-      >PÅ</span>
-      <span
-        v-else
-        class="text-sm text-button2-meta ml-1"
-      >AV</span>
+      <span v-if="enabled" class="text-sm text-green-500 font-semibold ml-1"
+        >PÅ</span
+      >
+      <span v-else class="text-sm text-button2-meta ml-1">AV</span>
     </label>
   </div>
 </template>

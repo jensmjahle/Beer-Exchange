@@ -4,14 +4,20 @@
   >
     <section class="flex flex-[3] flex-col items-center gap-6 justify-center">
       <slot name="right">
-        <div class="flex flex-[1] flex-col items-center text-center justify-center">
+        <div
+          class="flex flex-[1] flex-col items-center text-center justify-center"
+        >
           <h1 class="text-4xl md:text-6xl font-bold">
             {{ ev?.name ?? "Beer Exchange" }}
           </h1>
         </div>
-        <div class="flex flex-[8] flex-row w-full items-start justify-start gap-6">
-          <div class="flex flex-[7] flex-col w-full items-center justify-center gap-6">
-           <BeerList
+        <div
+          class="flex flex-[8] flex-row w-full items-start justify-start gap-6"
+        >
+          <div
+            class="flex flex-[7] flex-col w-full items-center justify-center gap-6"
+          >
+            <BeerList
               title="Øl på børsen"
               :beers="beers"
               :currency="ev?.currency ?? 'NOK'"
@@ -35,7 +41,9 @@
               />
             </div>
           </div>
-          <div class="flex flex-[5] flex-col w-full items-center justify-start gap-6">
+          <div
+            class="flex flex-[5] flex-col w-full items-center justify-start gap-6"
+          >
             <div class="grid md:grid-cols-2 w-full gap-4">
               <BiggestMoversKiosk
                 title="Vinnere siste timen"
@@ -58,9 +66,7 @@
       </slot>
     </section>
 
-    <section
-      class="flex flex-col flex-[1] items-center  justify-between"
-    >
+    <section class="flex flex-col flex-[1] items-center justify-between">
       <slot name="left">
         <Podium
           title="Mest væske konsumert"
