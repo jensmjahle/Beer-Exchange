@@ -1,11 +1,12 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import http from "node:http";
 import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
-import db from "./db/index.js";
 import { runMigrations } from "./db/migrate.js";
+import db from "./db";
 
 process.on("unhandledRejection", (e) =>
   console.error("[server] UnhandledRejection:", e),
@@ -38,7 +39,7 @@ const { events } = await import("./api/events.js");
 const { beers } = await import("./api/beers.js");
 const { customers } = await import("./api/customers.js");
 const { transactions } = await import("./api/transactions.js");
-const { analytics } = await import("./api/analytics.js"); // ← add this
+const { analytics } = await import("./api/analytics.js");
 const { admin } = await import("./api/admin.js");
 const { live } = await import("./api/live.js");
 

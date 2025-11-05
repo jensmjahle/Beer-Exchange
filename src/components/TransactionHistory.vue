@@ -69,9 +69,7 @@ function money(n) {
             {{ t.beer_name ?? t.beer_id }}
             {{ t.volume_ml ? `(${t.volume_ml}ml)` : "" }}
           </div>
-          <div class="text-xs opacity-70">
-            Kl. {{ formatTime(t.created_at) }}
-          </div>
+          <div class="text-xs opacity-70">Kl. {{ formatTime(t.ts) }}</div>
         </div>
         <div class="text-right">
           <div class="font-bold tabular-nums">

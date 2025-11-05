@@ -30,20 +30,6 @@ onMounted(() => {
 onUnmounted(() => {
   off("priceUpdate", getTransactions);
 });
-
-function fmtTs(ts) {
-  if (!ts) return "";
-  try {
-    return new Date(ts).toLocaleTimeString([], {
-      hour: "2-digit",
-      minute: "2-digit",
-      second: "2-digit",
-    });
-  } catch {
-    return "";
-  }
-}
-
 function money(n) {
   if (n == null || Number.isNaN(n)) return "";
   return Number(n).toFixed(1);
@@ -69,9 +55,7 @@ function money(n) {
             {{ t.beer_name ?? t.beer_id }}
             {{ t.volume_ml ? `(${t.volume_ml}ml)` : "" }}
           </div>
-          <div class="text-lg opacity-70">
-            Kl. {{ formatTime(t.created_at) }}
-          </div>
+          <div class="text-lg opacity-70">Kl. {{ formatTime(t.ts) }}</div>
         </div>
         <div class="text-right">
           <div class="font-bold text-2xl tabular-nums">

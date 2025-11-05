@@ -32,3 +32,9 @@ export const dbOps = {
     return activeAdapter.listTransactions(eventId, limit);
   },
 };
+
+export interface DBAdapter {
+  kind: string;
+  init(): Promise<void>;
+  query?(text: string, params?: any[]): Promise<{ rows: any[] }>;
+}

@@ -6,11 +6,11 @@ import { DBAdapter } from "../adapter.js";
 
 const sql = {
   insert: fs.readFileSync(
-    path.resolve("server/db/sql/transactions/insert.sql"),
+    path.resolve("server/db/sql/transactions/insertTransaction.sql"),
     "utf8",
   ),
   list: fs.readFileSync(
-    path.resolve("server/db/sql/transactions/list.sql"),
+    path.resolve("server/db/sql/transactions/listTransactions.sql"),
     "utf8",
   ),
 };

@@ -1,9 +1,10 @@
+// server/api/beers.ts
 import { Router } from "express";
 import { attachBeerToEvent, listEventBeers } from "../repo/beers.repo.js";
 
 export const beers = Router();
 
-// Hent alle event-øl
+// Hent alle øl for et event
 beers.get("/event/:eventId", async (req, res) => {
   try {
     const rows = await listEventBeers(req.params.eventId);

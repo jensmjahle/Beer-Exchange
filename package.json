@@ -29,6 +29,7 @@
     "chartjs-adapter-date-fns": "^3.0.0",
     "concurrently": "^9.2.1",
     "date-fns": "^4.1.0",
+    "dotenv": "^17.2.3",
     "exifreader": "^4.29.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
