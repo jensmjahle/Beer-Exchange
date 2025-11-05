@@ -65,11 +65,12 @@ function money(n) {
       >
         <div class="min-w-0">
           <div class="font-medium truncate">
-            {{ t.customer_name ?? "Anonymous" }} kjøpte {{ t.qty }} ×
+            {{ t.customer_name ?? "Anonymous" }} kjøpte
             {{ t.beer_name ?? t.beer_id }}
-            {{ t.volume_ml ? `(${t.volume_ml}ml)` : "" }}
           </div>
-          <div class="text-xs opacity-70">Kl. {{ formatTime(t.ts) }}</div>
+          <div class="text-xs opacity-70">Kl. {{ formatTime(t.ts) }} •
+            {{ t.qty }} ×
+          {{ t.volume_ml ? `(${t.volume_ml}ml)` : "" }}</div>
         </div>
         <div class="text-right">
           <div class="font-bold tabular-nums">

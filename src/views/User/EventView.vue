@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from "vue";
+import {ref, computed, onMounted, onUnmounted, onUpdated} from "vue";
 import { useRoute } from "vue-router";
 import { getEvent } from "@/services/events.service.js";
 import { listEventBeers } from "@/services/beers.service.js";
@@ -83,8 +83,8 @@ on("priceUpdate", handlePriceUpdate);
 onUnmounted(() => off("priceUpdate", handlePriceUpdate));
 </script>
 
-<template>
-  <section class="space-y-6">
+<template class="p-4">
+  <section class="flex flex-col space-y-6">
     <header class="flex items-baseline justify-between">
       <div class="flex flex-col items-center gap-4">
         <h1 class="text-3xl font-extrabold">
@@ -111,7 +111,7 @@ onUnmounted(() => off("priceUpdate", handlePriceUpdate));
         {{ error }}
       </div>
 
-      <div class="grid md:grid-cols-2 gap-4">
+    <div class="grid md:grid-cols-2 gap-4">
         <BiggestMovers
           title="Største vinnere siste timen"
           :currency="ev?.currency ?? 'NOK'"
