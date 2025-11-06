@@ -15,7 +15,7 @@
           class="flex flex-[8] flex-row w-full items-start justify-start gap-6"
         >
           <div
-            class="flex flex-[7] flex-col w-full items-center justify-center gap-6"
+            class="flex flex-[1] flex-col w-full items-center justify-center gap-6"
           >
             <BeerList
               title="Øl på børsen"
@@ -37,12 +37,12 @@
               <img
                 :src="qrCode"
                 alt="QR Code"
-                class="w-54 h-54 md:w-80 md:h-80 rounded-lg"
+                class="w-54 h-54 md:w-64 md:h-64 rounded-lg"
               />
             </div>
           </div>
           <div
-            class="flex flex-[5] flex-col w-full items-center justify-start gap-6"
+            class="flex flex-[1] flex-col w-full items-center justify-start gap-6"
           >
             <div class="grid md:grid-cols-2 w-full gap-4">
               <BiggestMoversKiosk
@@ -69,44 +69,21 @@
     <section class="flex flex-col flex-[1] items-center justify-between">
       <slot name="left">
         <Podium
-          title="Mest væske konsumert"
-          unit="L"
-          :entries="[
-            {
-              name: 'Kari',
-              score: 23.5,
-              image: '/uploads/1762198777652-j0jhfskcsmp.png',
-            },
-            { name: 'Ola', score: 19.2, image: '/avatars/ola.jpg' },
-            { name: 'Per', score: 17.8, image: '/avatars/per.jpg' },
-          ]"
-        />
-        <Podium
-          title="Høyest barregning"
-          unit="NOK"
-          :entries="[
-            {
-              name: 'Kari',
-              score: 670,
-              image: '/uploads/1762198777652-j0jhfskcsmp.png',
-            },
-            { name: 'Ola', score: 500, image: '/avatars/ola.jpg' },
-            { name: 'Per', score: 230, image: '/avatars/per.jpg' },
-          ]"
-        />
-        <Podium
-          title="Top 3 fyllesvin"
-          unit="‰"
-          :entries="[
-            {
-              name: 'Kari',
-              score: 1.4,
-              image: '/uploads/1762198777652-j0jhfskcsmp.png',
-            },
-            { name: 'Ola', score: 0.8, image: '/avatars/ola.jpg' },
-            { name: 'Per', score: 0.4, image: '/avatars/per.jpg' },
-          ]"
-        />
+  title="Mest væske konsumert"
+  unit="L"
+  :entries="podiums.volume"
+/>
+<Podium
+  title="Høyest barregning"
+  unit="NOK"
+  :entries="podiums.spend"
+/>
+<Podium
+  title="Top 3 fyllesvin"
+  unit="‰"
+  :entries="podiums.bac"
+/>
+
       </slot>
     </section>
   </div>
@@ -127,6 +104,7 @@ import TransactionHistory from "@/components/TransactionHistory.vue";
 import BeerList from "@/components/BeerList.vue";
 import BiggestMoversKiosk from "@/components/BiggestMoversKiosk.vue";
 import TransactionHistoryKiosk from "@/components/TransactionHistoryKiosk.vue";
+import {getAllPodiums} from "@/services/leaderboard.service.js";
 const route = useRoute();
 const ev = ref(null);
 const eventId = String(route.params.eventId || "");
@@ -136,18 +114,21 @@ const biggestWinners = ref([]);
 const biggestLosers = ref([]);
 const error = ref(null);
 const loading = ref(true);
+const podiums = ref({ volume: [], spend: [], bac: [] });
 async function loadAll() {
   loading.value = true;
   error.value = null;
   try {
-    const [e, b, t] = await Promise.all([
+    const [e, b, t, p] = await Promise.all([
       getEvent(eventId),
       listEventBeers(eventId),
-      listTransactions(eventId, { limit: 200 }),
+      listTransactions(eventId),
+      getAllPodiums(eventId)
     ]);
     ev.value = e;
     beers.value = Array.isArray(b) ? b : [];
     transactions.value = Array.isArray(t) ? t : [];
+    podiums.value = p;
 
     const sorted = [...beers.value].sort(
       (a, b) => (b.last_hours_change ?? 0) - (a.last_hours_change ?? 0),
@@ -155,7 +136,7 @@ async function loadAll() {
 
     biggestWinners.value = sorted.slice(0, 3);
     biggestLosers.value = sorted.slice(-3).reverse();
-    console.log("Loaded event data:", { event: e, beers: b, transactions: t });
+    console.log("Loaded event data:", { event: e, beers: b, transactions: t , podiums: p});
   } catch (e) {
     error.value = e?.message || "Failed to load";
   } finally {

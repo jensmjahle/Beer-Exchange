@@ -8,7 +8,7 @@
         class="flex justify-between text-text3 items-center bg-bg3 p-2 rounded border"
       >
         <div>
-          <span class="text-3xl">{{ beer.name }}</span>
+          <span class="text-2xl">{{ beer.name }}</span>
           <div class="text-xl opacity-70">
             {{ beer.current_price }} {{ currency }}/L
           </div>
