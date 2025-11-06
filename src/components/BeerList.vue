@@ -24,7 +24,7 @@
         <!-- Høyre side -->
         <div class="flex flex-col items-end">
           <div class="text-3xl font-bold">
-            {{ formatPrice(beer.current_price, currency) }}/L
+            {{ beer.current_price }} {{ currency }}/L
           </div>
 
           <div class="text-lg font-semibold text-text1">
@@ -68,11 +68,7 @@ function priceDelta(beer) {
   return ((beer.current_price - beer.base_price) / beer.base_price) * 100;
 }
 
-// prisformatering
-function formatPrice(value, currency) {
-  if (value == null) return "-";
-  return `${value.toFixed(1)} ${currency}`;
-}
+
 </script>
 
 <style scoped>

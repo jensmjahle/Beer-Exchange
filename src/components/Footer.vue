@@ -26,7 +26,7 @@
           🎁 Gratis rabattkode
         </a>
         <a
-          href="legg-inn-link-til-tindern-din-her-torbjørn"
+          href="https://tinder.com/@torbosk"
           class="hover:text-primary transition"
         >
           📬 Kontakt oss
