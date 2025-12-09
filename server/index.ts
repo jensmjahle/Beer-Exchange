@@ -6,7 +6,7 @@ import path from "node:path";
 import fs from "node:fs";
 import { fileURLToPath } from "node:url";
 import { runMigrations } from "./db/migrate.js";
-import db from "./db";
+import db from "./db/index.js";
 
 process.on("unhandledRejection", (e) =>
   console.error("[server] UnhandledRejection:", e),
@@ -53,7 +53,12 @@ app.use("/api/admin", admin);
 app.use("/api/live", live);
 app.use("/api/leaderboard", leaderboard);
 
+
+
+
+
 const PORT = Number(process.env.PORT || 3000);
-server.listen(PORT, "127.0.0.1", () => {
-  console.log(`API listening on http://127.0.0.1:${PORT} (db=${db.kind})`);
+server.listen(PORT, "0.0.0.0", () => {
+  console.log(`API listening on http://0.0.0.0:${PORT} (db=${db.kind})`);
 });
+

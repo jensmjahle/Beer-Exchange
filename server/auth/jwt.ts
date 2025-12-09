@@ -10,6 +10,8 @@ export type JwtPayload = {
 };
 
 export function signJwt(payload: JwtPayload) {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
   return jwt.sign(payload, JWT_SECRET, { expiresIn: JWT_EXPIRES });
 }
 
