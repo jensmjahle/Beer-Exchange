@@ -1,5 +1,5 @@
 // server/db/memory.ts
-import { DBAdapter } from "./adapter.js";
+import { DBAdapter } from "../adapter.js";
 
 const mem = {
   events: [],

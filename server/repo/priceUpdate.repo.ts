@@ -45,7 +45,7 @@ export async function insertPriceUpdate(
       event_beer_id: eventBeerId,
       old_price: oldPrice,
       new_price: newPrice,
-      updated_at,
+      updated_at: created_at,
     };
     db.mem.priceUpdates.push(rec);
     return rec;

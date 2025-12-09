@@ -2,7 +2,7 @@
 import { Router } from "express";
 import db from "../db/index.js";
 import { listPriceUpdates } from "../repo/priceUpdate.repo.js";
-import { getBeerStats } from "../repo/analytics.repo";
+import { getBeerStats } from "../repo/analytics.repo.js";
 
 export const analytics = Router();
 

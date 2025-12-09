@@ -1,6 +1,7 @@
 // server/repo/customers.repo.ts
 import crypto from "node:crypto";
-import db, { Customer } from "../db/index.js";
+import db from "../db/index.js";
+import {Customer} from "../db.js";
 
 /**
  * Hent alle kunder for et event

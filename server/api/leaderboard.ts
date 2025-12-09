@@ -1,5 +1,5 @@
 import { Router } from "express";
-import {getTopBac, getTopSpend, getTopVolume} from "../repo/leaderboard";
+import {getTopBac, getTopSpend, getTopVolume} from "../repo/leaderboard.js";
 
 
 export const leaderboard = Router();

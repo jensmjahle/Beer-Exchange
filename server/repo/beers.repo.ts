@@ -1,8 +1,8 @@
 // server/repo/beers.repo.ts
 import crypto from "node:crypto";
 import db from "../db/index.js";
-import {getPriceWindowForBeer, listRecentPriceForBeer} from "./priceUpdate.repo.js";
-import {EventBeer} from "../db";
+import {getPriceWindowForBeer} from "./priceUpdate.repo.js";
+import {EventBeer} from "../db.js";
 
 
 export async function listEventBeers(eventId: string): Promise<any[]> {

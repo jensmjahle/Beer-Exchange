@@ -37,4 +37,9 @@ export interface DBAdapter {
   kind: string;
   init(): Promise<void>;
   query?(text: string, params?: any[]): Promise<{ rows: any[] }>;
+
+    listEvents?(): Promise<any[]>;
+  getEvent?(id: string): Promise<any>;
+  createEvent?(ev: any): Promise<void>;
+  query?(text: string, params?: any[]): Promise<{ rows: any[] }>;
 }

@@ -1,10 +1,9 @@
 // server/db.ts
 // One DB module for all backends: memory (default), sqlite, pg
-import fs from "node:fs";
-import path from "node:path";
+
 import process from "node:process";
 
-export type DBKind = "memory" | "sqlite" | "pg";
+export type DBKind = "memory" | "pg";
 
 export type Event = {
   id: string;
@@ -84,27 +83,7 @@ function createMemory() {
   };
 }
 
-// Try SQLite; on any failure fall back to memory
-async function trySqlite(url: string) {
-  try {
-    const Database = (await import("better-sqlite3")).default;
-    const raw = url.replace("sqlite://", "");
-    const file = path.isAbsolute(raw) ? raw : path.resolve(process.cwd(), raw);
-    const dir = path.dirname(file);
-    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
 
-    const sql = new Database(file);
-    sql.pragma("journal_mode = WAL");
-    sql.pragma("foreign_keys = ON");
-    return { kind: "sqlite" as const, sql };
-  } catch (e: any) {
-    console.warn(
-      "SQLite init failed, falling back to memory:",
-      e?.message || e,
-    );
-    return createMemory();
-  }
-}
 
 // Try Postgres; on any failure fall back to memory
 async function tryPg(url: string) {
@@ -125,13 +104,10 @@ async function tryPg(url: string) {
 const DATABASE_URL = process.env.DATABASE_URL?.trim() || "";
 let db:
   | { kind: "memory"; mem: ReturnType<typeof createMemory>["mem"] }
-  | { kind: "sqlite"; sql: any }
   | { kind: "pg"; pool: any };
 
 if (!DATABASE_URL) {
   db = createMemory();
-} else if (DATABASE_URL.startsWith("sqlite://")) {
-  db = await trySqlite(DATABASE_URL);
 } else if (
   DATABASE_URL.startsWith("postgres://") ||
   DATABASE_URL.startsWith("postgresql://")
