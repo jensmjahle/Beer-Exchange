@@ -1,7 +1,7 @@
 // server/db/migrate.ts
 import fs from "node:fs";
 import path from "node:path";
-import db from "../db";
+import db from "../db.js";
 
 export async function runMigrations() {
   if (db.kind === "memory") {
