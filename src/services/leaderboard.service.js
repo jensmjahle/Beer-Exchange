@@ -1,32 +1,31 @@
-// src/services/leaderboard.service.js
-const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:3000/api";
+import api from "@/config/axiosConfig.js";
 
-/** 🔹 Fetch helper */
-async function fetchJson(url, opts = {}) {
-  const res = await fetch(url, opts);
-  if (!res.ok) throw new Error(`Request failed: ${res.status}`);
-  return res.json();
-}
+const BASE = "/api/leaderboard";
 
-/** 🥇 Mest væske konsumert (liter) */
 export async function getTopVolume(eventId) {
   if (!eventId) throw new Error("eventId required");
-  return fetchJson(`${API_BASE}/leaderboard/event/${eventId}/top-volume`);
+  const { data } = await api.get(
+    `${BASE}/event/${encodeURIComponent(eventId)}/top-volume`
+  );
+  return data;
 }
 
-/** 💰 Høyest barregning (NOK) */
 export async function getTopSpend(eventId) {
   if (!eventId) throw new Error("eventId required");
-  return fetchJson(`${API_BASE}/leaderboard/event/${eventId}/top-spend`);
+  const { data } = await api.get(
+    `${BASE}/event/${encodeURIComponent(eventId)}/top-spend`
+  );
+  return data;
 }
 
-/** 🍻 Top fyllesvin (promille beregnet) */
 export async function getTopBac(eventId) {
   if (!eventId) throw new Error("eventId required");
-  return fetchJson(`${API_BASE}/leaderboard/event/${eventId}/top-bac`);
+  const { data } = await api.get(
+    `${BASE}/event/${encodeURIComponent(eventId)}/top-bac`
+  );
+  return data;
 }
 
-/** 🧩 Hent alle tre leaderboardene samtidig */
 export async function getAllPodiums(eventId) {
   const [volume, spend, bac] = await Promise.all([
     getTopVolume(eventId),

@@ -1,32 +1,21 @@
-const BASE = "/api";
+import api from "@/config/axiosConfig.js";
 
-async function parse(res) {
-  if (!res.ok) {
-    let msg = `HTTP ${res.status}`;
-    try {
-      const j = await res.json();
-      if (j?.error) msg = j.error;
-    } catch {}
-    throw new Error(msg);
-  }
-  try {
-    return await res.json();
-  } catch {
-    return null;
-  }
-}
+const BASE = "/api";
 
 // range: '1h' | '3h' | 'day' | 'all'
 export async function getBeerPriceHistory(eventId, beerId, range = "day") {
-  const res = await fetch(
-    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(beerId)}/price-history?range=${encodeURIComponent(range)}`,
+  const { data } = await api.get(
+    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(beerId)}/price-history`,
+    {
+      params: { range },
+    }
   );
-  return parse(res);
+  return data;
 }
+
 export async function getBeerStats(eventId, beerId) {
-  const res = await fetch(
-    `/api/analytics/event/${eventId}/beer/${beerId}/stats`,
+  const { data } = await api.get(
+    `${BASE}/analytics/event/${encodeURIComponent(eventId)}/beer/${encodeURIComponent(beerId)}/stats`
   );
-  if (!res.ok) throw new Error("Failed to load beer stats");
-  return await res.json();
+  return data;
 }

@@ -84,15 +84,26 @@ const basePrice = computed(() => {
   const liters = Number(selectedVolume.value) / 1000;
   return Number(props.beer.current_price) * liters * Number(qty.value);
 });
-const kurtasjeAmount = computed(
-  () => basePrice.value * Number(kurtasje.value || 0),
-);
+const kurtasjeAmount = computed(() => {
+  const rate = Number(kurtasje.value || 0);
+  if (rate <= 0) return 0;
+
+  const amount = basePrice.value * rate;
+  return Math.max(0.25, amount);
+});
+
 const totalPrice = computed(() => basePrice.value + kurtasjeAmount.value);
 
 async function buy() {
   if (!selectedCustomer.value) return alert("Velg en kunde først.");
   if (!selectedVolume.value) return alert("Velg et volum først.");
 
+  if (qty.value > 1) {
+    return alert("Kan ikke kjøpe mer enn 1 enhet av gangen.");
+  }
+  if (qty.value < 1) {
+    return alert("Antall må være minst 1.");
+  }
   const payload = {
     event_id: props.eventId,
     event_beer_id: props.beer.id,
