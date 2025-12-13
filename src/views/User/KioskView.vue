@@ -155,6 +155,7 @@ const handlePriceUpdate = async () => {
   const updated = await listEventBeers(eventId);
   beers.value.splice(0, beers.value.length, ...updated);
   recomputeMovers();
+  podiums.value = await getAllPodiums(eventId);
 };
 
 onMounted(async () => {
