@@ -36,7 +36,7 @@
         >
           <img
             v-if="e.image_url"
-            :src="e.image_url"
+            :src="useAssetUrl(e.image_url)"
             alt=""
             class="h-36 w-full object-cover border-b border-[var(--color-border3)]"
           />
@@ -72,12 +72,13 @@ import { ref, computed, onMounted } from "vue";
 import { listEvents } from "@/services/events.service.js";
 import SettingsWidget from "@/components/settings/SettingsWidget.vue";
 import { useI18n } from "vue-i18n";
+import {useAssetUrl} from "@/composables/useAssetUrl.js";
 
 const loading = ref(true);
 const error = ref(null);
 const events = ref([]);
 const { t } = useI18n();
-
+const {assetUrl} = useAssetUrl();
 function fmt(d) {
   try {
     return new Date(d).toLocaleString([], {
