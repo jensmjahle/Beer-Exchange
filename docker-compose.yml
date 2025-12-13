@@ -10,7 +10,8 @@ services:
       - "3000:3000"
     env_file:
       - .env
-
+    volumes:
+      - beer_uploads:/app/uploads
 
   frontend:
     build:
@@ -25,3 +26,6 @@ services:
     depends_on:
       - backend
     restart: always
+
+volumes:
+  beer_uploads:

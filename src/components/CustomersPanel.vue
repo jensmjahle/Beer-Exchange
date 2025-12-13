@@ -5,7 +5,9 @@ import { listCustomersWithStats } from "@/services/customers.service";
 import BACMini from "@/components/BACMini.vue";
 import NewCustomerModal from "@/components/modals/NewCustomerModal.vue";
 import BaseButton from "@/components/base/BaseButton.vue";
+import {useAssetUrl} from "@/composables/useAssetUrl.js";
 
+const { assetUrl } = useAssetUrl();
 const props = defineProps({
   eventId: { type: String, required: true },
   currency: { type: String, default: "NOK" },
@@ -86,7 +88,7 @@ onMounted(load);
           <!-- profile image -->
           <img
             v-if="c.profile_image_url"
-            :src="c.profile_image_url"
+            :src="assetUrl(c.profile_image_url)"
             alt="Profile"
             class="w-12 h-12 rounded-full object-cover border shrink-0"
           />

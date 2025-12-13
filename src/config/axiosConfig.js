@@ -1,75 +1,81 @@
-import axios from 'axios'
-import { useToast } from 'vue-toastification'
-import router from '@/router/index.js'
+import axios from "axios";
+import { useToast } from "vue-toastification";
+import router from "@/router/index.js";
 
 const api = axios.create({
-  baseURL: window.env?.VITE_API_URL || 'http://localhost:3000',
-  headers: {
-    'Content-Type': 'application/json'
-  }
-})
+  baseURL: window.env?.VITE_API_URL || "http://localhost:3000",
+});
 
+api.interceptors.request.use(
+  (config) => {
+    const token = sessionStorage.getItem("jwt");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
 
-api.interceptors.request.use(config => {
-  const token = sessionStorage.getItem('jwt')
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`
-  }
-  const fullUrl = `${config.baseURL}${config.url}`
-    console.log('➡️ Axios Request:', {
+    if (config.data instanceof FormData) {
+      delete config.headers["Content-Type"];
+      delete config.headers["content-type"];
+    } else if (!config.headers["Content-Type"] && !config.headers["content-type"]) {
+      config.headers["Content-Type"] = "application/json";
+    }
+
+    const fullUrl = `${config.baseURL}${config.url}`;
+    console.log("➡️ Axios Request:", {
       method: config.method?.toUpperCase(),
       url: fullUrl,
       params: config.params,
-      headers: config.headers
-  })
+      headers: config.headers,
+    });
 
+    return config;
+  },
+  (error) => Promise.reject(error)
+);
 
-  return config
-}, error => Promise.reject(error))
-
-const toast = useToast()
+const toast = useToast();
 
 api.interceptors.response.use(
-    response => response,
-    error => {
-      const status = error.response?.status
-      const currentRoute = router.currentRoute.value
-      const isAdmin = currentRoute.path.startsWith('/admin')
+  (response) => response,
+  (error) => {
+    const status = error.response?.status;
+    const currentRoute = router.currentRoute.value;
+    const isAdmin = currentRoute.path.startsWith("/admin");
 
-      const data = error.response?.data || {}
-      const message = data.message || 'An error occurred.'
-      const type = data.type || null
+    const data = error.response?.data || {};
+    const message = data.message || "An error occurred.";
+    const type = data.type || null;
 
-      switch (status) {
-        case 401:
-          if (type === 'INVALID_TOKEN') {
-            toast.error(message || 'Session expired. Please log in again.')
-            sessionStorage.removeItem('jwt')
-            router.push({ name: isAdmin ? 'admin-login' : 'home' })
-          } else {
-            toast.error(message || 'Unauthorized. Please check your credentials.')
-          }
-          break
+    switch (status) {
+      case 401:
+        if (type === "INVALID_TOKEN") {
+          toast.error(message || "Session expired. Please log in again.");
+          sessionStorage.removeItem("jwt");
+          router.push({ name: isAdmin ? "admin-login" : "home" });
+        } else {
+          toast.error(message || "Unauthorized. Please check your credentials.");
+        }
+        break;
 
-        case 403:
-          toast.warning(message || 'You do not have permission to access this.')
-          break
+      case 403:
+        toast.warning(message || "You do not have permission to access this.");
+        break;
 
-        case 404:
-          toast.error(message || 'The requested resource was not found.')
-          break
+      case 404:
+        toast.error(message || "The requested resource was not found.");
+        break;
 
-        default:
-          if (status >= 500) {
-            toast.error(message || 'Server error occurred. Please try again later.')
-            console.error('Server error:', error)
-          } else if (message) {
-            toast.error(message)
-          }
-      }
-
-      return Promise.reject(error)
+      default:
+        if (status >= 500) {
+          toast.error(message || "Server error occurred. Please try again later.");
+          console.error("Server error:", error);
+        } else if (message) {
+          toast.error(message);
+        }
     }
-)
 
-export default api
+    return Promise.reject(error);
+  }
+);
+
+export default api;

@@ -51,6 +51,7 @@ customers.get("/:customerId/event/:eventId", async (req, res) => {
   try {
     const { customerId, eventId } = req.params;
     const details = await getCustomerDetails(customerId, eventId);
+    console.log("Fetched customer details:", details);
     if (!details.customer)
       return res.status(404).json({ error: "Customer not found" });
     res.json(details);

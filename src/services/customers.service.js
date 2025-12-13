@@ -27,6 +27,7 @@ export async function listEventCustomers(eventId) {
 }
 
 export async function createCustomer(eventId, formData) {
+ console.log("Creating customer with eventId:", eventId, "and formData:", formData);
   const { data } = await api.post(
     `${BASE}/event/${encodeURIComponent(eventId)}`,
     formData
